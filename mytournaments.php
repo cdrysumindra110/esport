@@ -222,13 +222,49 @@ $conn->close();
                   margin-right: 0;
               }
           }
+          /* Responsive Styles */
+        /* Toggle Button */
+        .toggle-btn {
+            display: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .profile-container {
+                display: none; /* Hide profile and cover on small devices */
+            }
+
+            .btn-container {
+                display: none; /* Initially hide buttons on small devices */
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-container.active {
+                display: flex; /* Show buttons when active */
+            }
+
+            .toggle-btn {
+                display: block; /* Show toggle button on small devices */
+            }
+
+            .btn-cnt {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
   </head>
 
   <body class="size-1280 primary-color-red">  
-    <div id="preloader" style="background: #000 url(./img/loader.gif) no-repeat center center; 
-        background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-    </div>
+
     <!-- HEADER -->
     <header role="banner" class="position-absolute">
       <!-- Top Bar -->
@@ -278,10 +314,14 @@ $conn->close();
     <div class="popup-message" id="popup-message"></div>
 
     <div class="profile-cont">
+        <!-- Toggle Button -->
+        <button class="toggle-btn" onclick="toggleButtons()">
+            <i class="fa fa-bars"></i> Menu
+        </button>
         <div class="btn-container">
             <button id="walletBtn" class="btn-cnt"><i class='fa fa-money'></i>Wallet</button>
             <button id="updateProfileBtn" class="btn-cnt"><i class='fas fa-user-edit'></i>Profile</button>
-            <button id="teamProfileBtn" class="btn-cnt"><i class='fa fa-group'></i>Teams</button>
+            <!-- <button id="teamProfileBtn" class="btn-cnt"><i class='fa fa-group'></i>Teams</button> -->
             <button id="myTournamentBtn" class="btn-cnt"><i class='fa fa-group'></i>My Tournaments</button>
             <button id="changeEmailBtn" class="btn-cnt"><i class='fa fa-envelope'></i>Change Email</button>
             <button id="changePasswordBtn" class="btn-cnt"><i class='fa fa-key'></i>Change Password</button>
@@ -291,25 +331,25 @@ $conn->close();
             <div class="profile-container">
                 <div class="cover-photo-container">
                     <div class="cover-photo">
-                        <input id="coverPhotoFile" name="coverPhotoFile" type="file" onchange="loadCoverPhoto(event)" class="file-input" />
+                        <!-- <input id="coverPhotoFile" name="coverPhotoFile" type="file" onchange="loadCoverPhoto(event)" class="file-input" />
                         <label for="coverPhotoFile" class="cover-photo-label">
                             <span class="icon-wrapper">
                                 <i class="fas fa-camera"></i>
                             </span>
                             <span>Change Cover</span>
-                        </label>
+                        </label> -->
                         <img id="coverPhoto" name="coverPhoto" src="./img/neon.png" alt="Cover Photo" class="cover-photo-img" />
                         <div class="cover-overlay"></div>
                     </div>
                 </div>
                 <div class="profile-pic">
-                    <input id="profilePicFile" name="profilePicFile" type="file" onchange="loadProfilePic(event)" class="file-input" />
+                    <!-- <input id="profilePicFile" name="profilePicFile" type="file" onchange="loadProfilePic(event)" class="file-input" />
                     <label for="profilePicFile" class="profile-pic-label">
                         <span class="icon-wrapper">
                           <i class="fas fa-camera"></i>
                         </span>
                         <span>Change Profile</span>
-                    </label>
+                    </label> -->
                     <img src="./img/dash-logo.png" id="profilePic" name="profilePic" class="profile-pic-img" />
                 </div>
             </div>
@@ -612,5 +652,12 @@ function redirectToDetails(row) {
         loader.style.display = "none";
     });
   </script>
+    <script>
+    // Toggle Button Functionality
+    function toggleButtons() {
+        const btnContainer = document.querySelector('.btn-container');
+        btnContainer.classList.toggle('active');
+    }
+</script>
   </body>
 </html>

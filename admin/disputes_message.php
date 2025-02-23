@@ -65,7 +65,7 @@ if (isset($_POST['delete'], $_POST['id']) && is_numeric($_POST['id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<div id="preloader" style="background: #000 url(../img/loader.gif) no-repeat center center; 
+<div id="preloader" style="background: #1E1E2F url(../img/loader.gif) no-repeat center center; 
         background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
         </div>
 <div class="popup-message" id="popup-message"></div>

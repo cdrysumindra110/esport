@@ -99,7 +99,7 @@ exit;
   </head>
 
   <body class="size-1280 primary-color-red">  
-    <div id="preloader" style="background: #000 url(./img/loader.gif) no-repeat center center; 
+    <div id="preloader" style="background: #1E1E2F url(./img/loader.gif) no-repeat center center; 
     background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
     </div>
     <!-- HEADER -->
@@ -163,9 +163,9 @@ exit;
         <div class="profile-container">
               <div class="cover-photo-container">
                   <div class="cover-photo">
-                      <input type="file" name="cover_photo" id="cover_photo" accept="image/*" onchange="loadCoverPhoto(event)" class="file-input" />
+                      <!-- <input type="file" name="cover_photo" id="cover_photo" accept="image/*" onchange="loadCoverPhoto(event)" class="file-input" />
                       <label for="cover_photo" class="cover-photo-label">
-                      </label>
+                      </label> -->
                       <!-- Display user's cover photo or default cover photo -->
                       <img id="coverPhoto" 
                           name="coverPhoto" 
@@ -178,10 +178,10 @@ exit;
                   </div>
               </div>
               <div class="profile-pic">
-                  <input type="file" name="profile_pic" id="profile_pic" accept="image/*" onchange="loadProfilePic(event)" class="file-input" />
+                  <!-- <input type="file" name="profile_pic" id="profile_pic" accept="image/*" onchange="loadProfilePic(event)" class="file-input" />
                   <label for="profile_pic" class="profile-pic-label">
                       <span class="icon-wrapper">
-                  </label>
+                  </label> -->
                   <!-- Display user's profile picture or default profile picture -->
                   <img id="profilePic" 
                       name="profilePic" 

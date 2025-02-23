@@ -110,13 +110,126 @@ exit;
 
 
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'> 
+<style>
+/* Wallet Wrapper - One row, three columns */
+.wallet-wrapper {
+    display: flex;
+    justify-content: space-between; /* Distributes wallets evenly */
+    gap: 20px; /* Adds spacing between wallets */
+    flex-wrap: nowrap; /* Ensures one row only */
+    width: 100%; /* Ensures full width usage */
+    padding: 10px;
+    overflow: hidden; /* Prevents extra content from breaking layout */
+}
 
+/* Wallet Container */
+.wallet-cnt {
+    background-color:rgba(227, 227, 227, 0);
+    /* border: 1px solid #ddd; */
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    flex: 1 1 calc(33.333% - 20px); /* Three wallets in one row */
+    max-width: calc(33.333% - 20px); /* Prevents shrinking */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+/* Wallet Header */
+.wallet-header {
+    font-size: 1.2rem; /* Larger font size */
+    font-weight: 600; /* Semi-bold */
+    color: white; /* Darker text color */
+    margin-bottom: 15px; /* Spacing below the header */
+    text-transform: uppercase; /* Uppercase text */
+    letter-spacing: 1px; /* Slight letter spacing */
+}
+
+/* Hover effect */
+.wallet-cnt:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure one row with three columns at all breakpoints */
+@media (max-width: 768px) {
+    .wallet-wrapper {
+        gap: 15px; /* Slightly reduce gap for smaller screens */
+    }
+    .wallet-cnt {
+        flex: 1 1 calc(33.333% - 15px); /* Adjust for smaller gap */
+        max-width: calc(33.333% - 15px);
+    }
+    .wallet-header {
+        font-size: 1.1rem; /* Smaller font size for mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .wallet-wrapper {
+        gap: 10px; /* Further reduce gap for very small screens */
+    }
+    .wallet-cnt {
+        flex: 1 1 calc(33.333% - 10px); /* Adjust for smallest gap */
+        max-width: calc(33.333% - 10px);
+    }
+    .wallet-header {
+        font-size: 1.0rem; /* Smaller font size for mobile */
+    }
+}
+/* Responsive Styles */
+        /* Toggle Button */
+        .toggle-btn {
+            display: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .profile-container {
+                display: none; /* Hide profile and cover on small devices */
+            }
+
+            .btn-container {
+                display: none; /* Initially hide buttons on small devices */
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-container.active {
+                display: flex; /* Show buttons when active */
+            }
+
+            .toggle-btn {
+                display: block; /* Show toggle button on small devices */
+            }
+
+            .btn-cnt {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .wallet-cnt {
+                width: 100%;
+                max-width: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .wallet-cnt {
+                width: 100%;
+                max-width: 120px;
+            }
+        }
+</style>
   </head>
 
   <body class="size-1280 primary-color-red">
-    <div id="preloader" style="background: #000 url(./img/loader.gif) no-repeat center center; 
-      background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-    </div>
+
     <!-- HEADER -->
     <header role="banner" class="position-absolute">
       <!-- Top Bar -->
@@ -165,10 +278,16 @@ exit;
     <div class="popup-message" id="popup-message"></div>
 
     <div class="profile-cont">
+        <!-- Toggle Button -->
+        <button class="toggle-btn" onclick="toggleButtons()">
+            <i class="fa fa-bars"></i> Menu
+        </button>
+
+        <!-- Buttons Container -->
     <div class="btn-container">
             <button id="walletBtn" class="btn-cnt"><i class='fa fa-money'></i>Wallet</button>
             <button id="updateProfileBtn" class="btn-cnt"><i class='fas fa-user-edit'></i>Profile</button>
-            <button id="teamProfileBtn" class="btn-cnt"><i class='fa fa-group'></i>Teams</button>
+            <!-- <button id="teamProfileBtn" class="btn-cnt"><i class='fa fa-group'></i>Teams</button> -->
             <button id="myTournamentBtn" class="btn-cnt"><i class='fa fa-group'></i>My Tournaments</button>
             <button id="changeEmailBtn" class="btn-cnt"><i class='fa fa-envelope'></i>Change Email</button>
             <button id="changePasswordBtn" class="btn-cnt"><i class='fa fa-key'></i>Change Password</button>
@@ -178,9 +297,9 @@ exit;
         <div class="profile-container">
               <div class="cover-photo-container">
                   <div class="cover-photo">
-                      <input type="file" name="cover_photo" id="cover_photo" accept="image/*" onchange="loadCoverPhoto(event)" class="file-input" />
-                      <label for="cover_photo" class="cover-photo-label">
-                      </label>
+                      <!-- <input type="file" name="cover_photo" id="cover_photo" accept="image/*" onchange="loadCoverPhoto(event)" class="file-input" />
+                      <label for="cover_photo" class="cover-photo-label">change cover
+                      </label> -->
                       <!-- Display user's cover photo or default cover photo -->
                       <img id="coverPhoto" 
                           name="coverPhoto" 
@@ -193,9 +312,9 @@ exit;
                   </div>
               </div>
               <div class="profile-pic">
-                  <input type="file" name="profile_pic" id="profile_pic" accept="image/*" onchange="loadProfilePic(event)" class="file-input" />
+                  <!-- <input type="file" name="profile_pic" id="profile_pic" accept="image/*" onchange="loadProfilePic(event)" class="file-input" />
                   <label for="profile_pic" class="profile-pic-label">
-                  </label>
+                  </label> -->
                   <!-- Display user's profile picture or default profile picture -->
                   <img id="profilePic" 
                       name="profilePic" 
@@ -209,22 +328,35 @@ exit;
 
         <div class="unique-container">
           <div class="wallet-container">
-          <h2 class="unique-header">Wallet</h2>
-            <button class="link-wallet">
-              <span class="link-icon">🔗</span>
-              <span class="link-text">Link Wallet</span>
-            </button>
+            <h2 class="unique-header">Wallet</h2>
+              <!-- <button class="link-wallet">
+                <span class="link-icon">🔗</span>
+                <span class="link-text">Link Wallet</span>
+              </button> -->
           </div>
                       
-          <h2 class="unique-header">Wallet</h2>
-          
-          <h2 class="unique-header">Wallet</h2>
-                      
-          <h2 class="unique-header">Wallet</h2>
-          
-          <h2 class="unique-header">Wallet</h2>
-                      
-          <h2 class="unique-header">Wallet</h2>
+          <div class="wallet-wrapper">
+              <div class="wallet-cnt">
+                  <h2 class="wallet-header">Esewa</h2>
+                  <a href="https://esewa.com.np" target="_blank">
+                      <img src="./img/wallet/esewa-logo.png" alt="Esewa" class="wallet-logo">
+                  </a>
+              </div>
+
+              <div class="wallet-cnt">
+                  <h2 class="wallet-header">Khalti</h2>
+                  <a href="https://khalti.com" target="_blank">
+                      <img src="./img/wallet/khalti-logo.png" alt="Khalti" class="wallet-logo">
+                  </a>
+              </div>
+
+              <div class="wallet-cnt">
+                  <h2 class="wallet-header">Fone Pay</h2>
+                  <a href="https://fonepay.com" target="_blank">
+                      <img src="./img/wallet/fonepay-logo.png" alt="Fone Pay" class="wallet-logo">
+                  </a>
+              </div>
+          </div>
         </div>
     </div>
 
@@ -415,6 +547,13 @@ function loadProfilePic(event) {
         showPopupMessage("<?php echo $success_message; ?>", 'success');
       });
     <?php endif; ?>
+</script>
+<script>
+    // Toggle Button Functionality
+    function toggleButtons() {
+        const btnContainer = document.querySelector('.btn-container');
+        btnContainer.classList.toggle('active');
+    }
 </script>
 
   </body>

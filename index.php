@@ -39,7 +39,7 @@ if (isset($_GET['error_signin'])) {
   </head>
 
   <body class="size-1280 primary-color-red">
-  <div id="preloader" style="background: #000 url(./img/loader.gif) no-repeat center center; 
+  <div id="preloader" style="background: #1E1E2F url(./img/loader.gif) no-repeat center center; 
     background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
   </div>
 
@@ -607,7 +607,7 @@ if (isset($_GET['error_signin'])) {
         <!-- red full width arrow object -->
         <img class="arrow-object" src="img/object-red.svg" alt="">
       </section>
-
+      
     </main>
     
     

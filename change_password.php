@@ -123,13 +123,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_password'])) {
 
 
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'> 
+<style>
+            /* Responsive Styles */
+        /* Toggle Button */
+        .toggle-btn {
+            display: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
 
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .profile-container {
+                display: none; /* Hide profile and cover on small devices */
+            }
+
+            .btn-container {
+                display: none; /* Initially hide buttons on small devices */
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-container.active {
+                display: flex; /* Show buttons when active */
+            }
+
+            .toggle-btn {
+                display: block; /* Show toggle button on small devices */
+            }
+
+            .btn-cnt {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+</style>
   </head>
 
   <body class="size-1280 primary-color-red">
-    <div id="preloader" style="background: #000 url(./img/loader.gif) no-repeat center center; 
-        background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-    </div>
+
     <!-- HEADER -->
     <header role="banner" class="position-absolute">
       <!-- Top Bar -->
@@ -178,10 +215,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_password'])) {
     <div class="popup-message" id="popup-message"></div>
 
     <div class="profile-cont">
+        <!-- Toggle Button -->
+        <button class="toggle-btn" onclick="toggleButtons()">
+            <i class="fa fa-bars"></i> Menu
+        </button>
     <div class="btn-container">
             <button id="walletBtn" class="btn-cnt"><i class='fa fa-money'></i>Wallet</button>
             <button id="updateProfileBtn" class="btn-cnt"><i class='fas fa-user-edit'></i>Profile</button>
-            <button id="teamProfileBtn" class="btn-cnt"><i class='fa fa-group'></i>Teams</button>
+            <!-- <button id="teamProfileBtn" class="btn-cnt"><i class='fa fa-group'></i>Teams</button> -->
             <button id="myTournamentBtn" class="btn-cnt"><i class='fa fa-group'></i>My Tournaments</button>
             <button id="changeEmailBtn" class="btn-cnt"><i class='fa fa-envelope'></i>Change Email</button>
             <button id="changePasswordBtn" class="btn-cnt"><i class='fa fa-key'></i>Change Password</button>
@@ -191,9 +232,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_password'])) {
           <div class="profile-container">
               <div class="cover-photo-container">
                   <div class="cover-photo">
-                      <input type="file" name="cover_photo" id="cover_photo" accept="image/*" onchange="loadCoverPhoto(event)" class="file-input" />
+                      <!-- <input type="file" name="cover_photo" id="cover_photo" accept="image/*" onchange="loadCoverPhoto(event)" class="file-input" />
                       <label for="cover_photo" class="cover-photo-label">
-                      </label>
+                      </label> -->
                       <!-- Display user's cover photo or default cover photo -->
                       <img id="coverPhoto" 
                           name="coverPhoto" 
@@ -206,10 +247,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_password'])) {
                   </div>
               </div>
               <div class="profile-pic">
-                  <input type="file" name="profile_pic" id="profile_pic" accept="image/*" onchange="loadProfilePic(event)" class="file-input" />
+                  <!-- <input type="file" name="profile_pic" id="profile_pic" accept="image/*" onchange="loadProfilePic(event)" class="file-input" />
                   <label for="profile_pic" class="profile-pic-label">
                       <span class="icon-wrapper">
-                  </label>
+                  </label> -->
                   <!-- Display user's profile picture or default profile picture -->
                   <img id="profilePic" 
                       name="profilePic" 
@@ -428,6 +469,13 @@ document.addEventListener('DOMContentLoaded', function() {
   <?php endif; ?>
 });
 
+</script>
+<script>
+    // Toggle Button Functionality
+    function toggleButtons() {
+        const btnContainer = document.querySelector('.btn-container');
+        btnContainer.classList.toggle('active');
+    }
 </script>
 </body>
 </html>

@@ -2712,3 +2712,187 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
                 <li><a>Ongoing Tournaments</a></li>
                 </ul>
             </li>
+
+
+
+
+
+
+  /* <--------------------------NewsLetter Form CSS------------------------------> */
+  .newsletter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1;
+  }
+  .news {
+      background-color: #000000;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      width: auto;
+      height: auto;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+  
+  .news:hover {
+      background-color: #444;
+  }
+  
+  .news svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      fill: #fff;
+      flex-shrink: 0;
+  }
+  
+  .news span {
+      color: #fff;
+      flex-grow: 1;
+  }
+  
+  .news a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+  }
+  .newsletter-form {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px; /* Reduced width */
+      max-width: 90%;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 2; /* Ensure the form is above other content */
+  }
+  
+  img.site-logo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      margin: 0 auto;
+  }
+  
+  .form-heading {
+      font-size: 1.5rem; /* Reduced font size */
+      font-weight: bold;
+      text-align: center;
+      font-size: 30px;
+  }
+  
+  .newsletter-form.show {
+      display: block;
+  }
+  .newsletter-form input[type="name"],
+  .newsletter-form input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box; /* Ensure padding and border width are included in the width */
+  }
+  
+  .newsletter-form .button-container {
+      display: flex;
+      justify-content: space-between;
+  }
+  
+  .newsletter-form input[type="submit"],
+  .newsletter-form .close-btn {
+      width: 48%; /* Adjusted width to fit two buttons in a row with a small gap */
+      padding: 0.5rem; /* Reduced padding using rem units */
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      box-sizing: border-box; /* Ensure padding and border width are included in the width */
+  }
+  
+  .newsletter-form input[type="submit"] {
+      background-color: #4CAF50; /* Green color for subscribe */
+      color: white;
+  }
+  
+  .newsletter-form input[type="submit"]:hover {
+      background-color: #45a049;
+  }
+  
+  .newsletter-form .close-btn {
+      background-color: #f44336; /* Red color for close */
+      color: white;
+  }
+  
+  .newsletter-form .close-btn:hover {
+      background-color: #da190b;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+      .newsletter-form {
+          width: 90%;
+          padding: 15px;
+      }
+  
+      .form-heading {
+          font-size: 1.3rem; /* Further reduced font size */
+      }
+  }
+  
+  @media (max-width: 480px) {
+      .newsletter-form {
+          width: 100%;
+      }
+  }
+
+
+
+                <div class="newsletter">
+                    <div class="news" onclick="toggleNewsletterForm()">
+                        <a href="#" title="Newsletter">
+                            <span>Newsletter</span>
+                        </a>
+                    </div>
+                    <div class="newsletter-form" id="newsletter-form" style="display: none;">
+                        <form>
+                            <img src="../assets/img/logo3.png" alt="Logo" class="site-logo">
+                            <h2 class="form-heading"> Newsletter</h2>
+                            <strong>Name</strong> <input type="name" placeholder="Enter your Name">
+                            <strong>Email</strong> <input type="email" placeholder="Enter your e-mail address">
+                            <input type="submit" value="Subscribe">
+                            <button type="button" class="close-btn" onclick="closeNewsletterForm()">Close</button>
+                        </form>
+                    </div>
+                </div>
+
+
+            // NewsLetter Form
+            function toggleNewsletterForm() {
+        var newsletterForm = document.getElementById("newsletter-form");
+        if (newsletterForm.style.display === "none") {
+            newsletterForm.style.display = "block";
+        } else {
+            newsletterForm.style.display = "none";
+        }
+    }
+    
+    function closeNewsletterForm() {
+        var newsletterForm = document.getElementById("newsletter-form");
+        newsletterForm.style.display = "none";
+    }
+
+
+
+
