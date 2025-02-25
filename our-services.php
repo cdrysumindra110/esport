@@ -109,11 +109,11 @@ $conn->close();
     <main role="main">    
       <article>
         <!-- Header -->
-        <header class="section-head background-image" style="background-image:url(img/full_bg.jpg)">
+        <header class="section-head background-image" style="background-image:url(img/services.gif);">
           <div class="line">
   
             <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
-              Our Services
+              <center>Our Services</center>
             </h1>
           
           </div>
@@ -138,7 +138,7 @@ $conn->close();
               <i class="icon-sli-location-pin text-primary text-size-30 center"></i>
               <h2 class="text-size-20 margin-bottom-0 text-strong">Company Address</h2>                
               <p>
-                 Exhibition Road,<br>
+                 Bafal Marga,<br>
                  Kathmandu, Nepal
               </p> 
               
@@ -157,7 +157,8 @@ $conn->close();
           </div>
           <div class="s-12 m-12 l-4">
             <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1459734.5702753505!2d16.91089086619977!3d48.577103681657675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ssk!2ssk!4v1457640551761" width="100%" height="600" frameborder="0" style="border:0"></iframe> -->
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.4854170982326!2d85.31721907496203!3d27.70229502571519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19a99fb5b605%3A0xe39f9cd2361902f1!2sRatna%20Rajyalaxmi%20Campus!5e0!3m2!1sen!2snp!4v1723286331549!5m2!1sen!2snp" width="100%" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3224.2555422694672!2d85.27984737496206!3d27.704231625629888!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19e90cf303c5%3A0x7e0ccc224c0c39ae!2sInfiKnight%20Esports!5e1!3m2!1sen!2snp!4v1739861973629!5m2!1sen!2snp" width="100%" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
           </div>
         </section>
         

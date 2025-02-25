@@ -97,7 +97,7 @@ if (isset($_GET['error_signin'])) {
           <div class="s-12 center">
             <div class="section background-image-zoom-out">
               <!-- ZOOMED Carousel Image -->
-              <div class="background-image background-image-object" style="background-image:url(img/1homebg3.png)"></div>
+              <div class="background-image background-image-object" style="background-image:url(img/homebg1.jpg)"></div>
               
               <div class="line">
                 <p class="animated-carousel-element text-strong text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-80 text-line-height-1 margin-bottom-40 margin-top-130">
@@ -108,7 +108,7 @@ if (isset($_GET['error_signin'])) {
                   <p class="animated-carousel-element text-white text-size-20 margin-bottom-30">
                     Where gaming meets greatness, champions are forged. The bravest gamers gather to test their skills and claim their place among the elite. Compete. Conquer. Repeat. The battle for greatness never ends.
                   </p>
-                  <a class="button text-white background-primary margin-bottom-60" href="about-us-1.html">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="contact-1.html">Contact Us</a>
+                  <a class="button text-white background-primary margins-bottom-60" href="about-us.php">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="our-services.php">Contact Us</a>
                 </div>
               </div>
 
@@ -121,7 +121,7 @@ if (isset($_GET['error_signin'])) {
             <!-- For ZOOM effect add classes "background-image-zoom-out" or "background-image-zoom-in" -->
             <div class="section background-image-zoom-out">
               <!-- ZOOMED Carousel Image -->
-              <div class="background-image background-image-object" style="background-image:url(img/1homebg.jpg)"></div>
+              <div class="background-image background-image-object" style="background-image:url(img/homebg2.jpg)"></div>
                             
               <div class="line">
                 <p class="animated-carousel-element text-strong text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-80 text-line-height-1 margin-bottom-40 margin-top-130">
@@ -145,7 +145,7 @@ if (isset($_GET['error_signin'])) {
             <!-- For ZOOM effect add classes "background-image-zoom-out" or "background-image-zoom-in" -->
             <div class="section background-image-zoom-out">
               <!-- ZOOMED Carousel Image -->
-              <div class="background-image background-image-object" style="background-image:url(img/1homebg2.jpg)"></div>
+              <div class="background-image background-image-object" style="background-image:url(img/homebg3.jpg)"></div>
               
               <div class="line">
                 <p class="animated-carousel-element text-strong text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-80 text-line-height-1 margin-bottom-40 margin-top-130">
@@ -155,7 +155,7 @@ if (isset($_GET['error_signin'])) {
                   <p class="animated-carousel-element text-white text-size-20 margin-bottom-30">
                     Champion, where every move you make carves your name into the history of champions. It’s not just about victory; it’s about defining who you are in the heat of battle. Rise above the rest, let your skills speak for themselves, and leave a mark that will never fade. The title of Ultimate Champion is yours for the taking—are you ready to claim it?
                   </p>
-                  <a class="button text-white background-primary margin-bottom-60" href="about-us-1.html">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="contact-1.html">Contact Us</a>
+                  <a class="button text-white background-primary margin-bottom-60" href="about-us.php">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="our-services.php">Contact Us</a>
                 </div>
               </div>
 

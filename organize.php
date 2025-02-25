@@ -95,7 +95,7 @@ if (!$isSignin) {
     <main role="main">    
       <article>
         <!-- Header -->
-        <header class="section-head background-image" style="background-image:url(img/full_bg.jpg)">
+        <header class="section-head background-image" style="background-image:url(img/ful_bg.gif)">
           <div class="line">
   
             <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
