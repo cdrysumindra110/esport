@@ -232,9 +232,7 @@ $conn->close();
   </head>
 
   <body class="size-1280 primary-color-red">
-    <div id="preloader" style="background: #1E1E2F url(./img/loader.gif) no-repeat center center; 
-      background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-    </div>
+
     <!-- HEADER -->
     <header role="banner" class="position-absolute">
       <!-- Top Bar -->
@@ -283,7 +281,7 @@ $conn->close();
     <main role="main">    
       <article>
         <!-- Header -->
-        <header class="section-head background-image" style="background-image:url(img/full_bg.jpg)">
+        <header class="section-head background-image" style="background-image:url(./img/full_bg.jpg); background-size: cover; ">
           <div class="line">
   
             <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">

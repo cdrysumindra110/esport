@@ -54,9 +54,7 @@
   </head>
 
   <body class="size-1280 primary-color-red">
-    <div id="preloader" style="background: #1E1E2F url(./img/loader.gif) no-repeat center center; 
-        background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-    </div>
+
     <!-- HEADER -->
     <header role="banner" class="position-absolute">
       <!-- Top Bar -->

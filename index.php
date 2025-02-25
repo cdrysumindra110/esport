@@ -39,9 +39,6 @@ if (isset($_GET['error_signin'])) {
   </head>
 
   <body class="size-1280 primary-color-red">
-  <div id="preloader" style="background: #1E1E2F url(./img/loader.gif) no-repeat center center; 
-    background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-  </div>
 
     <!-- HEADER -->
     <header role="banner" class="position-absolute">
@@ -98,6 +95,29 @@ if (isset($_GET['error_signin'])) {
         
         <div class="item">
           <div class="s-12 center">
+            <div class="section background-image-zoom-out">
+              <!-- ZOOMED Carousel Image -->
+              <div class="background-image background-image-object" style="background-image:url(img/1homebg3.png)"></div>
+              
+              <div class="line">
+                <p class="animated-carousel-element text-strong text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-80 text-line-height-1 margin-bottom-40 margin-top-130">
+                  Where gaming meets <span class="text-orange animated-carousel-element">Greatness</span> so<br>
+                  Compete. Conquer. Repeat.
+                </p>
+                <div class="m-12 l-8">
+                  <p class="animated-carousel-element text-white text-size-20 margin-bottom-30">
+                    Where gaming meets greatness, champions are forged. The bravest gamers gather to test their skills and claim their place among the elite. Compete. Conquer. Repeat. The battle for greatness never ends.
+                  </p>
+                  <a class="button text-white background-primary margin-bottom-60" href="about-us-1.html">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="contact-1.html">Contact Us</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        
+        <div class="item">
+          <div class="s-12 center">
             <!-- For ZOOM effect add classes "background-image-zoom-out" or "background-image-zoom-in" -->
             <div class="section background-image-zoom-out">
               <!-- ZOOMED Carousel Image -->
@@ -112,7 +132,7 @@ if (isset($_GET['error_signin'])) {
                   <p class="animated-carousel-element text-white text-size-20 margin-bottom-30">
                     Unleash your power, dominate the arena, and become the ultimate Street Fighter. It’s not just about winning—it’s about proving you’re the best. Step up, fight hard, and claim your crown.
                   </p>
-                  <a class="button text-white background-primary margin-bottom-60" href="about-us.php">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="our-services.php">Contact Us</a>
+                  <a class="button text-white background-primary margins-bottom-60" href="about-us.php">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="our-services.php">Contact Us</a>
                 </div>
               </div>
 
@@ -134,29 +154,6 @@ if (isset($_GET['error_signin'])) {
                 <div class="m-12 l-8">
                   <p class="animated-carousel-element text-white text-size-20 margin-bottom-30">
                     Champion, where every move you make carves your name into the history of champions. It’s not just about victory; it’s about defining who you are in the heat of battle. Rise above the rest, let your skills speak for themselves, and leave a mark that will never fade. The title of Ultimate Champion is yours for the taking—are you ready to claim it?
-                  </p>
-                  <a class="button text-white background-primary margin-bottom-60" href="about-us-1.html">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="contact-1.html">Contact Us</a>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-        
-        <div class="item">
-          <div class="s-12 center">
-            <div class="section background-image-zoom-out">
-              <!-- ZOOMED Carousel Image -->
-              <div class="background-image background-image-object" style="background-image:url(img/carousel-03.jpg)"></div>
-              
-              <div class="line">
-                <p class="animated-carousel-element text-strong text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-80 text-line-height-1 margin-bottom-40 margin-top-130">
-                  Where gaming meets <span class="text-orange animated-carousel-element">Greatness</span> so<br>
-                  Compete. Conquer. Repeat.
-                </p>
-                <div class="m-12 l-8">
-                  <p class="animated-carousel-element text-white text-size-20 margin-bottom-30">
-                    Where gaming meets greatness, champions are forged. The bravest gamers gather to test their skills and claim their place among the elite. Compete. Conquer. Repeat. The battle for greatness never ends.
                   </p>
                   <a class="button text-white background-primary margin-bottom-60" href="about-us-1.html">About Us</a> <a class="button text-white background-orange margin-bottom-60" href="contact-1.html">Contact Us</a>
                 </div>
@@ -384,7 +381,7 @@ if (isset($_GET['error_signin'])) {
             <div class="s-12 m-12 l-3">
               <div class="block">
                 <div class="count-to">
-                  <span class="timer h1 text-size-60 text-orange">1800</span>
+                   <span class="timer h1 text-size-60 text-red">3</span> <span class="h1 text-size-60 text-red">K+</span>
                   <p class="h1 text-size-20 margin-top-10 text-white text-thin">Tournament & Events</p> 
                 </div>
               </div>
@@ -392,7 +389,7 @@ if (isset($_GET['error_signin'])) {
             <div class="s-12 m-12 l-3">
               <div class="block">
                 <div class="count-to">
-                  <span class="timer h1 text-size-60 text-green">95</span> <span class="h1 text-size-60 text-green">%</span>
+                  <span class="timer h1 text-size-60 text-green">6+</span> <span class="h1 text-size-60 text-green">K+</span>
                   <p class="h1 text-size-20 margin-top-10 text-white text-thin">Matches</p> 
                 </div>
               </div>
@@ -400,7 +397,7 @@ if (isset($_GET['error_signin'])) {
             <div class="s-12 m-12 l-3">
               <div class="block">
                 <div class="count-to">
-                  <span class="timer h1 text-size-60 text-light-blue">108</span>
+                   <span class="timer h1 text-size-60 text-red">3K</span> <span class="h1 text-size-60 text-red">K+</span>
                   <p class="h1 text-size-20 margin-top-10 text-white text-thin">Teams</p> 
                 </div>
               </div>
@@ -408,7 +405,7 @@ if (isset($_GET['error_signin'])) {
             <div class="s-12 m-12 l-3">
               <div class="block">
                 <div class="count-to">
-                  <span class="timer h1 text-size-60 text-red">108</span> <span class="h1 text-size-60 text-red">K</span>
+                  <span class="timer h1 text-size-60 text-red">40K</span> <span class="h1 text-size-60 text-red">K+</span>
                   <p class="h1 text-size-20 margin-top-10 text-white text-thin">Players</p> 
                 </div>
               </div>
@@ -421,7 +418,7 @@ if (isset($_GET['error_signin'])) {
       <!-- Section 6 -->
       <section class="section-top-bottom-padding background-grey">      
         <div class="line">
-          <h2 class="text-extra-strong text-size-80 text-m-size-40 margin-bottom-40">Our Developers Team</h2>
+          <h2 class="text-extra-strong text-size-80 text-m-size-40 margin-bottom-40">Systems Developer</h2>
         </div>
         
         <!-- Team Carousel -->                                                                                    
@@ -443,7 +440,9 @@ if (isset($_GET['error_signin'])) {
               <h4 class="text-strong margin-bottom-10">Mohan Khatri</h4>                        
               <p class="margin-bottom-10 text-primary text-uppercase">CEO</p>                                                                                                                                          
               <div class="line">
-                <a href="#"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a> <a href="#"><i class="icon-google_plus_circle text-primary-hover text-size-25"></i></a> <a href="#"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a>
+                <a href="https://www.linkedin.com/in/igl-horaa-ab2859333/"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a>
+                 <a href="https://x.com/_Prabeen"><i class="icon-google_plus_circle text-primary-hover text-size-25"></i></a> 
+                 <a href="https://www.facebook.com/profile.php?id=100090083115854"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a>
               </div>                                                                                                                                                                                                                                          
             </div>                                                                                                                                                            
           </div> 
@@ -465,7 +464,7 @@ if (isset($_GET['error_signin'])) {
               <h4 class="text-strong margin-bottom-10">Sumindra Chaudhary</h4>                        
               <p class="margin-bottom-10 text-primary text-uppercase">BOD</p>                                                                                                                                          
               <div class="line">
-                <a href="#"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a> <a href="#"><i class="icon-google_plus_circle text-primary-hover text-size-25"></i></a> <a href="#"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a>
+                <a href="https://www.linkedin.com/in/sumindra-chaudhary-00769130b/"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a> <a href="https://x.com/SumindraChaudh2"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a> <a href="https://www.facebook.com/sumindra.UCH"><i class="icon-facebook_circle text-primary-hover text-size-25"></i></a>
               </div>                                                                                                                                                                                                                                          
             </div>                                                                                                                                                                                                                                                                                                                                                                                    
           </div> 
@@ -475,7 +474,7 @@ if (isset($_GET['error_signin'])) {
 
       
       <!-- Section 7 -->
-      <section class="section background-image" style="background-image:url(img/full_bg.jpg)">  
+      <section class="section background-image" style="background-image:url(img/full_bg.jpg);background-size: cover;background-repeat: no-repeat;">  
         <div class="line">
           <h2 class="text-white text-extra-strong text-size-80 text-m-size-40 margin-bottom-40"><span class="text-orange">InfiKnight Esports</span> Unleashing the Future of Gaming</h2>
           <p class="text-white text-size-20 margin-bottom-30">
@@ -683,8 +682,8 @@ if (isset($_GET['error_signin'])) {
       <section class="padding-2x background-dark full-width">
         <div class="full-width">
           <div class="s-12 l-6">
-            <p class="text-size-16 margin-bottom-0">Copyright 2024 &Sigma;Indra65 , MK38 - BCA 2K22</p>
-            <p class="text-size-12">Copyright 2024 InfiKnight Esports. All Rights Reserved.</p>
+            <p class="text-size-16 margin-bottom-0">Copyright 2024 &Sigma;Indra65 , MK38 - BCA 2022</p>
+            <p class="text-size-12">Copyright 2025 InfiKnight Esports. All Rights Reserved.</p>
           </div>
           <div class="s-12 l-6">
             <a class="right text-size-12 text-primary-hover" href="#" title="Team InfiKnight">Developed by Team <span style="font-size: 25px;">&infin;</span>
