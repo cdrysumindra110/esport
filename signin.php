@@ -81,7 +81,7 @@ if (!empty($error_message)) {
   <title>Sign In Page</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,800">
-  <link rel="stylesheet" href="./css/signin.css">
+  <link rel="stylesheet" href="./css/signin.css?v=1.0">
   <style>
     .popup-message {
       display: none;
@@ -166,23 +166,24 @@ if (!empty($error_message)) {
   });
 
     // Function to toggle password visibility
-    function togglePasswordVisibility(passwordFieldId, toggleButtonId) {
-    const passwordField = document.getElementById(passwordFieldId);
-    const toggleButton = document.getElementById(toggleButtonId);
-    
-    if (passwordField.type === "password") {
-      passwordField.type = "text";
-      toggleButton.textContent = "🙈"; // Change to 'Hide' icon when visible
-    } else {
-      passwordField.type = "password";
-      toggleButton.textContent = "👁️"; // Change to 'Show' icon when hidden
+    function togglePasswordVisibility(passwordFieldId, toggleButtonId, toggleIconId) {
+        const passwordField = document.getElementById(passwordFieldId);
+        const toggleButton = document.getElementById(toggleButtonId);
+        const toggleIcon = document.getElementById(toggleIconId);
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleIcon.textContent = "🙈"; // Change to 'Hide' icon when visible
+        } else {
+            passwordField.type = "password";
+            toggleIcon.textContent = "👁️"; // Change to 'Show' icon when hidden
+        }
     }
-  }
 
-  // Add event listeners to toggle buttons
-  document.getElementById('toggle-password').addEventListener('click', function() {
-    togglePasswordVisibility('password', 'toggle-password');
-  });
+    // Add event listeners to toggle buttons
+    document.getElementById('toggle-password').addEventListener('click', function() {
+        togglePasswordVisibility('password', 'toggle-password', 'toggle-icon');
+    });
 
 // Function to show the popup message
 function showPopupMessage(message, type) {

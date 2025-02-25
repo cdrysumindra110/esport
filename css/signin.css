@@ -110,36 +110,6 @@ input {
   border-radius: 10px;
 }
 
-/* Keyframes for a more refined neon glow effect */
-/* @keyframes matrix-right-loop {
-  0% {
-    box-shadow: 10px 0 15px rgba(0, 255, 255, 0.6), 
-                20px 0 25px rgba(0, 255, 255, 0.6),
-                30px 0 35px rgba(0, 255, 255, 0.6);
-  }
-  25% {
-    box-shadow: 0 10px 15px rgba(0, 255, 255, 0.7), 
-                0 20px 25px rgba(0, 255, 255, 0.7),
-                0 30px 35px rgba(0, 255, 255, 0.7);
-  }
-  50% {
-    box-shadow: -10px 0 15px rgba(0, 255, 255, 0.8), 
-                -20px 0 25px rgba(0, 255, 255, 0.8),
-                -30px 0 35px rgba(0, 255, 255, 0.8);
-  }
-  75% {
-    box-shadow: 0 -10px 15px rgba(0, 255, 255, 0.7), 
-                0 -20px 25px rgba(0, 255, 255, 0.7),
-                0 -30px 35px rgba(0, 255, 255, 0.7);
-  }
-  100% {
-    box-shadow: 10px 0 15px rgba(0, 255, 255, 0.6), 
-                20px 0 25px rgba(0, 255, 255, 0.6),
-                30px 0 35px rgba(0, 255, 255, 0.6);
-  }
-} */
-
-
 
 /* Container styles */
 .container {
@@ -329,35 +299,100 @@ button.ghost:hover {
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
-  .form-container, .overlay-container {
+  
+  .form-container {
     width: 100%;
-    order: unset;
+    position: relative;
+    transform: none;
+    order: 1;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
-
+  
+  .overlay-container {
+    width: 100%;
+    position: relative;
+    transform: none;
+    order: 2;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
   .overlay {
-    background-size: cover;
-    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 20px;
+    text-align: center;
   }
 }
 
 @media (max-width: 480px) {
+  h1 {
+    font-size: 18px;
+  }
+  
+  p {
+    font-size: 12px;
+    line-height: 16px;
+  }
+  
+  input {
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
   button {
     padding: 10px 20px;
     font-size: 10px;
   }
-
-  input {
-    padding: 10px;
-    margin: 5px 0;
-  }
-
+  
   .overlay-panel {
     padding: 0 20px;
     font-size: 12px;
   }
 }
 
-
-/* Add custom styles for the popup message */
+@media (max-width: 360px) {
+  h1 {
+    font-size: 16px;
+  }
+  
+  p {
+    font-size: 11px;
+    line-height: 14px;
+  }
+  
+  input {
+    font-size: 12px;
+    padding: 8px;
+  }
+  
+  button {
+    padding: 8px 15px;
+    font-size: 9px;
+  }
+  
+  .social-container a {
+    height: 30px;
+    width: 30px;
+  }
+}

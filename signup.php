@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <title>Signup Page</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,800">
-  <link rel="stylesheet" href="./css/signup.css">
+  <link rel="stylesheet" href="./css/signup.css?v=1.0">
   <style>
     .popup-message {
       display: none;
@@ -134,7 +134,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       border: none;
       cursor: pointer;
     }
-    #toggle-confirm-password {
+    #toggle-icon {
+      font-size: 1rem;  
+    }
+    #toggle-password-confirm {
       position: absolute;
       right: -2rem;
       top: 75%;
@@ -143,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       border: none;
       cursor: pointer;
     }
-    #toggle-icon {
+    #toggle-icon-confirm {
       font-size: 1rem;  
     }
   </style>
@@ -171,8 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <span id="toggle-icon">👁️</span>
           </button>
           <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
-          <button type="button" id="toggle-confirm-password">
-            <span id="toggle-icon">👁️</span>
+          <button type="button" id="toggle-password-confirm">
+            <span id="toggle-icon-confirm">👁️</span>
           </button>
       </div>
       
@@ -200,9 +203,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   });
 
   // Function to toggle password visibility
-  function togglePasswordVisibility(passwordFieldId, toggleButtonId) {
-    const passwordField = document.getElementById(passwordFieldId);
-    const toggleButton = document.getElementById(toggleButtonId);
+    function togglePasswordVisibility(passwordFieldId, toggleButtonId, toggleIconId) {
+        const passwordField = document.getElementById(passwordFieldId);
+        const toggleButton = document.getElementById(toggleButtonId);
+        const toggleIcon = document.getElementById(toggleIconId);
     
     if (passwordField.type === "password") {
       passwordField.type = "text";
@@ -217,8 +221,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   document.getElementById('toggle-password').addEventListener('click', function() {
     togglePasswordVisibility('password', 'toggle-password');
   });
-  document.getElementById('toggle-confirm-password').addEventListener('click', function() {
-    togglePasswordVisibility('confirm_password', 'toggle-confirm-password');
+  document.getElementById('toggle-password-confirm').addEventListener('click', function() {
+    togglePasswordVisibility('confirm_password', 'toggle-password-confirm');
   });
 
   // Your other existing JavaScript code here...
