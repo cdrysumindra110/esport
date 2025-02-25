@@ -160,10 +160,6 @@ if (!$isSignin) {
         <input type="search" name="q" id="searchInput" aria-label="Search for inspiration" placeholder="Search games..."/>
       </div>
       
-      <div id="results">
-        
-      </div>
-      
         <div class="games-container">
           <div class="game-card available" id="game-pubg">
               <img src="img/game/pubg.png" alt="PUBG">
@@ -219,6 +215,10 @@ if (!$isSignin) {
       </div>
         <!-- Add other featured games similarly -->
     </div>
+      
+      <div id="results">
+      <p id="noGamesFound" style="display:none; text-align:center;">No Games Found</p>
+      </div>
   </div>
 
 
@@ -346,16 +346,28 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('searchInput').addEventListener('input', function() {
     var searchTerm = this.value.toLowerCase();
     var gameCards = document.querySelectorAll('.game-card');
+    var noGamesFoundMessage = document.getElementById('noGamesFound');
+
+    let isAnyCardVisible = false; // To track if any card is visible
 
     gameCards.forEach(function(card) {
         var gameName = card.querySelector('h3').textContent.toLowerCase();
         if (gameName.includes(searchTerm)) {
             card.style.display = ''; // Show the card if it matches the search
+            isAnyCardVisible = true; // At least one card is visible
         } else {
             card.style.display = 'none'; // Hide the card if it doesn't match
         }
     });
+
+    // Show the "No Games Found" message if no cards are visible
+    if (isAnyCardVisible) {
+        noGamesFoundMessage.style.display = 'none';
+    } else {
+        noGamesFoundMessage.style.display = 'block'; // Show the message if no game matches
+    }
 });
+
 
 </script>
 <!-- Accordian jQuery -->

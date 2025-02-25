@@ -439,6 +439,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                               <input type="submit" name="next" class="next action-button" value="Submit" />
                               <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
                           </fieldset>
+                            
+                          <fieldset>
+                              <div class="form-card">
+                                  <div class="row">
+                                      <div class="col-7"> 
+                                          <h2 class="fs-title">Finish:</h2>    
+                                      </div>
+                                      <div class="col-5">
+                                          <h2 class="steps">Step 4 - 4</h2>
+                                      </div>
+                                  </div> 
+                                  <br><br>
+                                  <h2 class="purple-text text-center"><strong>Tournament Created</strong></h2> 
+                                  <br>
+                                  <div class="row justify-content-center">
+                                      <div class="col-3">
+                                          <img id="final-banner-img" src="" class="fit-image" style="   width: 100%; max-width: 400px; height: auto; object-fit: cover; ">
+                                      </div>
+                                  </div> 
+                                  <br><br>
+                                  <div class="row justify-content-center">
+                                      <div class="col-7 text-center">
+                                          <h5 class="purple-text text-center" id="final-tournament-name"></h5>
+                                          <p id="final-tournament-start-date"></p>
+                                      </div>
+                                  </div>
+                                  <br>
+                                  <div class="row justify-content-center">
+                                      <div class="col-7 text-center">
+                                          <a href="mytournaments.php" class="button-custom">View Tournament</a>
+                                      </div>
+                                  </div>
+                              </div>
+                          </fieldset>
                       </form>
                     </div>
                 </div>
@@ -676,10 +710,33 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sdate').setAttribute('min', today);
 </script>
 <script>
-    var loader = document.getElementById("preloader");
-    window.addEventListener("load", function () {
-        loader.style.display = "none";
-    });
+document.querySelector('input[name="next"]').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default behavior of form submission
+    
+    // Get values from the form fields
+    const tournamentName = document.getElementById('tname').value;
+    const startDate = document.getElementById('sdate').value;
+    const bannerImage = document.getElementById('bannerimg-preview').src;
+
+    // Set the preview content in Step 4
+    document.getElementById('final-tournament-name').innerText = tournamentName;
+    document.getElementById('final-tournament-start-date').innerText = `Start Date: ${startDate}`;
+    document.getElementById('final-banner-img').src = bannerImage;
+
+    // Optionally, proceed to the next step or submit the form
+    // Example:
+    // document.getElementById('msform').submit();
+});
+
+function showPreview(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+        var previewImage = document.getElementById('bannerimg-preview');
+        previewImage.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
   </script>
 <!-- Accordian jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

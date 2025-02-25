@@ -198,19 +198,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </nav>
     </header>
 
-   <!-- MAIN -->
-    <main role="main"> 
+    <!-- MAIN -->
+    <main role="main">    
+      <article>
         <!-- Header -->
         <header class="section-head background-image" style="width: 100%; height: 100%; object-fit: cover;background-image:url(img/battleground.gif)">
-            <div class="line">
-              <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
-                Organize Tournament
-              </h1>
-            </div>
-          </header>
+          <div class="line">
+  
+            <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
+              <center>Organize Tournament</center>
+            </h1>
+          
+          </div>
+  
+        </header>
+        
+      </article>  
+
     </main>
-
-
     
         <!-- Popup Message -->
         <div class="popup-message" id="popup-message"></div>
@@ -437,7 +442,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </fieldset>
                             
                             <fieldset>
-                                <div class="form-card">
+                              <div class="form-card">
                                   <div class="row">
                                       <div class="col-7">
                                           <h2 class="fs-title">Finish:</h2>
@@ -451,23 +456,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                   <br>
                                   <div class="row justify-content-center">
                                       <div class="col-3">
-                                          <img src="img.png" class="fit-image">
+                                          <img id="final-banner-img" src="" class="fit-image" style="   width: 100%; max-width: 400px; height: auto; object-fit: cover; ">
                                       </div>
                                   </div> 
                                   <br><br>
                                   <div class="row justify-content-center">
                                       <div class="col-7 text-center">
-                                          <h5 class="purple-text text-center">You Have Successfully Created Tournament</h5>
+                                          <h5 class="purple-text text-center" id="final-tournament-name"></h5>
+                                          <p id="final-tournament-start-date"></p>
                                       </div>
                                   </div>
                                   <br>
                                   <div class="row justify-content-center">
                                       <div class="col-7 text-center">
-                                        <a href="mytournaments.php" class="button-custom">View Tournament</a>
+                                          <a href="mytournaments.php" class="button-custom">View Tournament</a>
                                       </div>
                                   </div>
-                                </div>
-                            </fieldset>
+                              </div>
+                          </fieldset>
+
                         </form>
                     </div>
                 </div>
@@ -666,10 +673,33 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script>
-    var loader = document.getElementById("preloader");
-    window.addEventListener("load", function () {
-        loader.style.display = "none";
-    });
+document.querySelector('input[name="next"]').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default behavior of form submission
+    
+    // Get values from the form fields
+    const tournamentName = document.getElementById('tname').value;
+    const startDate = document.getElementById('sdate').value;
+    const bannerImage = document.getElementById('bannerimg-preview').src;
+
+    // Set the preview content in Step 4
+    document.getElementById('final-tournament-name').innerText = tournamentName;
+    document.getElementById('final-tournament-start-date').innerText = `Start Date: ${startDate}`;
+    document.getElementById('final-banner-img').src = bannerImage;
+
+    // Optionally, proceed to the next step or submit the form
+    // Example:
+    // document.getElementById('msform').submit();
+});
+
+function showPreview(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+        var previewImage = document.getElementById('bannerimg-preview');
+        previewImage.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
   </script>
   <script>
     // Get today's date in the format YYYY-MM-DD
