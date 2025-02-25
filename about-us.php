@@ -83,11 +83,11 @@ $isSignin = isset($_SESSION['isSignin']) ? $_SESSION['isSignin'] : false;
     <main role="main">    
       <article>
         <!-- Header -->
-        <header class="section-head background-image" style="width: 100%; height: 100%; object-fit: cover;background-image:url(img/battleground.gif)">
+        <header class="section-head background-image" style="background-image:url(img/battleground.gif);">
           <div class="line">
   
             <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
-              About Us
+              About InfiKnight
             </h1>
           
           </div>
@@ -104,30 +104,30 @@ $isSignin = isset($_SESSION['isSignin']) ? $_SESSION['isSignin'] : false;
                 <h2 class="text-extra-strong text-size-80 text-m-size-40">Why choose us?</h2>
                 
                 <p class="text-dark text-size-20 margin-bottom-30">
-                  Top-Tier Experience
+                Top-Tier Experience with Sponsors
                 </p>
                 <p>Enjoy cutting-edge technology and thrilling gameplay designed for all skill levels.</p>
 
                 <p class="text-dark text-size-20 margin-bottom-30">
-                  24/7 Support
+                24/7 Support
                 </p>
-                <p>Get prompt and professional assistance whenever you need it.</p>
+                <p>Get prompt and professional assistance whenever you need it. You can access remote support for T3/T2 players.</p>
 
                 <p class="text-dark text-size-20 margin-bottom-30">
-                  Competitive Play
+                Competitive Tournaments for LAN
                 </p>
-                <p>Compete in exciting tournaments and showcase your skills.</p>
+                <p>Hosting local-level tournaments to promote culture and provide opportunities for underdog players.</p>
 
                 <p class="text-dark text-size-20 margin-bottom-30">
-                  Active Community
+                Brand Endorsement
                 </p>
-                <p>Connect with fellow gamers and stay engaged through our vibrant community.</p>
+                <p>Any national and international brand promotion.</p>
 
               </div>
               
               <div class="m-12 l-6 margin-m-top-30">
                 <!-- Image --> 
-                <img src="img/about.jpeg" alt="">
+                <img src="img/about1.jpg" alt="">
               </div> 
             </div>    
           </div>      
@@ -143,7 +143,7 @@ $isSignin = isset($_SESSION['isSignin']) ? $_SESSION['isSignin'] : false;
               </div> 
                        
               <div class="m-12 l-6">
-                <h2 class="text-extra-strong text-size-80 text-m-size-40">Our Mission</h2>
+                <h2 class="text-extra-strong text-size-80 text-m-size-40">Our Vision</h2>
                 <p>At InfiKnight, we are driven by a passion for competitive gaming. 
                   Our mission is to create a platform where gamers from all backgrounds can showcase 
                   their skills, compete at the highest levels, and connect with a global community of 
