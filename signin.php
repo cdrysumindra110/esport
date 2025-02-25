@@ -142,7 +142,7 @@ if (!empty($error_message)) {
               <span id="toggle-icon">👁️</span>
             </button>
         </div>
-        <a href="#" id="forgot-password">Forgot your password?</a>
+        <a href="forgot-password.php" id="forgot-password">Forgot your password?</a>
         <button type="submit" id="signin-button" name="signin-button">Sign In</button>
       </form>
     </div>
