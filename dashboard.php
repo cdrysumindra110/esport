@@ -9,6 +9,23 @@ session_start();
 $error_message = '';
 $success_message = '';
 
+if (isset($_SESSION['success_message'])) {
+  echo "<script type='text/javascript'>
+          window.onload = function() { 
+              showPopupMessage('".addslashes($_SESSION['success_message'])."', 'success'); 
+          }
+        </script>";
+  unset($_SESSION['success_message']); // Clear message after displaying
+}
+if (isset($_SESSION['error_message'])) {
+  echo "<script type='text/javascript'>
+          window.onload = function() { 
+              showPopupMessage('".addslashes($_SESSION['error_message'])."', 'success'); 
+          }
+        </script>";
+  unset($_SESSION['error_message']); // Clear message after displaying
+}
+
 // Check if the user is logged in
 if (!isset($_SESSION['isSignin']) || !$_SESSION['isSignin']) {
     header('Location: signin.php');
@@ -19,24 +36,8 @@ if (!isset($_SESSION['isSignin']) || !$_SESSION['isSignin']) {
 if (!isset($_SESSION['user_id'])) {
     die("Error: User ID not set in session.");
 }
-// Show success message for signup
-if (isset($_GET['success_signin'])) {
-  $success_message = htmlspecialchars($_GET['success_signin']);
-  echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($success_message)."', 'success'); }</script>";
-}
 
-// Get the messages from the URL query string
-$success_message = isset($_GET['success_message']) ? $_GET['success_message'] : '';
-$error_message = isset($_GET['error_message']) ? $_GET['error_message'] : '';
 
-// Display success or error message
-if ($success_message) {
-    echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($success_message)."', 'success'); }</script>";
-}
-
-if ($error_message) {
-    echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($error_message)."', 'error'); }</script>";
-}
 
 $user_id = $_SESSION['user_id'];
 
@@ -110,22 +111,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 
         // Execute the query
         if ($stmt->execute()) {
-            $success_message = 'Profile updated successfully.';
+          $_SESSION['success_message'] = 'Profile updated successfully.';
         } else {
-            $error_message = 'Error updating profile: ' . $stmt->error;
+          $_SESSION['error_message'] = 'Error updating profile: ' . $stmt->error;
         }
 
         $stmt->close();
     }
 
-    // Redirect with messages
-    $query_string = '';
-    if (!empty($success_message)) {
-        $query_string .= 'success_message=' . urlencode($success_message);
-    }
-    if (!empty($error_message)) {
-        $query_string .= '&error_message=' . urlencode($error_message);
-    }
     header('Location: dashboard.php?' . $query_string);
     exit;
 }

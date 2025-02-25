@@ -5,6 +5,15 @@ require_once 'config.php';
 $error_message = '';
 $success_message = '';
 
+if (isset($_SESSION['success_message'])) {
+    echo "<script type='text/javascript'>
+            window.onload = function() { 
+                showPopupMessage('".addslashes($_SESSION['success_message'])."', 'success'); 
+            }
+          </script>";
+    unset($_SESSION['success_message']); // Clear message after displaying
+}
+
 // Check if user is verified
 $email = $_SESSION['verified_email'] ?? '';
 if (empty($email)) {
@@ -29,12 +38,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $success_message = "Password reset successful! You can now <a href='signin.php'>sign in</a>.";
-            session_destroy(); // Destroy session after reset
+            $_SESSION['success_message'] = "Password reset successful! You can now sign in.";
+            header("Location: signin.php"); // Redirect to signin.php after success
+            exit(); // Make sure no further code is executed after redirection
         } else {
             $error_message = "Failed to reset password. Please try again.";
         }
     }
+}
+
+// Handle error messages
+if (!empty($error_message)) {
+    echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($error_message)."', 'error'); }</script>";
 }
 ?>
 
@@ -105,8 +120,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
     <div class="container" id="container">
       <div class="form-container sign-in-container">
-      <?php if (!empty($error_message)) echo "<p style='color:red;'>$error_message</p>"; ?>
-      <?php if (!empty($success_message)) echo "<p style='color:green;'>$success_message</p>"; ?>
         <form action="reset-password.php" method="post">
             <h1>Reset Your Password</h1>
             <div class="password-container">

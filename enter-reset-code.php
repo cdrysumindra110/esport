@@ -2,7 +2,19 @@
 session_start();
 require_once 'config.php';
 
+
 $error_message = '';
+$success_message = '';
+
+if (isset($_SESSION['success_message'])) {
+    echo "<script type='text/javascript'>
+            window.onload = function() { 
+                showPopupMessage('".addslashes($_SESSION['success_message'])."', 'success'); 
+            }
+          </script>";
+    unset($_SESSION['success_message']); // Clear message after displaying
+}
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_SESSION['reset_email'] ?? '';  // Get stored email from session
@@ -28,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } elseif (password_verify($entered_code, $hashed_code)) {
                 // Code is correct, allow password reset
                 $_SESSION['verified_email'] = $email;
+                $_SESSION['success_message'] = "Verification Successful.";
                 header("Location: reset-password.php");
                 exit();
             } else {
@@ -37,6 +50,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error_message = "No reset request found for this email.";
         }
     }
+}
+
+
+// Handle error messages
+if (!empty($error_message)) {
+    echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($error_message)."', 'error'); }</script>";
 }
 ?>
 
@@ -92,7 +111,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
     <div class="container" id="container">
       <div class="form-container sign-in-container">
-        <?php if (!empty($error_message)) echo "<p style='color:red;'>$error_message</p>"; ?>
         <form action="enter-reset-code.php" method="post">
         <h1>Enter Verification Code</h1>
         <input type="text" id="verification_code" name="verification_code" placeholder="Enter Verification Code" />

@@ -10,6 +10,15 @@ if (isset($_SESSION['username'])) {
     $uname = $_SESSION['username'];
 }
 
+if (isset($_SESSION['success_message'])) {
+  echo "<script type='text/javascript'>
+          window.onload = function() { 
+              showPopupMessage('".addslashes($_SESSION['success_message'])."', 'success'); 
+          }
+        </script>";
+  unset($_SESSION['success_message']); // Clear message after displaying
+}
+
 // Display success/error messages
 if (isset($_GET['success_signup'])) {
     $success_message = htmlspecialchars($_GET['success_signup']);
@@ -47,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['uname'];
 
-                $success_message = "Successfully logged in!";
+                $_SESSION['success_message'] = "Successfully logged in!";
                 header("Location: dashboard.php?success_signin=" . urlencode($success_message));
                 exit();
             }

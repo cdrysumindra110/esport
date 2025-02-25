@@ -6,7 +6,19 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+
 $error_message = '';
+$success_message = '';
+
+// Display success/error messages
+if (isset($_GET['success_signup'])) {
+  $success_message = htmlspecialchars($_GET['success_signup']);
+  echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($success_message)."', 'success'); }</script>";
+}
+if (isset($_GET['error_signin'])) {
+  $error_message = htmlspecialchars($_GET['error_signin']);
+  echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($error_message)."', 'error'); }</script>";
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
@@ -55,6 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $mail->send();
                 $_SESSION['reset_email'] = $email;
+                $_SESSION['success_message'] = "A verification link has been sent to your email. Please check your inbox.";
                 header("Location: enter-reset-code.php"); // Redirect to code entry page
                 exit();
             } catch (Exception $e) {
@@ -64,6 +77,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error_message = "No account found with this email.";
         }
     }
+}
+
+
+// Handle error messages
+if (!empty($error_message)) {
+  echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($error_message)."', 'error'); }</script>";
 }
 ?>
 
@@ -126,10 +145,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <h1>Forgot Password</h1>
               <!-- <p>Enter your registered email to receive a password reset link.</p> -->
               <input type="email" id="email" name="email" placeholder="Enter your Email ID" required />
-              
-              <!-- <p>OR, if you received a verification code, enter it below:</p> -->
-              <input type="text" id="verification_code" name="verification_code" placeholder="Enter Verification Code" />
-
               <button type="submit" id="reset-button" name="reset-button">Submit</button>
           </form>
       </div>
