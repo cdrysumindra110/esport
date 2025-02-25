@@ -81,7 +81,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
         </div>
         
         <div class="footer">
-        <p>© 2022 All Rights Reserved | Design by Team <a href="http://infiknight.great-site.net/" > &infin; InfiKnight </a></p>
+        <p>© 2022 All Rights Reserved | Design by Team <a href="#" > &infin; InfiKnight </a></p>
         </div>
     </div>
 
