@@ -101,7 +101,7 @@ $isSignin = isset($_SESSION['isSignin']) ? $_SESSION['isSignin'] : false;
           <div class="line">
             <div class="margin2x">         
               <div class="m-12 l-6">
-                <h2 class="text-extra-strong text-size-80 text-m-size-40">Why choose us?</h2>
+                <h2 class="text-extra-strong text-size-80 text-m-size-40">What makes us unique?</h2>
                 
                 <p class="text-dark text-size-20 margin-bottom-30">
                 Top-Tier Experience with Sponsors
@@ -127,7 +127,7 @@ $isSignin = isset($_SESSION['isSignin']) ? $_SESSION['isSignin'] : false;
               
               <div class="m-12 l-6 margin-m-top-30">
                 <!-- Image --> 
-                <img src="img/about1.jpg" alt="">
+                <img src="./img/about1.jpg" alt="">
               </div> 
             </div>    
           </div>      
@@ -139,7 +139,7 @@ $isSignin = isset($_SESSION['isSignin']) ? $_SESSION['isSignin'] : false;
             <div class="margin2x">              
               <div class="m-12 l-6 margin-m-top-30">
                 <!-- Image --> 
-                <img src="img/mission.jpg" alt="">
+                <img src="./img/mission.jpg" alt="">
               </div> 
                        
               <div class="m-12 l-6">
