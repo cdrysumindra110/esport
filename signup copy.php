@@ -1,14 +1,15 @@
 <?php
-
 session_start();
-
 include_once('config.php');
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
 
 $error_message = '';
 $success_signup = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
     $uname = $_POST['uname'];
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -38,24 +39,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $error_message = "Username already exists.";
                 }
             } else {
-
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-                $stmt = $conn->prepare("INSERT INTO users (uname, email, password) VALUES (?, ?, ?)");
-                $stmt->bind_param("sss", $uname, $email, $hashed_password);
+                // Generate a verification token
+                $verify_token = md5(rand() . time());
+
+                $stmt = $conn->prepare("INSERT INTO users (uname, email, password, verify_token) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("ssss", $uname, $email, $hashed_password, $verify_token);
                 $stmt->execute();
 
                 if ($stmt->affected_rows > 0) {
-                    $_SESSION['username'] = $uname;
+                    // Send the verification email using PHPMailer
+                    $mail = new PHPMailer(true);
 
-                    $success_signup = "Account created successfully!";
-                    header("Location: signin.php?success_signup=" . urlencode($success_signup));
-                    exit();
+                    try {
+                        // Server settings
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com';  
+                        $mail->SMTPAuth = true;
+                        $mail->Username = 'infiknightesports@gmail.com';  // Your email address
+                        $mail->Password = 'mjbn ijjz ysel kkiz';  // Your email password (or app password) mjbn ijjz ysel kkiz
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                        $mail->Port = 587;
+                      //  cdrysumindra2060@gmail.com =  rwiy dkal iizf ildc   
+                        // Recipients
+                        $mail->setFrom('infiknightesports@gmail.com');
+                        $mail->addAddress($email);
+
+                        // Content
+                        $mail->isHTML(true);
+                        $mail->Subject = 'Email Verification';
+                        $mail->Body    = 'Please click the following link to verify your email address: 
+                        <a href="https://infiknight.great-site.net/verify.php?token=' . $verify_token . '">Verify Email</a>';
+
+                        // Send the email
+                        $mail->send();
+                        $success_signup = "Account created successfully! Please check your email for verification.";
+                        header("Location: signin.php?success_signup=" . urlencode($success_signup));
+                        exit();
+                    } catch (Exception $e) {
+                        $error_message = "Error sending verification email: " . $mail->ErrorInfo;
+                    }
                 } else {
                     $error_message = "Error: " . $conn->error;
                 }
             }
-
 
             $stmt->close();
             $conn->close();
@@ -65,7 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <title>Signup Page</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,800">
-  <link rel="stylesheet" href="./css/signup.css">
+  <link rel="stylesheet" href="./css/signup.css?v=1.0">
   <style>
     .popup-message {
       display: none;
@@ -107,7 +134,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       border: none;
       cursor: pointer;
     }
-    #toggle-confirm-password {
+    #toggle-icon {
+      font-size: 1rem;  
+    }
+    #toggle-password-confirm {
       position: absolute;
       right: -2rem;
       top: 75%;
@@ -116,15 +146,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       border: none;
       cursor: pointer;
     }
-    #toggle-icon {
+    #toggle-icon-confirm {
       font-size: 1rem;  
     }
   </style>
 </head>
 <body>
-<div id="preloader" style="background: #000 url(./img/loader.gif) no-repeat center center; 
-    background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-    </div>
+
   <div class="popup-message" id="popup-message"></div>
 
   <div class="container" id="container">
@@ -146,8 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <span id="toggle-icon">👁️</span>
           </button>
           <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
-          <button type="button" id="toggle-confirm-password">
-            <span id="toggle-icon">👁️</span>
+          <button type="button" id="toggle-password-confirm">
+            <span id="toggle-icon-confirm">👁️</span>
           </button>
       </div>
       
@@ -175,9 +203,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   });
 
   // Function to toggle password visibility
-  function togglePasswordVisibility(passwordFieldId, toggleButtonId) {
-    const passwordField = document.getElementById(passwordFieldId);
-    const toggleButton = document.getElementById(toggleButtonId);
+    function togglePasswordVisibility(passwordFieldId, toggleButtonId, toggleIconId) {
+        const passwordField = document.getElementById(passwordFieldId);
+        const toggleButton = document.getElementById(toggleButtonId);
+        const toggleIcon = document.getElementById(toggleIconId);
     
     if (passwordField.type === "password") {
       passwordField.type = "text";
@@ -192,8 +221,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   document.getElementById('toggle-password').addEventListener('click', function() {
     togglePasswordVisibility('password', 'toggle-password');
   });
-  document.getElementById('toggle-confirm-password').addEventListener('click', function() {
-    togglePasswordVisibility('confirm_password', 'toggle-confirm-password');
+  document.getElementById('toggle-password-confirm').addEventListener('click', function() {
+    togglePasswordVisibility('confirm_password', 'toggle-password-confirm');
   });
 
   // Your other existing JavaScript code here...

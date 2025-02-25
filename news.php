@@ -158,19 +158,24 @@ $conn->close();
 
 
     <!-- MAIN -->
+    <!-- MAIN -->
     <main role="main">    
       <article>
         <!-- Header -->
-        <header class="section-head background-image" style="background-image:url(img/full_bg.jpg)">
+        <header class="section-head background-image" style="background-image:url(./img/full_bg.jpg); background-size: cover; ">
           <div class="line">
   
             <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
-               News
+              <center>News</center>
             </h1>
           
           </div>
   
         </header>
+        
+      </article>  
+
+    </main>
         
 
     
@@ -493,9 +498,7 @@ $conn->close();
           <!-- red full width arrow object -->
           <img class="arrow-object" src="img/object-red.svg" alt="">
         </section>
-      </article>  
 
-    </main>
     
    <!-- FOOTER -->
     <footer>

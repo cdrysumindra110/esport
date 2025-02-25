@@ -2,7 +2,6 @@
 session_start();
 require_once 'config.php';
 
-
 $error_message = '';
 $success_message = '';
 
@@ -11,26 +10,32 @@ if (isset($_SESSION['username'])) {
     $uname = $_SESSION['username'];
 }
 
-// Show success message for signup
+if (isset($_SESSION['success_message'])) {
+  echo "<script type='text/javascript'>
+          window.onload = function() { 
+              showPopupMessage('".addslashes($_SESSION['success_message'])."', 'success'); 
+          }
+        </script>";
+  unset($_SESSION['success_message']); // Clear message after displaying
+}
+
+// Display success/error messages
 if (isset($_GET['success_signup'])) {
     $success_message = htmlspecialchars($_GET['success_signup']);
     echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($success_message)."', 'success'); }</script>";
 }
 if (isset($_GET['error_signin'])) {
-    $success_message = htmlspecialchars($_GET['error_signin']);
-    echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($success_message)."', 'success'); }</script>";
+    $error_message = htmlspecialchars($_GET['error_signin']);
+    echo "<script type='text/javascript'>window.onload = function() { showPopupMessage('".addslashes($error_message)."', 'error'); }</script>";
 }
 
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    // Escape input to prevent SQL injection
-    $email = $conn->real_escape_string($email);
-    $password = $conn->real_escape_string($password);
-
     // Fetch user details from the database
-    $stmt = $conn->prepare("SELECT id, uname, password, is_suspended FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id, uname, password, is_suspended, is_verified FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -38,48 +43,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
-        // Verify the user's password first
+        // Verify the user's password
         if (password_verify($password, $user['password'])) {
             // Check if the account is suspended
             if ($user['is_suspended'] == 1) {
-                if ($stmt->affected_rows > 0) {
-                  $_SESSION['username'] = $uname;
+                $error_message = "Your account has been suspended. Please contact support.";
+            } elseif ($user['is_verified'] == 0) {
+                $error_message = "Your account is not verified. Please check your email.";
+            } else {
+                // Successful login
+                $_SESSION['isSignin'] = true;
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['uname'];
 
-                  $error_signin = "Your account has been suspended. Please contact support.";
-                  header("Location: signin.php?error_signin=" . urlencode($error_signin));
-                  exit();
-              } else {
-                  $error_message = "Error: " . $conn->error;
-              }
+                $_SESSION['success_message'] = "Successfully logged in!";
+                header("Location: dashboard.php?success_signin=" . urlencode($success_message));
+                exit();
             }
-
-            if ($user['is_verified'] == 1) { // Check if the user's account is not verified
-              if ($stmt->affected_rows > 0) {
-                  $_SESSION['username'] = $uname;
-          
-                  $error_signin = "Your account is not verified. Please verify your email or contact support.";
-                  header("Location: signin.php?error_signin=" . urlencode($error_signin));
-                  exit();
-              } else {
-                  $error_message = "Error: " . $conn->error;
-              }
-          }
-          
-          
-            // If the account is not suspended, set session variables for the logged-in user
-            $_SESSION['isSignin'] = true;
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['uname'];
-
-            if ($stmt->affected_rows > 0) {
-              $_SESSION['username'] = $uname;
-
-              $success_signin = "Successfully logged in!";
-              header("Location: dashboard.php?success_signin=" . urlencode($success_signin));
-              exit();
-          } else {
-              $error_message = "Error: " . $conn->error;
-          }
         } else {
             $error_message = "Invalid email or password. Please try again.";
         }
@@ -110,7 +90,7 @@ if (!empty($error_message)) {
   <title>Sign In Page</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,800">
-  <link rel="stylesheet" href="./css/signin.css">
+  <link rel="stylesheet" href="./css/signin.css?v=1.0">
   <style>
     .popup-message {
       display: none;
@@ -151,10 +131,6 @@ if (!empty($error_message)) {
 </head>
 <body>
 
-<div id="preloader" style="background: #000 url(./img/loader.gif) no-repeat center center; 
-    background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-    </div>
-
   <div class="popup-message" id="popup-message"></div>
   
   <div class="container" id="container">
@@ -162,7 +138,7 @@ if (!empty($error_message)) {
       <form action="signin.php" method="post">
         <h1>Sign in</h1>
         <div class="social-container">
-          <a href="<?= $url ?>" class="social-icon" id="google-signin" title="Sign with Google"><i class="fab fa-google"></i></a>
+          <a class="social-icon" id="google-signin" title="Sign with Google"><i class="fab fa-google"></i></a>
           <a class="social-icon" id="facebook-signin" title="Sign with Facebook"><i class="fab fa-facebook-f"></i></a>
           <a class="social-icon" id="twitch-signin" title="Sign with Twitch"><i class="fab fa-twitch"></i></a>
           <a class="social-icon" id="discord-signin" title="Sign with Discord"><i class="fab fa-discord"></i></a>
@@ -175,7 +151,7 @@ if (!empty($error_message)) {
               <span id="toggle-icon">👁️</span>
             </button>
         </div>
-        <a href="#" id="forgot-password">Forgot your password?</a>
+        <a href="forgot-password.php" id="forgot-password">Forgot your password?</a>
         <button type="submit" id="signin-button" name="signin-button">Sign In</button>
       </form>
     </div>
@@ -199,23 +175,24 @@ if (!empty($error_message)) {
   });
 
     // Function to toggle password visibility
-    function togglePasswordVisibility(passwordFieldId, toggleButtonId) {
-    const passwordField = document.getElementById(passwordFieldId);
-    const toggleButton = document.getElementById(toggleButtonId);
-    
-    if (passwordField.type === "password") {
-      passwordField.type = "text";
-      toggleButton.textContent = "🙈"; // Change to 'Hide' icon when visible
-    } else {
-      passwordField.type = "password";
-      toggleButton.textContent = "👁️"; // Change to 'Show' icon when hidden
+    function togglePasswordVisibility(passwordFieldId, toggleButtonId, toggleIconId) {
+        const passwordField = document.getElementById(passwordFieldId);
+        const toggleButton = document.getElementById(toggleButtonId);
+        const toggleIcon = document.getElementById(toggleIconId);
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleIcon.textContent = "🙈"; // Change to 'Hide' icon when visible
+        } else {
+            passwordField.type = "password";
+            toggleIcon.textContent = "👁️"; // Change to 'Show' icon when hidden
+        }
     }
-  }
 
-  // Add event listeners to toggle buttons
-  document.getElementById('toggle-password').addEventListener('click', function() {
-    togglePasswordVisibility('password', 'toggle-password');
-  });
+    // Add event listeners to toggle buttons
+    document.getElementById('toggle-password').addEventListener('click', function() {
+        togglePasswordVisibility('password', 'toggle-password', 'toggle-icon');
+    });
 
 // Function to show the popup message
 function showPopupMessage(message, type) {
