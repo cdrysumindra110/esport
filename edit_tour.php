@@ -379,7 +379,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                       <textarea id="placement" name="placement" class="brac-input" rows="7"><?php echo htmlspecialchars($bracket_data['placement']); ?></textarea>
                                   </div>
                               </div>
-                              <input type="button" name="next" class="next action-button" value="Next" />
+                              <input type="button" name="next" class="next action-button" id="last-nextBtn" value="Next" />
                               <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
                           </fieldset>
 
@@ -739,6 +739,82 @@ function showPreview(event) {
 }
 
   </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('msform');
+      const submitButton = document.getElementById('create_tour');
+      const popup = document.getElementById('popup-message');
+      const nextButton = document.getElementById('last-nextBtn'); // Assuming the last Next button has this ID
+
+      function validateForm() {
+          let isValid = true;
+          const requiredFields = form.querySelectorAll('[required]');
+
+          requiredFields.forEach(field => {
+              if (!field.value.trim()) {
+                  isValid = false;
+                  console.log(`Field ${field.name} is empty.`); // Debugging
+              }
+          });
+
+          // Additional custom validations
+          const startDate = document.getElementById('sdate').value;
+          if (startDate && new Date(startDate) < new Date()) {
+              isValid = false;
+              console.log('Start date is not in the future.'); // Debugging
+          }
+
+          console.log(`Form is valid: ${isValid}`); // Debugging
+          return isValid;
+      }
+
+      function showPopupMessage(message, type) {
+          console.log('Popup function called with message:', message); // Debugging
+          popup.textContent = message;
+          popup.className = 'popup-message'; // Reset to default
+          if (type === 'success') {
+              popup.classList.add('success');
+          } else if (type === 'error') {
+              popup.classList.add('error');
+          }
+          popup.style.display = 'block'; // Show the popup
+          setTimeout(() => {
+              popup.style.display = 'none'; // Hide after 3 seconds
+          }, 3000);
+      }
+
+      form.addEventListener('input', function () {
+          console.log('Input event triggered.'); // Debugging
+          if (validateForm()) {
+              submitButton.disabled = false;
+              console.log('Submit button enabled.'); // Debugging
+          } else {
+              submitButton.disabled = true;
+              console.log('Submit button disabled.'); // Debugging
+          }
+      });
+
+      nextButton.addEventListener('click', function (event) {
+          if (!validateForm()) {
+              event.preventDefault();
+              showPopupMessage('Please fill out all required fields correctly before proceeding.', 'error');
+          }
+      });
+
+      form.addEventListener('submit', function (event) {
+          console.log('Form submit event triggered.'); // Debugging
+          if (!validateForm()) {
+              event.preventDefault();
+              showPopupMessage('Please fill out all required fields correctly before submitting.', 'error');
+          } else {
+              showPopupMessage('Form submitted successfully!', 'success');
+          }
+      });
+
+      // Initial check to disable the button if the form is invalid
+      submitButton.disabled = !validateForm();
+  });
+</script>
 <!-- Accordian jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>

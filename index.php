@@ -441,8 +441,8 @@ if (isset($_GET['error_signin'])) {
               <p class="margin-bottom-10 text-primary text-uppercase">Lead Developer</p>                                                                                                                                          
               <div class="line">
                 <a href="https://www.linkedin.com/in/igl-horaa-ab2859333/"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a>
-                 <a href="https://x.com/_Prabeen"><i class="icon-google_plus_circle text-primary-hover text-size-25"></i></a> 
-                 <a href="https://www.facebook.com/profile.php?id=100090083115854"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a>
+                 <a href="https://x.com/_Prabeen"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a> 
+                 <a href="https://www.facebook.com/profile.php?id=100090083115854"><i class="icon-facebook_circle text-primary-hover text-size-25"></i></a>
               </div>                                                                                                                                                                                                                                          
             </div>                                                                                                                                                            
           </div> 
@@ -464,7 +464,9 @@ if (isset($_GET['error_signin'])) {
               <h4 class="text-strong margin-bottom-10">Sumindra Chaudhary</h4>                        
               <p class="margin-bottom-10 text-primary text-uppercase">CTO</p>                                                                                                                                          
               <div class="line">
-                <a href="https://www.linkedin.com/in/sumindra-chaudhary-00769130b/"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a> <a href="https://x.com/SumindraChaudh2"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a> <a href="https://www.facebook.com/sumindra.UCH"><i class="icon-facebook_circle text-primary-hover text-size-25"></i></a>
+                <a href="https://www.linkedin.com/in/sumindra-chaudhary-00769130b/"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a>
+                <a href="https://x.com/SumindraChaudh2"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a>
+                <a href="https://www.facebook.com/sumindra.UCH"><i class="icon-facebook_circle text-primary-hover text-size-25"></i></a>
               </div>                                                                                                                                                                                                                                          
             </div>                                                                                                                                                                                                                                                                                                                                                                                    
           </div> 
