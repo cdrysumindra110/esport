@@ -201,114 +201,114 @@ $conn->close();
               box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
           }
 
-/* Responsive Styles */
-@media screen and (max-width: 1024px) {
-    .filter-form {
-        flex-direction: column;
-        align-items: center;
+    /* Responsive Styles */
+    @media screen and (max-width: 1024px) {
+        .filter-form {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .filter-form div {
+            width: 100%;
+        }
+
+        .ut-header__button {
+            width: 100%;
+            text-align: center;
+        }
+
+        .ut-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
     }
 
-    .filter-form div {
-        width: 100%;
+    @media screen and (max-width: 768px) {
+        .ut-container {
+            padding: 10px;
+        }
+
+        .ut-table thead {
+            display: none;
+        }
+
+        .ut-table tbody,
+        .ut-table tr {
+            display: block;
+            width: 100%;
+        }
+
+        .ut-table tr {
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .ut-table__cell {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .ut-table__cell--first {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .ut-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .ut-info {
+            margin-top: 5px;
+        }
+
+        .ut-info__name,
+        .ut-info__host {
+            font-size: 16px;
+        }
     }
 
-    .ut-header__button {
-        width: 100%;
-        text-align: center;
-    }
+    @media screen and (max-width: 480px) {
+        .ut-header {
+            text-align: center;
+        }
 
-    .ut-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-}
+        .filter-form div {
+            width: 100%;
+            display: block;
+        }
 
-@media screen and (max-width: 768px) {
-    .ut-container {
-        padding: 10px;
-    }
+        .filter-form select,
+        .filter-form input {
+            width: 100%;
+        }
 
-    .ut-table thead {
-        display: none;
-    }
+        .ut-table tr {
+            padding: 8px;
+        }
 
-    .ut-table tbody,
-    .ut-table tr {
-        display: block;
-        width: 100%;
-    }
+        .ut-table__cell {
+            font-size: 12px;
+        }
 
-    .ut-table tr {
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-    }
+        .filter-form button,
+        .ut-header__button {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
 
-    .ut-table__cell {
-        display: flex;
-        justify-content: space-between;
-        padding: 5px 10px;
-        font-size: 14px;
+        .ut-info__name,
+        .ut-info__host {
+            font-size: 14px;
+        }
     }
-
-    .ut-table__cell--first {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .ut-image img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-    }
-
-    .ut-info {
-        margin-top: 5px;
-    }
-
-    .ut-info__name,
-    .ut-info__host {
-        font-size: 16px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .ut-header {
-        text-align: center;
-    }
-
-    .filter-form div {
-        width: 100%;
-        display: block;
-    }
-
-    .filter-form select,
-    .filter-form input {
-        width: 100%;
-    }
-
-    .ut-table tr {
-        padding: 8px;
-    }
-
-    .ut-table__cell {
-        font-size: 12px;
-    }
-
-    .filter-form button,
-    .ut-header__button {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-
-    .ut-info__name,
-    .ut-info__host {
-        font-size: 14px;
-    }
-}
     </style>
   </head>
 
