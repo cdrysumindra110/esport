@@ -195,22 +195,6 @@ $conn->close();
               box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
           }
 
-          /* Animations */
-          select, input {
-              animation: fadeInUp 0.6s ease;
-          }
-
-          @keyframes fadeInUp {
-              0% {
-                  opacity: 0;
-                  transform: translateY(10px);
-              }
-              100% {
-                  opacity: 1;
-                  transform: translateY(0);
-              }
-          }
-
           /* Responsive Adjustments */
           @media (max-width: 768px) {
               .filter-form {
@@ -235,31 +219,115 @@ $conn->close();
             margin-bottom: 20px;
         }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .profile-container {
-                display: none; /* Hide profile and cover on small devices */
-            }
 
-            .btn-container {
-                display: none; /* Initially hide buttons on small devices */
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .btn-container.active {
-                display: flex; /* Show buttons when active */
-            }
-
-            .toggle-btn {
-                display: block; /* Show toggle button on small devices */
-            }
-
-            .btn-cnt {
-                width: 100%;
-                justify-content: center;
-            }
+    /* Responsive Styles */
+    @media screen and (max-width: 1024px) {
+        .filter-form {
+            flex-direction: column;
+            align-items: center;
         }
+
+        .filter-form div {
+            width: 100%;
+        }
+
+        .ut-header__button {
+            width: 100%;
+            text-align: center;
+        }
+
+        .ut-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .ut-container {
+            padding: 10px;
+        }
+
+        .ut-table thead {
+            display: none;
+        }
+
+        .ut-table tbody,
+        .ut-table tr {
+            display: block;
+            width: 100%;
+        }
+
+        .ut-table tr {
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .ut-table__cell {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .ut-table__cell--first {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .ut-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .ut-info {
+            margin-top: 5px;
+        }
+
+        .ut-info__name,
+        .ut-info__host {
+            font-size: 16px;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .ut-header {
+            text-align: center;
+        }
+
+        .filter-form div {
+            width: 100%;
+            display: block;
+        }
+
+        .filter-form select,
+        .filter-form input {
+            width: 100%;
+        }
+
+        .ut-table tr {
+            padding: 8px;
+        }
+
+        .ut-table__cell {
+            font-size: 12px;
+        }
+
+        .filter-form button,
+        .ut-header__button {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .ut-info__name,
+        .ut-info__host {
+            font-size: 14px;
+        }
+    }
     </style>
   </head>
 
@@ -270,7 +338,7 @@ $conn->close();
       <!-- Top Bar -->
       <div class="top-bar full-width hide-s hide-m">
         <div class="right">
-            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 8888888888 </a> 
+            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 9864666601 </a> 
             <span class="sep text-white">|</span> <a href="mailto:infiknightesports@gmail.com" class="text-white text-primary-hover"><i ></i>Email : infiknightesports@gmail.com</a>
         </div>  
       </div>    
@@ -510,13 +578,14 @@ $conn->close();
                <h4 class="text-white text-strong margin-m-top-30">Term of Use</h4>
                <a class="text-primary-hover" href="faq.php">FAQ</a><br>
                <a class="text-primary-hover" href="privacy-policy.php">Privacy Policy</a><br>
-               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a>
+               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a><br>
+               <a class="text-primary-hover" href="terms-of-use.php">Terms Of Use</a>
             </div>
             <div class="s-12 m-6 l-3 xl-3">
                <h4 class="text-white text-strong margin-m-top-30">Contact Us</h4>
-                <a class="text-primary-hover" href="tel:+977 8888888888"><i class="icon-sli-screen-smartphone text-primary"></i> +977 8888888888</a><br>
-                <a class="text-primary-hover" href="mailto:contact@InfiKnight.com"><i class="fa-solid fa-envelope text-primary"></i> contact@InfiKnight.com</a><br>
-                <a class="text-primary-hover" href="https://maps.app.goo.gl/QGesNa3t51KtP1Vt7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Pradarshani Marg, Kathmandu 44600</a>
+                <a class="text-primary-hover" href="tel:+977 9864666601"><i class="icon-sli-screen-smartphone text-primary"></i> +977 9864666601</a><br>
+                <a class="text-primary-hover" href="mailto:infiknightesports@gmail.com"><i class="fa-solid fa-envelope text-primary"></i> infiknightesports@gmail.com</a><br>
+                <a class="text-primary-hover" href="https://maps.app.goo.gl/grg9akhzXTNkd1yU7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Bafal Marga, Kathmandu, Nepal</a>
             </div>
           </div>  
         </div>    

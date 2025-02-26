@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_email'])) {
       <!-- Top Bar -->
       <div class="top-bar full-width hide-s hide-m">
         <div class="right">
-            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 8888888888 </a> 
+            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 9864666601 </a> 
             <span class="sep text-white">|</span> <a href="mailto:infiknightesports@gmail.com" class="text-white text-primary-hover"><i ></i>Email : infiknightesports@gmail.com</a>
         </div>  
       </div>    
@@ -350,13 +350,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_email'])) {
                <h4 class="text-white text-strong margin-m-top-30">Term of Use</h4>
                <a class="text-primary-hover" href="faq.php">FAQ</a><br>
                <a class="text-primary-hover" href="privacy-policy.php">Privacy Policy</a><br>
-               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a>
+               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a><br>
+               <a class="text-primary-hover" href="terms-of-use.php">Terms Of Use</a>
             </div>
             <div class="s-12 m-6 l-3 xl-3">
                <h4 class="text-white text-strong margin-m-top-30">Contact Us</h4>
-                <a class="text-primary-hover" href="tel:+977 8888888888"><i class="icon-sli-screen-smartphone text-primary"></i> +977 8888888888</a><br>
-                <a class="text-primary-hover" href="mailto:contact@InfiKnight.com"><i class="fa-solid fa-envelope text-primary"></i> contact@InfiKnight.com</a><br>
-                <a class="text-primary-hover" href="https://maps.app.goo.gl/QGesNa3t51KtP1Vt7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Pradarshani Marg, Kathmandu 44600</a>
+                <a class="text-primary-hover" href="tel:+977 9864666601"><i class="icon-sli-screen-smartphone text-primary"></i> +977 9864666601</a><br>
+                <a class="text-primary-hover" href="mailto:infiknightesports@gmail.com"><i class="fa-solid fa-envelope text-primary"></i> infiknightesports@gmail.com</a><br>
+                <a class="text-primary-hover" href="https://maps.app.goo.gl/grg9akhzXTNkd1yU7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Bafal Marga, Kathmandu, Nepal</a>
             </div>
           </div>  
         </div>    

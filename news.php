@@ -42,44 +42,39 @@ if ($stmt) {
 }
 
 
-$sql = "SELECT id, title, description, image, updated_at FROM news_articles";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$stmt->store_result();
-$stmt->bind_result($article_id, $title, $description, $image, $updated_at);
 
-$articles = [];
+// SQL query to fetch the latest articles
+$sql = "SELECT * FROM news_articles ORDER BY updated_at DESC"; // Sorting by latest updated_at
+$result = $conn->query($sql);
 
-// Fetch articles and process image
-while ($stmt->fetch()) {
-  if ($image) {
-    if (is_string($image) && file_exists($image)) {
-        $image_src = htmlspecialchars($image);
-    } elseif (is_resource($image)) {
-        $image_data = stream_get_contents($image);
-        // You should check the actual MIME type of the image and use it
-        $image_src = 'data:image/jpeg;base64,' . base64_encode($image_data); // Adjust MIME type if needed (e.g., 'image/png')
-    } elseif (is_string($image) && strpos($image, 'data:image/') === 0) {
-        $image_src = $image;
+// Check if there are any articles
+if ($result->num_rows > 0) {
+    // Store fetched articles in an array
+    $articles = [];
+    while ($row = $result->fetch_assoc()) {
+      if (!empty($row['image'])) {
+        $image_path = 'uploads/' . $row['image'];
+    
+        // Check if the image file exists
+        if (file_exists($image_path) && is_readable($image_path)) {
+            $row['image'] = $image_path;
+        } else {
+            // If file does not exist, use default image
+            $row['image'] = 'img/dash-logo.png';
+        }
     } else {
-        $image_src = './img/dash-logo.png'; // Default image if no image available
+        // If no image provided, use default
+        $row['image'] = 'img/dash-logo.png';
+    }
+    
+        
+        // Store the article in the array
+        $articles[] = $row;
     }
 } else {
-    $image_src = './img/dash-logo.png'; // Default image if no image available
+    // If no articles are found
+    $articles = [];
 }
-
-
-    $articles[] = [
-        'id' => $article_id,
-        'title' => $title,
-        'description' => $description,
-        'image' => $image_src, 
-        'updated_at' => $updated_at
-    ];
-}
-
-$stmt->close();
-
 $conn->close();
 ?>
 
@@ -117,7 +112,7 @@ $conn->close();
       <!-- Top Bar -->
       <div class="top-bar full-width hide-s hide-m">
         <div class="right">
-            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 8888888888 </a> 
+            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 9864666601 </a> 
             <span class="sep text-white">|</span> <a href="mailto:infiknightesports@gmail.com" class="text-white text-primary-hover"><i ></i>Email :infiknightesports@gmail.com</a>
         </div>  
       </div>    
@@ -158,7 +153,6 @@ $conn->close();
 
 
     <!-- MAIN -->
-    <!-- MAIN -->
     <main role="main">    
       <article>
         <!-- Header -->
@@ -194,29 +188,23 @@ $conn->close();
           <div class="tab-content">
             <!-- Latest News Tab -->
             <div class="tab active" data-tab="latest" style="width: 100%;">
-            <?php if (!empty($articles)): ?>
-                <?php if (!empty($error_message)): ?>
-                    <div class="error-message">
-                        <p><?php echo htmlspecialchars($error_message); ?></p>
-                    </div>
-                <?php else: ?>
+                <?php if (!empty($articles)): ?>
                     <!-- Loop through the articles and display them -->
                     <?php foreach ($articles as $article): ?>
                         <div class="news-card">
                             <!-- Display the article image -->
-                            <img src="<?php echo htmlspecialchars($article['image']); ?>" alt="Article Image" class="news-image" />
+                            <img src="<?= htmlspecialchars($article['image']) ?>" alt="Article Image" class="news-image" />
                             <div class="news-details">
-                                <p>By InfiKnight Gaming Community | Updated at <?= htmlspecialchars($article['updated_at']) ?></p>
+                                <p>By InfiKnight Gaming Community | Updated at <?= htmlspecialchars(date('Y-m-d', strtotime($article['updated_at']))) ?></p>
                                 <h2><?= htmlspecialchars($article['title']) ?></h2>
                                 <p><?= htmlspecialchars($article['description']) ?></p>
                                 <a href="article_detail.php?id=<?= $article['id'] ?>" class="read-more-link">Read More</a>
                             </div>
                         </div>
                     <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No articles available at the moment.</p>
                 <?php endif; ?>
-            <?php else: ?>
-                <p>No articles available at the moment.</p>
-            <?php endif; ?>
             </div>
           </div>
         </div>
@@ -224,120 +212,117 @@ $conn->close();
 
 
 
-      <section class="section-top-bottom-padding">
-    <div class="line">
-        <h2 class="text-extra-strong text-size-80 text-m-size-40 margin-bottom-40">Upcoming Live Events</h2>
-    </div>
+        <section class="section-top-bottom-padding">
+            <div class="line">
+                <h2 class="text-extra-strong text-size-80 text-m-size-40 margin-bottom-40">Upcoming Live Events</h2>
+            </div>
 
-    <!-- Image / Text Carousel -->
-    <div class="carousel-center owl-carousel carousel-main carousel-hide-pagination nav-bottom text-center">
+            <!-- Image / Text Carousel -->
+            <div class="carousel-center owl-carousel carousel-main carousel-hide-pagination nav-bottom text-center">
 
-        <?php
-        // Assuming $tournaments array is populated from the fetch code
-        if (!empty($tournaments)) {
-            foreach ($tournaments as $tournament) {
-                $tournamentName = htmlspecialchars($tournament['tname']);
-                $bannerImg = htmlspecialchars($tournament['bannerimg']);
-                $startDate = $tournament['sdate']; 
-                $startTime = $tournament['stime']; 
-                
-                $tournamentDateTime = $startDate . ' ' . $startTime;
-                
-                $tournamentTimestamp = strtotime($tournamentDateTime);
-                $currentTimestamp = time(); 
-   
-                if ($currentTimestamp >= $tournamentTimestamp) {
+                <?php
+                // Assuming $tournaments array is populated from the fetch code
+                if (!empty($tournaments)) {
+                    foreach ($tournaments as $tournament) {
+                        $tournamentName = htmlspecialchars($tournament['tname']);
+                        $bannerImg = htmlspecialchars($tournament['bannerimg']);
+                        $startDate = $tournament['sdate']; 
+                        $startTime = $tournament['stime']; 
+                        
+                        $tournamentDateTime = $startDate . ' ' . $startTime;
+                        
+                        $tournamentTimestamp = strtotime($tournamentDateTime);
+                        $currentTimestamp = time(); 
+          
+                        if ($currentTimestamp >= $tournamentTimestamp) {
 
-                    ?>
-                   
-                    <?php
-                } else {
+                            ?>
+                          
+                            <?php
+                        } else {
 
-                    ?>
-                    <div class="item">
-                        <div class="image-with-text-overlay">
-                            <div class="image-text-overlay">
-                                <div class="image-text-overlay-content padding-2x">
-                                    <!-- Text -->
-                                    <p class="text-orange text-size-30 margin-bottom-10"><?php echo $tournamentName; ?></p>
-                                    <h3 class="text-white text-size-30 text-strong">Starting Soon</h3>
-                                    <p class="text-white">The tournament will start on <?php echo date('F j, Y, g:i a', $tournamentTimestamp); ?>.</p> 
-                                </div> 
+                            ?>
+                            <div class="item">
+                                <div class="image-with-text-overlay">
+                                    <div class="image-text-overlay">
+                                        <div class="image-text-overlay-content padding-2x">
+                                            <!-- Text -->
+                                            <p class="text-orange text-size-30 margin-bottom-10"><?php echo $tournamentName; ?></p>
+                                            <h3 class="text-white text-size-30 text-strong">Starting Soon</h3>
+                                            <p class="text-white">The tournament will start on <?php echo date('F j, Y, g:i a', $tournamentTimestamp); ?>.</p> 
+                                        </div> 
+                                    </div>
+                                    <!-- Photo -->
+                                    <?php if (!empty($tournament['bannerimg'])): ?>
+                                        <img src="data:image/jpeg;base64,<?php echo base64_encode($tournament['bannerimg']); ?>" alt="Tournament Banner" style="width: 100%; height: 450px; object-fit: cover;">
+                                    <?php else: ?>
+                                        <img src="./img/dash-logo.png" alt="Default Tournament Banner" style="width: 100%; height: 450px; object-fit: cover;">
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                            <!-- Photo -->
-                            <?php if (!empty($tournament['bannerimg'])): ?>
-                                <img src="data:image/jpeg;base64,<?php echo base64_encode($tournament['bannerimg']); ?>" alt="Tournament Banner" style="width: 100%; height: 450px; object-fit: cover;">
-                            <?php else: ?>
-                                <img src="./img/dash-logo.png" alt="Default Tournament Banner" style="width: 100%; height: 450px; object-fit: cover;">
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <?php
+                            <?php
+                        }
+                    }
+                } else {
+                    echo "No tournament data found.";
                 }
-            }
-        } else {
-            echo "No tournament data found.";
-        }
-        ?>
-
-    </div>
-</section>
-
+                ?>
+            </div>
+        </section>
 
         <!-- Section Videos Section --> 
         <section class="section line-full-width">
-        <div class="line">
-            <h2 class="text-extra-strong text-size-80 text-m-size-40 margin-bottom-40">Live Events</h2>
-        </div>
+          <div class="line">
+              <h2 class="text-extra-strong text-size-80 text-m-size-40 margin-bottom-40">Live Events</h2>
+          </div>
 
           <div class="margin">      
-          <?php
-              // Assuming $tournaments array is populated from the fetch code
-              if (!empty($tournaments)) {
-                  foreach ($tournaments as $tournament) {
-                      $tournamentName = htmlspecialchars($tournament['tname']);
-                      $channelName = htmlspecialchars($tournament['channel_name']);
-                      $startDate = $tournament['sdate']; 
-                      $startTime = $tournament['stime']; 
+            <?php
+                // Assuming $tournaments array is populated from the fetch code
+                if (!empty($tournaments)) {
+                    foreach ($tournaments as $tournament) {
+                        $tournamentName = htmlspecialchars($tournament['tname']);
+                        $channelName = htmlspecialchars($tournament['channel_name']);
+                        $startDate = $tournament['sdate']; 
+                        $startTime = $tournament['stime']; 
 
-                      $tournamentDateTime = $startDate . ' ' . $startTime;
-                      
-
-                      $tournamentTimestamp = strtotime($tournamentDateTime);
-                      $currentTimestamp = time(); 
-
-                      if ($currentTimestamp >= $tournamentTimestamp) {
-
-                          ?>
-                          <div class="s-12 m-6">
-                              <a class="image-with-hover-overlay image-hover-zoom margin-bottom">
+                        $tournamentDateTime = $startDate . ' ' . $startTime;
                         
-                                  <h1><?php echo $tournamentName; ?></h1>
-                                  <!-- Twitch Embed only  -->
-                                  <iframe 
-                                      src="https://player.twitch.tv/?channel=<?php echo urlencode($channelName); ?>&parent=localhost" 
-                                      frameborder="0" 
-                                      allowfullscreen="true" 
-                                      scrolling="no" 
-                                      height="365" 
-                                      width="700">
-                                  </iframe>
-                              </a>    
-                          </div>
-                          <?php
-                      } else {
 
-                      }
-                  }
-              } else {
-                  echo "No tournament data found.";
-              }
-          ?>
+                        $tournamentTimestamp = strtotime($tournamentDateTime);
+                        $currentTimestamp = time(); 
+
+                        if ($currentTimestamp >= $tournamentTimestamp) {
+
+                            ?>
+                            <div class="s-12 m-6">
+                                <a class="image-with-hover-overlay image-hover-zoom margin-bottom">
+                          
+                                    <h1><?php echo $tournamentName; ?></h1>
+                                    <!-- Twitch Embed only  -->
+                                    <iframe 
+                                        src="https://player.twitch.tv/?channel=<?php echo urlencode($channelName); ?>&parent=localhost" 
+                                        frameborder="0" 
+                                        allowfullscreen="true" 
+                                        scrolling="no" 
+                                        height="365" 
+                                        width="700">
+                                    </iframe>
+                                </a>    
+                            </div>
+                            <?php
+                        } else {
+
+                        }
+                    }
+                } else {
+                    echo "No tournament data found.";
+                }
+            ?>
 
 
-            <div class="s-12 m-6">
+            <!-- <div class="s-12 m-6">
               <a class="image-with-hover-overlay image-hover-zoom margin-bottom">
-                <!-- YouTube Video Embed -->
               <h1>Games Highlights</h1>
                 <iframe width="700" height="365" src="https://www.youtube.com/embed/u1oqfdh4xBY?si=vhWBHZT9TCSuW0Mi" 
                 title="Pubg Tournaments" frameborder="0" 
@@ -347,7 +332,6 @@ $conn->close();
             </div>       
             <div class="s-12 m-6">
               <a class="image-with-hover-overlay image-hover-zoom margin-bottom">
-                <!-- YouTube Video Embed -->
               <h1>Games Highlights</h1>
                 <iframe width="700" height="365" src="https://www.youtube.com/embed/oq2Rz2I11l0?si=SMtxcxt0eeu_LMoK" 
                 title="Free Fire Tournament" frameborder="0" 
@@ -357,13 +341,12 @@ $conn->close();
             </div>       
             <div class="s-12 m-6">
               <a class="image-with-hover-overlay image-hover-zoom margin-bottom">
-                <!-- YouTube Video Embed -->
               <h1>Games Highlights</h1>
                 <iframe width="700" height="365" src="https://www.youtube.com/embed/4N3xwEtLpu0?si=t__WCvNzt33pjJZi&amp;start=10" 
                 title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
                 gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               </a>	
-            </div>       
+            </div>        -->
           </div>
         </section>
         
@@ -553,13 +536,14 @@ $conn->close();
                <h4 class="text-white text-strong margin-m-top-30">Term of Use</h4>
                <a class="text-primary-hover" href="faq.php">FAQ</a><br>
                <a class="text-primary-hover" href="privacy-policy.php">Privacy Policy</a><br>
-               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a>
+               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a><br>
+               <a class="text-primary-hover" href="terms-of-use.php">Terms Of Use</a>
             </div>
             <div class="s-12 m-6 l-3 xl-3">
                <h4 class="text-white text-strong margin-m-top-30">Contact Us</h4>
-                <a class="text-primary-hover" href="tel:+977 8888888888"><i class="icon-sli-screen-smartphone text-primary"></i> +977 8888888888</a><br>
-                <a class="text-primary-hover" href="mailto:contact@InfiKnight.com"><i class="fa-solid fa-envelope text-primary"></i> contact@InfiKnight.com</a><br>
-                <a class="text-primary-hover" href="https://maps.app.goo.gl/QGesNa3t51KtP1Vt7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Pradarshani Marg, Kathmandu 44600</a>
+                <a class="text-primary-hover" href="tel:+977 9864666601"><i class="icon-sli-screen-smartphone text-primary"></i> +977 9864666601</a><br>
+                <a class="text-primary-hover" href="mailto:infiknightesports@gmail.com"><i class="fa-solid fa-envelope text-primary"></i> infiknightesports@gmail.com</a><br>
+                <a class="text-primary-hover" href="https://maps.app.goo.gl/grg9akhzXTNkd1yU7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Bafal Marga, Kathmandu, Nepal</a>
             </div>
           </div>  
         </div>    

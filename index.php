@@ -45,7 +45,7 @@ if (isset($_GET['error_signin'])) {
       <!-- Top Bar -->
       <div class="top-bar full-width hide-s hide-m">
         <div class="right">
-            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 8888888888 </a> 
+            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 9864666601 </a> 
             <span class="sep text-white">|</span> <a href="mailto:infiknightesports@gmail.com" class="text-white text-primary-hover"><i ></i>Email : infiknightesports@gmail.com</a>
         </div>  
       </div>    
@@ -125,7 +125,7 @@ if (isset($_GET['error_signin'])) {
                             
               <div class="line">
                 <p class="animated-carousel-element text-strong text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-80 text-line-height-1 margin-bottom-40 margin-top-130">
-                  Become the <span class="text-orange animated-carousel-element">Ultimate</span> Street<br>
+                  Become the <span class="text-orange animated-carousel-element">Ultimate</span><br>
                   Street Fighter
                 </p>
                 <div class="m-12 l-8">
@@ -429,7 +429,7 @@ if (isset($_GET['error_signin'])) {
               <div class="image-hover-overlay background-primary"> 
                 <div class="image-hover-overlay-content padding">
                   <!-- Team Member Bio -->
-                  <p>Maintains System Standard</p>
+                  <p>Directs development, ensuring platform features meet standards.</p>
                 </div> 
               </div>  
               <!-- Team Member Photo -->
@@ -438,7 +438,7 @@ if (isset($_GET['error_signin'])) {
             <div class="margin-top">                          
               <!-- Team Member Description -->
               <h4 class="text-strong margin-bottom-10">Mohan Khatri</h4>                        
-              <p class="margin-bottom-10 text-primary text-uppercase">CEO</p>                                                                                                                                          
+              <p class="margin-bottom-10 text-primary text-uppercase">Lead Developer</p>                                                                                                                                          
               <div class="line">
                 <a href="https://www.linkedin.com/in/igl-horaa-ab2859333/"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a>
                  <a href="https://x.com/_Prabeen"><i class="icon-google_plus_circle text-primary-hover text-size-25"></i></a> 
@@ -453,7 +453,7 @@ if (isset($_GET['error_signin'])) {
               <div class="image-hover-overlay background-primary"> 
                 <div class="image-hover-overlay-content padding">
                   <!-- Team Member Bio -->
-                  <p>The overall Controller</p>
+                  <p>Leads the technical vision, ensuring scalability and innovation.</p>
                 </div> 
               </div>  
               <!-- Team Member Photo -->
@@ -462,7 +462,7 @@ if (isset($_GET['error_signin'])) {
             <div class="margin-top">                          
               <!-- Team Member Description -->
               <h4 class="text-strong margin-bottom-10">Sumindra Chaudhary</h4>                        
-              <p class="margin-bottom-10 text-primary text-uppercase">BOD</p>                                                                                                                                          
+              <p class="margin-bottom-10 text-primary text-uppercase">CTO</p>                                                                                                                                          
               <div class="line">
                 <a href="https://www.linkedin.com/in/sumindra-chaudhary-00769130b/"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a> <a href="https://x.com/SumindraChaudh2"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a> <a href="https://www.facebook.com/sumindra.UCH"><i class="icon-facebook_circle text-primary-hover text-size-25"></i></a>
               </div>                                                                                                                                                                                                                                          
@@ -664,13 +664,14 @@ if (isset($_GET['error_signin'])) {
                <h4 class="text-white text-strong margin-m-top-30">Term of Use</h4>
                <a class="text-primary-hover" href="faq.php">FAQ</a><br>
                <a class="text-primary-hover" href="privacy-policy.php">Privacy Policy</a><br>
-               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a>
+               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a><br>
+               <a class="text-primary-hover" href="terms-of-use.php">Terms Of Use</a>
             </div>
             <div class="s-12 m-6 l-3 xl-3">
                <h4 class="text-white text-strong margin-m-top-30">Contact Us</h4>
-                <a class="text-primary-hover" href="tel:+977 8888888888"><i class="icon-sli-screen-smartphone text-primary"></i> +977 8888888888</a><br>
-                <a class="text-primary-hover" href="mailto:contact@InfiKnight.com"><i class="fa-solid fa-envelope text-primary"></i> contact@InfiKnight.com</a><br>
-                <a class="text-primary-hover" href="https://maps.app.goo.gl/QGesNa3t51KtP1Vt7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Pradarshani Marg, Kathmandu 44600</a>
+                <a class="text-primary-hover" href="tel:+977 9864666601"><i class="icon-sli-screen-smartphone text-primary"></i> +977 9864666601</a><br>
+                <a class="text-primary-hover" href="mailto:infiknightesports@gmail.com"><i class="fa-solid fa-envelope text-primary"></i> infiknightesports@gmail.com</a><br>
+                <a class="text-primary-hover" href="https://maps.app.goo.gl/grg9akhzXTNkd1yU7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Bafal Marga, Kathmandu, Nepal</a>
             </div>
           </div>  
         </div>    
