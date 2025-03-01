@@ -2894,5 +2894,28 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     }
 
 
+                <a class="text-primary-hover" href="tel:+977 9864666601"><i class="icon-sli-screen-smartphone text-primary"></i> +977 9864666601</a><br>
+                <a class="text-primary-hover" href="mailto:infiknightesports@gmail.com"><i class="fa-solid fa-envelope text-primary"></i> infiknightesports@gmail.com</a><br>
+                <a class="text-primary-hover" href="https://maps.app.goo.gl/grg9akhzXTNkd1yU7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Bafal Marga, Kathmandu, Nepal</a>
 
 
+
+<?php
+include('header.php');
+?>
+
+<!-- Specific CSS for Leaderboard Page -->
+<link rel="stylesheet" href="./css/leaderboard.css?ver=1.0">
+<link rel="stylesheet" href="./css/rank.css?ver=1.0">
+
+
+to link header as well as  anothe css also
+
+
+  <!-- <div id="preloader" style="background: #1E1E2F url(./img/loader.gif) no-repeat center center; 
+        background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
+    </div> -->
+    
+include('header.php');
+    
+<?php include('footer.php'); ?>

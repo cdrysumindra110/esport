@@ -1,161 +1,81 @@
 <?php
-  // Include the config file
-  require_once 'config.php';
-
-  // Start the session
-  session_start();
-  $isSignin = isset($_SESSION['isSignin']) ? $_SESSION['isSignin'] : false;
-
-
+include('header.php');
 ?>
 
+<style>
+  .section-disclaimer {
+      width: 80%;
+      margin: 0 auto;
+      text-align: justify;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      color: #333; 
+      padding: 20px;
+  }
 
-<!DOCTYPE html>
-<html lang="en-US">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Esports Website</title>
-    <link rel="stylesheet" href="./css/components.css">
-    <link rel="stylesheet" href="./css/icons.css">
-    <link rel="stylesheet" href="./css/responsee.css">
-    <link rel="stylesheet" href="./owl-carousel/owl.carousel.css">
-    <link rel="stylesheet" href="./owl-carousel/owl.theme.css">
-    <!-- CUSTOM STYLE -->      
-    <link rel="stylesheet" href="./css/template-style.css?ver=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">  
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+  .section-disclaimer h1 {
+      font-size: 3em;
+      color: #004080; 
+      text-align: left;
+      margin-bottom: 20px;
+  }
 
-    <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.min.js"></script>   
-  <style>
+  .section-disclaimer h2 {
+      font-size: 1.75em;
+      color: #003366; 
+      margin-top: 30px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+  }
 
-.section-disclaimer {
-    width: 80%;
-    margin: 0 auto;
-    text-align: justify;
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.6;
-    color: #333; 
-    padding: 20px;
-}
-
-
-.section-disclaimer h1 {
-    font-size: 3em;
-    color: #004080; 
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-.section-disclaimer h2 {
-    font-size: 1.75em;
-    color: #003366; 
-    margin-top: 30px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 5px;
-}
-
-.section-disclaimer h3 {
-    font-size: 1.4em;
-    color: #00509e; 
-    margin-top: 20px;
-}
+  .section-disclaimer h3 {
+      font-size: 1.4em;
+      color: #00509e; 
+      margin-top: 20px;
+  }
 
 
-.section-disclaimer p {
-    font-size: 1em;
-    margin: 10px 0;
-}
+  .section-disclaimer p {
+      font-size: 1em;
+      margin: 10px 0;
+  }
+
+  .section-disclaimer ul {
+      margin: 10px 0 20px 20px;
+      padding: 0;
+  }
+
+  .section-disclaimer li {
+      margin-bottom: 8px;
+  }
+
+  .section-disclaimer li strong {
+      color: #00509e; 
+  }
+
+  .section-disclaimer a {
+      color: #0073e6; 
+      text-decoration: none;
+      font-weight: bold;
+  }
+
+  .section-disclaimer a:hover {
+      text-decoration: underline;
+      color: #00509e;
+  }
 
 
-.section-disclaimer ul {
-    margin: 10px 0 20px 20px;
-    padding: 0;
-}
-
-.section-disclaimer li {
-    margin-bottom: 8px;
-}
-
-.section-disclaimer li strong {
-    color: #00509e; 
-}
+  .section-disclaimer p a[href^="mailto"] {
+      color: #cc0000;
+  }
 
 
-.section-disclaimer a {
-    color: #0073e6; 
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.section-disclaimer a:hover {
-    text-decoration: underline;
-    color: #00509e;
-}
-
-
-.section-disclaimer p a[href^="mailto"] {
-    color: #cc0000;
-}
-
-
-.section-disclaimer ul li p {
-    margin: 5px 0;
-    font-size: 0.95em;
-}
-
-  </style>
-  </head>
-
-  <body class="size-1280 primary-color-red">
-
-    <!-- HEADER -->
-    <header role="banner" class="position-absolute">
-      <!-- Top Bar -->
-      <div class="top-bar full-width hide-s hide-m">
-        <div class="right">
-            <a href="tel:080055544444444" class="text-white text-primary-hover">Phone : +977 9864666601 </a> 
-            <span class="sep text-white">|</span> <a href="mailto:infiknightesports@gmail.com" class="text-white text-primary-hover"><i ></i>Email :infiknightesports@gmail.com</a>
-        </div>  
-      </div>    
-      <!-- Top Navigation -->
-      <nav class="background-transparent background-transparent-hightlight full-width sticky">
-        <div class="s-12 l-2">
-          <a href="index.php" class="logo">
-            <!-- Logo White Version -->
-            <img class="logo-white" src="img/logo.png" alt="">
-            <!-- Logo Dark Version -->
-            <img class="logo-dark" src="img/logo.png" alt="">
-          </a>
-        </div>
-        <div class="top-nav s-12 l-10">
-          <ul class="right chevron">
-           <li><a href="index.php">Home</a></li>
-            <li><a href="tournaments.php">Tournaments</a></li>
-            <li><a href="news.php">News</a></li>
-            <li><a href="our-services.php">Our Services</a></li>
-             
-            <li><a href="organize.php">Organize</a></li>
-            <li><a href="about-us.php">About</a></li>
-            <li><a href="#"><i class="fas fa-user"></i><?php echo isset($_SESSION['username']) ? $_SESSION['username'] : ''; ?></a>
-              <ul>
-                  <?php if ($isSignin): ?>
-                      <li><a href="dashboard.php">Profile</a></li>
-                      <li><a href="logout.php"><i class='fa fa-sign-out'></i>Signout</a></li>
-                  <?php else: ?>
-                      <li><a href="signin.php">Signin</a></li>
-                      <li><a href="signup.php">Signup</a></li>
-                  <?php endif; ?>
-              </ul>
-          </li>
-          </li>
-        </div>
-      </nav>
-    </header>
+  .section-disclaimer ul li p {
+      margin: 5px 0;
+      font-size: 0.95em;
+  }
+</style>
 
     <!-- MAIN -->
     <main role="main">    
@@ -184,7 +104,7 @@
           <li><strong>Company</strong> (referred to as either &quot;the Company&quot;, &quot;We&quot;, &quot;Us&quot; or &quot;Our&quot; in this Disclaimer) refers to InfiKnight, Exhibition Road.</li>
           <li><strong>Service</strong> refers to the Website.</li>
           <li><strong>You</strong> means the individual accessing the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li>
-          <li><strong>Website</strong> refers to InfiKnight, accessible from <a href="https://www.infiknightesports.com.np" rel="external nofollow noopener" target="_blank">https://www.infiknightesports.com.np</a></li>
+          <li><strong>Website</strong> refers to InfiKnight, accessible from <a href="https://infiknight.great-site.net/" rel="external nofollow noopener" target="_blank">https://infiknight.great-site.net/</a></li>
           </ul>
           <h2>Disclaimer</h2>
           <p>The information contained on the Service is for general information purposes only.</p>
@@ -217,7 +137,7 @@
           <p>By email: infiknightesports@gmail.com</p>
           </li>
           <li>
-          <p>By visiting this page on our website: <a href="https://www.infiknightesports.com.np/our-services" rel="external nofollow noopener" target="_blank">https://www.infiknightesports.com.np/our-services</a></p>
+          <p>By visiting this page on our website: <a href="https://infiknight.great-site.net//our-services" rel="external nofollow noopener" target="_blank">https://infiknight.great-site.net//our-services</a></p>
           </li>
           </ul>
         </section>
@@ -245,91 +165,6 @@
 
     </main>
     
-    <!-- FOOTER -->
-    <footer>
-      <!-- Social -->
-      <div class="background-primary padding text-center">
-        <a href="#"><i class="icon-facebook_circle text-size-30 text-white"></i></a> 
-        <a href="#"><i class="icon-twitter_circle text-size-30 text-white"></i></a>
-        <a href="#"><i class="icon-google_plus_circle text-size-30 text-white"></i></a>
-        <a href="#"><i class="icon-instagram_circle text-size-30 text-white"></i></a> 
-        <a href="#"><i class="icon-linked_in_circle text-size-30 text-white"></i></a>                                                                       
-      </div>
-      <!-- Animated Logos -->
-      <div class="container-animated sticky" id="logo-container">
-        <div class="scrollable-container">
-          <button class="animated-btn left-button">&nbsp;&nbsp;&nbsp;&nbsp;We are Trusted By:&nbsp;&nbsp;&nbsp;&nbsp;</button>
-          <div class="logos">
-            <img src="img/logo/ESports.jpg" alt="Esports" class="image">
-            <img src="img/logo/amd.jpg" alt="AMD" class="image">
-            <img src="img/logo/redbull.jpg" alt="Red Bull" class="image">
-            <img src="img/logo/unicef.jpg" alt="UNICEF" class="image">
-            <img src="img/logo/tencent.jpg" alt="Tencent" class="image">
-            <img src="img/logo/KoHire.png" alt="KoHire" class="image">
-            <img src="img/logo/masterportfolio-banner-dark.png" alt="masterportfolio-banner-dark" class="image">
-            <img src="img/logo/Empyre.png" alt="Empyre" class="image">
-          </div>
-            <button onclick="window.location.href='our-services.php'" class="animated-btn right-button">&nbsp;&nbsp;Become our Client&nbsp;&nbsp;</button>
-        </div>
-      </div>
-      <section class="section background-dark">
-        <!-- Main Footer -->
-        <div class="line"> 
-          <div class="margin2x">
-            <div class="hide-s hide-m hide-l xl-2">
-              <img src="img/logo.png" alt="">
-            </div>
-            <div class="s-12 m-6 l-3 xl-3">
-               <h4 class="text-white text-strong">Our Mission</h4>
-               <p style="text-align: justify;">
-                To create a thriving esports ecosystem where players can showcase their skills, 
-                teams can compete at the highest level, and fans can experience the excitement 
-                of world-class gaming events.
-               </p>
-            </div>
-            <div class="s-12 m-6 l-3 xl-2">
-               <h4 class="text-white text-strong margin-m-top-30">Useful Links</h4> 
-               <a class="text-primary-hover" href="index.php">Home</a><br>
-               <a class="text-primary-hover" href="news.php">News</a><br>     
-               <a class="text-primary-hover" href="our-services.php">Contact Us</a><br>
-               <a class="text-primary-hover" href="about-us.php">About Us</a><br>
-            </div>
-            <div class="s-12 m-6 l-3 xl-2">
-               <h4 class="text-white text-strong margin-m-top-30">Term of Use</h4>
-               <a class="text-primary-hover" href="faq.php">FAQ</a><br>
-               <a class="text-primary-hover" href="privacy-policy.php">Privacy Policy</a><br>
-               <a class="text-primary-hover" href="disclaimer.php">Disclaimer</a><br>
-               <a class="text-primary-hover" href="terms-of-use.php">Terms Of Use</a>
-            </div>
-            <div class="s-12 m-6 l-3 xl-3">
-               <h4 class="text-white text-strong margin-m-top-30">Contact Us</h4>
-                <a class="text-primary-hover" href="tel:+977 9864666601"><i class="icon-sli-screen-smartphone text-primary"></i> +977 9864666601</a><br>
-                <a class="text-primary-hover" href="mailto:infiknightesports@gmail.com"><i class="fa-solid fa-envelope text-primary"></i> infiknightesports@gmail.com</a><br>
-                <a class="text-primary-hover" href="https://maps.app.goo.gl/grg9akhzXTNkd1yU7"><i class="fa-solid fa-map-marker-alt text-primary"></i> Bafal Marga, Kathmandu, Nepal</a>
-            </div>
-          </div>  
-        </div>    
-      </section>
-      <div class="background-dark">
-        <hr class="break margin-top-bottom-0" style="border-color: #777;">
-      </div>
-      <!-- Bottom Footer -->
-      <section class="padding-2x background-dark full-width">
-        <div class="full-width">
-          <div class="s-12 l-6">
-            <p class="text-size-16 margin-bottom-0">Copyright 2024 &Sigma;Indra65 , MK38 - BCA 2K22</p>
-            <p class="text-size-12">Copyright 2024 InfiKnight Esports. All Rights Reserved.</p>
-          </div>
-          <div class="s-12 l-6">
-            <a class="right text-size-12 text-primary-hover" href="#" title="Team InfiKnight">Developed by Team <span style="font-size: 25px;">&infin;</span>
-            </a>
-          </div>
-        </div>  
-      </section>
-    </footer>
-    <script type="text/javascript" src="js/responsee.js"></script>
-    <script type="text/javascript" src="owl-carousel/owl.carousel.js"></script>
-    <script type="text/javascript" src="js/template-scripts.js"></script> 
     <script>
     var loader = document.getElementById("preloader");
     window.addEventListener("load", function () {
@@ -344,6 +179,5 @@
       $(this).next("dd").slideToggle(300); //best for responsive toggle
     });
   </script>
-    
-  </body>
-</html>
+
+<?php include('footer.php'); ?>
