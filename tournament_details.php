@@ -520,6 +520,66 @@ $conn->close();
     color: white;
 } */
 
+/* Container for dropdown */
+.br-controls-dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 1000;
+}
+
+.br-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    cursor: pointer;
+    color: #f4f4f9;
+    background-color: #2c2c44;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    border: none;
+    transition: background 0.3s ease;
+}
+.br-btn:hover {
+    background-color: #3a3a5e;
+}
+
+.br-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #1a1a2e;
+    min-width: 220px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px 0;
+}
+
+/* Show dropdown */
+.br-controls-dropdown.show .br-dropdown-content {
+    display: flex;
+}
+
+.br-btn-small {
+    width: 100%;
+    padding: 8px 15px;
+    text-align: left;
+    background: none;
+    border: none;
+    color: #f4f4f9;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.br-btn-small:hover {
+    background-color: #2c2c44;
+}
+
 </style>
 
     <div id="popup-dialog" class="popup-dialog">
@@ -570,7 +630,27 @@ $conn->close();
                         <i class='fa fa-play'></i> Start Game
                     </button>
                     <button class="options"><i class='fa fa-share-alt'></i> Share</button>
-                    <button class="options"><i class="fas fa-cog"></i> Options</button>
+
+<div class="br-controls-dropdown">
+    <button class="br-btn" id="br-options-btn">
+        <i class="fas fa-cog"></i> Options
+    </button>
+    <div class="br-dropdown-content" id="br-dropdown">
+        <button class="br-btn-small" onclick="updateLeaderboard(<?php echo $tournament_id; ?>)">
+            <i class="fas fa-chart-line"></i> Update Leaderboard
+        </button>
+        <button class="br-btn-small" onclick="updateBrackets(<?php echo $tournament_id; ?>)">
+            <i class="fas fa-project-diagram"></i> Update Brackets
+        </button>
+        <button class="br-btn-small" onclick="simulateMatches(<?php echo $tournament_id; ?>)">
+            <i class="fas fa-dice"></i> Simulate Matches
+        </button>
+        <button class="br-btn-small" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+    </div>
+</div>
+
                 </div>
             </div>
 
@@ -688,4 +768,40 @@ $conn->close();
         </div>
     </div>
 <script src="js/tournament.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdownBtn = document.getElementById('br-options-btn');
+    const dropdownContainer = dropdownBtn.parentElement;
+
+    dropdownBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // prevent closing immediately
+        dropdownContainer.classList.toggle('show');
+    });
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function() {
+        dropdownContainer.classList.remove('show');
+    });
+});
+
+// Functions for buttons
+function updateLeaderboard(tournamentId) {
+    fetch('update_br_leaderboard.php?tournament_id=' + tournamentId)
+        .then(res => res.text())
+        .then(() => { alert("✅ Leaderboard updated!"); location.reload(); });
+}
+
+function updateBrackets(tournamentId) {
+    fetch('update_br_brackets.php?tournament_id=' + tournamentId)
+        .then(res => res.text())
+        .then(() => { alert("✅ Brackets updated!"); location.reload(); });
+}
+
+function simulateMatches(tournamentId) {
+    fetch('simulate_matches.php?tournament_id=' + tournamentId)
+        .then(res => res.text())
+        .then(() => { alert("🎲 Matches simulated!"); updateLeaderboard(tournamentId); });
+}
+</script>
+
 <?php include('footer.php'); ?>
