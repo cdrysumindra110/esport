@@ -473,7 +473,64 @@ $conn->close();
           flex-direction: column;
       }
   }
+
+  /* .popup-dialog {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.popup-content {
+    background: #222;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 300px;
+}
+
+.popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.popup-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup-btn.confirm {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.popup-btn.cancel {
+    background-color: #f44336;
+    color: white;
+} */
+
 </style>
+
+    <div id="popup-dialog" class="popup-dialog">
+        <div class="popup-content">
+            <p id="popup-message"></p>
+            <div class="popup-buttons">
+                <button id="popup-confirm" class="popup-btn confirm">OK</button>
+                <button id="popup-cancel" class="popup-btn cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <div class="banner-cont">
         <div class="banner-container">
@@ -493,24 +550,23 @@ $conn->close();
                 <div class="operation-btn">
                     <button class="organizer-actions">
                         <i class='fa fa-gears'></i> Organizer Actions
-                        <ul class="dropdown-menu">
+                    <ul class="dropdown-menu">
                         <li style="margin-bottom: 10px;">
                             <i class='fa fa-edit'></i>
                             <a href="edit_tour.php?tournament_id=<?php echo urlencode($tournament_id); ?>" style="text-decoration: none; color: #007bff;">
-                            Edit Tournament
+                                Edit Tournament
                             </a>
                         </li>
-                        <ul>
-                            <li style="margin-bottom: 10px;">
-                                <a href="javascript:void(0);" style="text-decoration: none; color: #dc3545;" 
-                                    onclick="confirmDelete()">
-                                    <i class="fa fa-trash"></i> Delete Tournament
-                                </a>
-                            </li>
-                        </ul>
-                        </ul>
+                        <li style="margin-bottom: 10px;">
+                            <i class='fa fa-trash'></i>
+                            <a href="javascript:void(0);" style="text-decoration: none; color: #dc3545;" 
+                            onclick="confirmDelete(<?php echo (int)$tournament_id; ?>)">
+                                Delete Tournament
+                            </a>
+                        </li>
+                    </ul>
                     </button>
-                    <button onclick="start_game(<?php echo urlencode($tournament_id); ?>)">
+                    <button onclick="start_game(<?php echo (int)$tournament_id; ?>)">
                         <i class='fa fa-play'></i> Start Game
                     </button>
                     <button class="options"><i class='fa fa-share-alt'></i> Share</button>
@@ -602,7 +658,7 @@ $conn->close();
                                     <!-- Team Name -->
                                     <span style="flex: 1; margin-left: 10px; font-weight: bold;"><?php echo $counter . ". " . htmlspecialchars($participant['team_name']); ?></span>
                                     <!-- Remove Team Button -->
-                                    <button onclick="confirmRemove(<?php echo urlencode($tournament_id); ?>, '<?php echo $match_type; ?>', '<?php echo htmlspecialchars($participant['team_name']); ?>')">
+                                    <button onclick="confirmRemove(<?php echo (int)$tournament_id; ?>, '<?php echo $match_type; ?>', '<?php echo addslashes($participant['team_name']); ?>')">
                                         <i class="fa fa-trash"></i> Remove Team
                                     </button>
                                 </div>
@@ -631,5 +687,5 @@ $conn->close();
             </div>
         </div>
     </div>
-
+<script src="js/tournament.js"></script>
 <?php include('footer.php'); ?>
