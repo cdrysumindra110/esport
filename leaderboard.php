@@ -22,46 +22,202 @@ $stmt->close();
 // Fetch leaderboard participants
 $participants = [];
 if ($match_type == 'solo') {
-    $sql = "SELECT lb.id, sr.player_name AS team_name, lb.kills, lb.placement, lb.total_score
+    $sql = "SELECT lb.id, sr.player_name AS team_name, lb.kills, lb.placement
             FROM leaderboard lb
             JOIN solo_registration sr ON lb.player_id = sr.solo_id
-            WHERE lb.tournament_id=?
-            ORDER BY lb.total_score DESC";
+            WHERE lb.tournament_id=?";
 } elseif ($match_type == 'duo') {
-    $sql = "SELECT lb.id, dr.team_name, lb.kills, lb.placement, lb.total_score
+    $sql = "SELECT lb.id, dr.team_name, lb.kills, lb.placement
             FROM leaderboard lb
             JOIN duo_registration dr ON lb.team_id = dr.duo_id
-            WHERE lb.tournament_id=?
-            ORDER BY lb.total_score DESC";
+            WHERE lb.tournament_id=?";
 } elseif ($match_type == 'squad') {
-    $sql = "SELECT lb.id, sq.team_name, lb.kills, lb.placement, lb.total_score
+    $sql = "SELECT lb.id, sq.team_name, lb.kills, lb.placement
             FROM leaderboard lb
             JOIN squad_registration sq ON lb.team_id = sq.squad_id
-            WHERE lb.tournament_id=?
-            ORDER BY lb.total_score DESC";
+            WHERE lb.tournament_id=?";
 }
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $tournament_id);
 $stmt->execute();
 $res = $stmt->get_result();
+
+// === Algorithm to calculate total_score dynamically ===
 while ($row = $res->fetch_assoc()) {
+    $kills = intval($row['kills']);
+    $placement = intval($row['placement']);
+
+    // Example scoring algorithm
+    $kill_points = 10; // points per kill
+    $placement_points = max(0, 100 - $placement); // higher placement gets more points
+
+    $row['total_score'] = ($kills * $kill_points) + $placement_points;
+
     $participants[] = $row;
 }
 $stmt->close();
 $conn->close();
+
+// Sort participants by total_score descending
+usort($participants, function($a, $b){
+    return $b['total_score'] <=> $a['total_score'];
+});
+
+// Now $participants contains leaderboard data with algorithm-applied scores
 ?>
 
-<div class="container">
-    <header>
+<style>
+:root {
+    --lbr-primary-color: #2c3e50;
+    --lbr-secondary-color: #3498db;
+    --lbr-accent-color: #e74c3c;
+    --lbr-light-color: #ecf0f1;
+    --lbr-dark-color: #2c3e50;
+    --lbr-success-color: #2ecc71;
+    --lbr-warning-color: #f39c12;
+    --lbr-border-radius: 8px;
+    --lbr-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --lbr-transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: var(--lbr-dark-color);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.lbr-container {
+    /* max-width: 1200px; */
+    margin: 0 auto;
+}
+
+.lbr-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--lbr-primary-color), var(--lbr-secondary-color));
+    color: white;
+    border-radius: var(--lbr-border-radius);
+    box-shadow: var(--lbr-box-shadow);
+}
+
+.lbr-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.lbr-groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.lbr-group-card {
+    background: white;
+    border-radius: var(--lbr-border-radius);
+    box-shadow: var(--lbr-box-shadow);
+    overflow: hidden;
+    transition: var(--lbr-transition);
+}
+
+.lbr-group-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.lbr-group-header {
+    background: var(--lbr-primary-color);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.lbr-teams-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.lbr-teams-table th {
+    background-color: var(--lbr-light-color);
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.lbr-teams-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.lbr-teams-table tr:last-child td {
+    border-bottom: none;
+}
+
+.lbr-team-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lbr-team-flag {
+    width: 24px;
+    height: 16px;
+    border-radius: 2px;
+    object-fit: cover;
+}
+
+.lbr-qualified {
+    background-color: rgba(46, 204, 113, 0.1);
+    font-weight: bold;
+    border-left: 5px solid var(--lbr-success-color);
+}
+
+.lbr-eliminated {
+    opacity: 0.6;
+}
+
+.lbr-position {
+    font-weight: bold;
+    width: 30px;
+    text-align: center;
+}
+
+.lbr-points {
+    font-weight: bold;
+    color: var(--lbr-secondary-color);
+}
+
+@media (max-width: 768px) {
+    .lbr-groups-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+<div class="lbr-container">
+    <header class="lbr-header">
         <h1>Battle Royale Championship 2025</h1>
         <p>Group Stage • Points Table & Match Results</p>
     </header>
 
-    <div class="groups-container">
-        <div class="group-card">
-            <div class="group-header">Leaderboard</div>
-            <table class="teams-table">
+    <div class="lbr-groups-container">
+        <div class="lbr-group-card">
+            <div class="lbr-group-header">Leaderboard</div>
+            <table class="lbr-teams-table">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -73,18 +229,17 @@ $conn->close();
                 </thead>
                 <tbody>
                     <?php $rank = 1; foreach($participants as $p): ?>
-                    <tr class="<?php echo ($rank <= 2 ? 'qualified' : 'eliminated'); ?>">
-                        <td class="position"><?php echo $rank++; ?></td>
+                    <tr class="<?php echo ($rank <= 2 ? 'lbr-qualified' : 'lbr-eliminated'); ?>">
+                        <td class="lbr-position"><?php echo $rank++; ?></td>
                         <td>
-                            <div class="team-name">
-                                <!-- Placeholder for flag/logo -->
-                                <img src="https://via.placeholder.com/40" class="team-flag" alt="Team">
+                            <div class="lbr-team-name">
+                                <img src="https://via.placeholder.com/40" class="lbr-team-flag" alt="Team">
                                 <?php echo htmlspecialchars($p['team_name']); ?>
                             </div>
                         </td>
                         <td><?php echo $p['kills']; ?></td>
                         <td><?php echo $p['placement']; ?></td>
-                        <td class="points"><?php echo $p['total_score']; ?></td>
+                        <td class="lbr-points"><?php echo $p['total_score']; ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -92,5 +247,6 @@ $conn->close();
         </div>
     </div>
 </div>
+
 
 <?php include('footer.php'); ?>
