@@ -636,7 +636,7 @@ $conn->close();
         <i class="fas fa-cog"></i> Options
     </button>
     <div class="br-dropdown-content" id="br-dropdown">
-        <button class="br-btn-small" onclick="updateLeaderboard(<?php echo $tournament_id; ?>)">
+        <button class="br-btn-small" onclick="window.location.href='update_br_leaderboard.php?tournament_id=<?php echo $tournament_id; ?>'">
             <i class="fas fa-chart-line"></i> Update Leaderboard
         </button>
         <button class="br-btn-small" onclick="updateBrackets(<?php echo $tournament_id; ?>)">
@@ -785,22 +785,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Functions for buttons
+// Redirect to update leaderboard page
 function updateLeaderboard(tournamentId) {
-    fetch('update_br_leaderboard.php?tournament_id=' + tournamentId)
-        .then(res => res.text())
-        .then(() => { alert("✅ Leaderboard updated!"); location.reload(); });
+    if (!tournamentId || isNaN(tournamentId)) return alert("❌ Invalid tournament ID");
+    window.location.href = 'update_br_leaderboard.php?tournament_id=' + tournamentId;
 }
 
+// Redirect to update brackets page
 function updateBrackets(tournamentId) {
-    fetch('update_br_brackets.php?tournament_id=' + tournamentId)
-        .then(res => res.text())
-        .then(() => { alert("✅ Brackets updated!"); location.reload(); });
+    if (!tournamentId || isNaN(tournamentId)) return alert("❌ Invalid tournament ID");
+    window.location.href = 'update_br_brackets.php?tournament_id=' + tournamentId;
 }
 
+// Redirect to simulate matches page
 function simulateMatches(tournamentId) {
-    fetch('simulate_matches.php?tournament_id=' + tournamentId)
-        .then(res => res.text())
-        .then(() => { alert("🎲 Matches simulated!"); updateLeaderboard(tournamentId); });
+    if (!tournamentId || isNaN(tournamentId)) return alert("❌ Invalid tournament ID");
+    window.location.href = 'simulate_matches.php?tournament_id=' + tournamentId;
 }
 </script>
 
