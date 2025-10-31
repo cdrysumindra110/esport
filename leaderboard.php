@@ -64,7 +64,7 @@ usort($participants, function($a, $b){
     return $b['total_score'] <=> $a['total_score'];
 });
 
-// Now $participants contains leaderboard data with algorithm-applied scores
+
 ?>
 
 <style>
@@ -207,6 +207,21 @@ body {
 }
 
 </style>
+
+    <!-- MAIN -->
+    <main role="main">    
+      <article>
+        <!-- Header -->
+        <header class="section-head background-image" style="background-image:url(./img/full_bg.jpg); background-size: cover; ">
+          <div class="line">
+  
+            <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
+              <center>Leaderboard</center>
+            </h1>
+          </div>
+        </header>
+      </article>  
+    </main>
 
 <div class="lbr-container">
     <header class="lbr-header">
