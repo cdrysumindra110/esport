@@ -117,7 +117,7 @@ body {
 
 .lbr-groups-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
     gap: 25px;
     margin-bottom: 30px;
 }
