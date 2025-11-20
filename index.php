@@ -385,6 +385,31 @@ include('header.php');
               </div>                                                                                                                                                                                                                                          
             </div>                                                                                                                                                                                                                                                                                                                                                                                    
           </div> 
+
+          <div class="item">
+            <!-- Team Member 3 -->
+            <div class="image-with-hover-overlay">
+              <div class="image-hover-overlay background-primary">
+                <div class="image-hover-overlay-content padding">
+                  <!-- Team Member Bio -->
+                  <p>Builds interactive user interfaces and ensures a seamless user experience.</p>
+                </div>
+              </div>
+              <!-- Team Member Photo -->
+              <img src="img/team-03.jpg"/>
+            </div>
+
+            <div class="margin-top">
+              <!-- Team Member Description -->
+              <h4 class="text-strong margin-bottom-10">Milan Khanal</h4>
+              <p class="margin-bottom-10 text-primary text-uppercase">Frontend Developer</p>
+              <div class="line">
+                <a href="#"><i class="icon-linked_in_circle text-primary-hover text-size-25"></i></a>
+                <a href="#"><i class="icon-twitter_circle text-primary-hover text-size-25"></i></a>
+                <a href="https://www.facebook.com/milankhanal.44"><i class="icon-facebook_circle text-primary-hover text-size-25"></i></a>
+              </div>
+            </div>
+          </div>
                                                                                                                                    
         </div>                                                                                                                
       </section>
