@@ -1,22 +1,22 @@
 <?php
 include('header.php');
-include('config.php'); // DB connection
 
-// Check if user is logged in
+// Check if the user is logged in
 if (!isset($_SESSION['isSignin']) || !$_SESSION['isSignin']) {
     header('Location: signin.php');
     exit();
 }
 
-// Get tournament ID and match type
-$tournament_id = isset($_GET['tournament_id']) ? intval($_GET['tournament_id']) : null;
+// Initialize variables for tournament and match type (for form display purposes)
+$tournament_id = isset($_GET['tournament_id']) ? $_GET['tournament_id'] : null;
 $match_type = isset($_GET['match_type']) ? $_GET['match_type'] : null;
 
+// Check if tournament ID or match type is missing in the URL
 if (!$tournament_id || !$match_type) {
     die("Error: Missing tournament ID or match type.");
 }
 
-// Fetch tournament details
+// Fetch tournament details from the database
 $sql = "SELECT 
             t.id, t.selected_game, t.tname, t.sdate, t.stime, t.about, t.bannerimg, 
             b.bracket_type, b.match_type, u.uname AS creator_name 
@@ -24,33 +24,46 @@ $sql = "SELECT
         LEFT JOIN brackets b ON t.id = b.tournament_id
         LEFT JOIN users u ON t.user_id = u.id  
         WHERE t.id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $tournament_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$tournament = $result->fetch_assoc();
-$stmt->close();
 
-if (!$tournament) {
-    die("Tournament not found.");
+$stmt = $conn->prepare($sql);
+if ($stmt) {
+    $stmt->bind_param("i", $tournament_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $tournament = $result->fetch_assoc();
+
+        // Assign variables from the $tournament array
+        $selected_game = $tournament['selected_game'] ?? 'Unknown Game';
+        $tname = $tournament['tname'] ?? 'Unknown Game';
+        $sdate = $tournament['sdate'] ?? '';
+        $stime = $tournament['stime'] ?? '';
+        $about = $tournament['about'] ?? '';
+        $bannerimg = $tournament['bannerimg'] ?? '';
+        $creator_name = $tournament['creator_name'] ?? 'Unknown Creator';
+
+        // Format the date to show month and day in words (keep year as a number)
+        if ($sdate) {
+            $date = new DateTime($sdate);
+            $sdate = $date->format('F j, Y');  // Month name, day, year
+        }
+    } else {
+        $error_message = "No tournament found with that ID.";
+    }
+    $stmt->close();
+} else {
+    $error_message = "Error preparing the tournament detail statement: " . $conn->error;
 }
 
-// Assign variables for display
-$tname = htmlspecialchars($tournament['tname']);
-$sdate = (new DateTime($tournament['sdate']))->format('F j, Y');
-$stime = $tournament['stime'];
-$selected_game = htmlspecialchars($tournament['selected_game'] ?? 'Unknown Game');
 
-// Tournament start datetime
-$tournamentStart = new DateTime($tournament['sdate'] . ' ' . $tournament['stime']);
-$now = new DateTime();
-
-// Function to check if slots are full
+// Check if slots are full for a specific match type
 function checkSlotsFull($tournament_id, $match_type) {
     global $conn;
     $current_count = 0;
     $max_slots = 0;
-
+    
+    // Retrieve the maximum number of slots for the given match type
     $sql = "SELECT solo_players, duo_teams, squad_teams FROM brackets WHERE tournament_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $tournament_id);
@@ -59,13 +72,23 @@ function checkSlotsFull($tournament_id, $match_type) {
     $stmt->fetch();
     $stmt->close();
 
-    if ($match_type == 'solo') $max_slots = $solo_players;
-    elseif ($match_type == 'duo') $max_slots = $duo_teams;
-    elseif ($match_type == 'squad') $max_slots = $squad_teams;
+    // Set max slots based on match type
+    if ($match_type == 'solo') {
+        $max_slots = $solo_players;
+    } elseif ($match_type == 'duo') {
+        $max_slots = $duo_teams;
+    } elseif ($match_type == 'squad') {
+        $max_slots = $squad_teams;
+    }
 
-    if ($match_type == 'solo') $sql = "SELECT COUNT(*) FROM solo_registration WHERE tournament_id = ?";
-    elseif ($match_type == 'duo') $sql = "SELECT COUNT(*) FROM duo_registration WHERE tournament_id = ?";
-    elseif ($match_type == 'squad') $sql = "SELECT COUNT(*) FROM squad_registration WHERE tournament_id = ?";
+    // Check current registrations based on match type
+    if ($match_type == 'solo') {
+        $sql = "SELECT COUNT(*) AS count FROM solo_registration WHERE tournament_id = ?";
+    } elseif ($match_type == 'duo') {
+        $sql = "SELECT COUNT(*) AS count FROM duo_registration WHERE tournament_id = ?";
+    } elseif ($match_type == 'squad') {
+        $sql = "SELECT COUNT(*) AS count FROM squad_registration WHERE tournament_id = ?";
+    }
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $tournament_id);
@@ -77,7 +100,7 @@ function checkSlotsFull($tournament_id, $match_type) {
     return $current_count >= $max_slots;
 }
 
-// Function to upload files
+// Function to handle file upload
 function uploadFile($input_name) {
     if (isset($_FILES[$input_name]) && $_FILES[$input_name]['error'] == 0) {
         $target_dir = "uploads/";
@@ -89,121 +112,152 @@ function uploadFile($input_name) {
     return null;
 }
 
-// Handle POST registration
+// Handle form data when the form is submitted via POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
+    $tournament_id = $_POST['tournament_id'];
+    $match_type = $_POST['match_type'];
 
-    if ($now >= $tournamentStart) {
-        $error_message = "Registration closed. Tournament has already started.";
-    } elseif (checkSlotsFull($tournament_id, $match_type)) {
-        $error_message = "Registration closed. Tournament is full.";
+    // Check if the slots are full for the match type
+    if (checkSlotsFull($tournament_id, $match_type)) {
+        $error_message = "Registration is closed as the tournament is full.";
     } else {
         try {
-            // SOLO registration
             if ($match_type == "solo") {
                 $player_name = $_POST['solo_name'];
                 $email = $_POST['solo_email'];
-
-                $stmt = $conn->prepare("SELECT * FROM solo_registration WHERE tournament_id = ? AND email = ?");
+                
+                // Check if the player already registered
+                $sql = "SELECT * FROM solo_registration WHERE tournament_id = ? AND email = ?";
+                $stmt = $conn->prepare($sql);
                 $stmt->bind_param("is", $tournament_id, $email);
                 $stmt->execute();
                 $result = $stmt->get_result();
-                if ($result->num_rows > 0) $error_message = "You have already registered.";
-                else {
+                if ($result->num_rows > 0) {
+                    $error_message = "You have already registered for this tournament.";
+                } else {
                     $ign = $_POST['solo_ign'];
                     $logo_path = uploadFile('solo_logo');
-                    $stmt = $conn->prepare("INSERT INTO solo_registration (tournament_id, player_name, email, ign, logo_path) VALUES (?, ?, ?, ?, ?)");
+
+                    $sql = "INSERT INTO solo_registration (tournament_id, player_name, email, ign, logo_path)
+                            VALUES (?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
                     $stmt->bind_param("issss", $tournament_id, $player_name, $email, $ign, $logo_path);
                     $stmt->execute();
                     $stmt->close();
                     $success_message = "Solo registration successful.";
-                }
             }
 
-            // DUO registration
-            elseif ($match_type == "duo") {
-                $team_name = $_POST['duo_name'];
-                $mentor_name = $_POST['duo_mentor'];
-                $email = $_POST['duo_email'];
+        } elseif ($match_type == "duo") {
+            $team_name = $_POST['duo_name'];
+            $mentor_name = $_POST['duo_mentor'];
+            $email = $_POST['duo_email'];
 
-                $stmt = $conn->prepare("SELECT * FROM duo_registration WHERE tournament_id = ? AND email = ?");
-                $stmt->bind_param("is", $tournament_id, $email);
+            // Check if the team already registered
+            $sql = "SELECT * FROM duo_registration WHERE tournament_id = ? AND email = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("is", $tournament_id, $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $error_message = "You have already registered for this tournament.";
+            } else {
+                $logo_path = uploadFile('duo_logo');
+                $sql = "INSERT INTO duo_registration (tournament_id, team_name, mentor_name, email, logo_path)
+                        VALUES (?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("issss", $tournament_id, $team_name, $mentor_name, $email, $logo_path);
                 $stmt->execute();
-                $result = $stmt->get_result();
-                if ($result->num_rows > 0) $error_message = "You have already registered.";
-                else {
-                    $logo_path = uploadFile('duo_logo');
-                    $stmt = $conn->prepare("INSERT INTO duo_registration (tournament_id, team_name, mentor_name, email, logo_path) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->bind_param("issss", $tournament_id, $team_name, $mentor_name, $email, $logo_path);
+                
+                $duo_id = $stmt->insert_id;
+                $stmt->close();
+
+                // Insert players for duo match type
+                $players = [
+                    ['name' => $_POST['duop1_name'], 'email' => $_POST['duop1_email'], 'role' => $_POST['duop1_role'], 'ign' => $_POST['duop1_ign']],
+                    ['name' => $_POST['duop2_name'], 'email' => $_POST['duop2_email'], 'role' => $_POST['duop2_role'], 'ign' => $_POST['duop2_ign']]
+                ];
+
+                foreach ($players as $player) {
+                    $sql = "INSERT INTO duo_players (duo_id, name, email, role, ign) VALUES (?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("issss", $duo_id, $player['name'], $player['email'], $player['role'], $player['ign']);
                     $stmt->execute();
-                    $duo_id = $stmt->insert_id;
                     $stmt->close();
-
-                    $players = [
-                        ['name'=>$_POST['duop1_name'], 'email'=>$_POST['duop1_email'], 'role'=>$_POST['duop1_role'], 'ign'=>$_POST['duop1_ign']],
-                        ['name'=>$_POST['duop2_name'], 'email'=>$_POST['duop2_email'], 'role'=>$_POST['duop2_role'], 'ign'=>$_POST['duop2_ign']]
-                    ];
-
-                    foreach ($players as $p) {
-                        $stmt = $conn->prepare("INSERT INTO duo_players (duo_id, name, email, role, ign) VALUES (?, ?, ?, ?, ?)");
-                        $stmt->bind_param("issss", $duo_id, $p['name'], $p['email'], $p['role'], $p['ign']);
-                        $stmt->execute();
-                        $stmt->close();
-                    }
-                    $success_message = "Duo registration successful.";
                 }
+                $success_message = "Duo registration successful.";
             }
 
-            // SQUAD registration
-            elseif ($match_type == "squad") {
-                $team_name = $_POST['sqd_name'];
-                $mentor_name = $_POST['sqd_mentor'];
-                $email = $_POST['sqd_email'];
+        } elseif ($match_type == "squad") {
+            $team_name = $_POST['sqd_name'];
+            $mentor_name = $_POST['sqd_mentor'];
+            $email = $_POST['sqd_email'];
 
-                $stmt = $conn->prepare("SELECT * FROM squad_registration WHERE tournament_id = ? AND email = ?");
-                $stmt->bind_param("is", $tournament_id, $email);
+            // Check if the team already registered
+            $sql = "SELECT * FROM squad_registration WHERE tournament_id = ? AND email = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("is", $tournament_id, $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $error_message = "You have already registered for this tournament.";
+            } else {
+                $logo_path = uploadFile('sqd_logo');
+                $sql = "INSERT INTO squad_registration (tournament_id, team_name, mentor_name, email, logo_path)
+                        VALUES (?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("issss", $tournament_id, $team_name, $mentor_name, $email, $logo_path);
                 $stmt->execute();
-                $result = $stmt->get_result();
-                if ($result->num_rows > 0) $error_message = "You have already registered.";
-                else {
-                    $logo_path = uploadFile('sqd_logo');
-                    $stmt = $conn->prepare("INSERT INTO squad_registration (tournament_id, team_name, mentor_name, email, logo_path) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->bind_param("issss", $tournament_id, $team_name, $mentor_name, $email, $logo_path);
+
+                $squad_id = $stmt->insert_id;
+                $stmt->close();
+
+                // Insert players for squad match type
+                $players = [
+                    ['name' => $_POST['sqdp1_name'], 'email' => $_POST['sqdp1_email'], 'role' => $_POST['sqdp1_role'], 'ign' => $_POST['sqdp1_ign']],
+                    ['name' => $_POST['sqdp2_name'], 'email' => $_POST['sqdp2_email'], 'role' => $_POST['sqdp2_role'], 'ign' => $_POST['sqdp2_ign']],
+                    ['name' => $_POST['sqdp3_name'], 'email' => $_POST['sqdp3_email'], 'role' => $_POST['sqdp3_role'], 'ign' => $_POST['sqdp3_ign']],
+                    ['name' => $_POST['sqdp4_name'], 'email' => $_POST['sqdp4_email'], 'role' => $_POST['sqdp4_role'], 'ign' => $_POST['sqdp4_ign']],
+                    ['name' => $_POST['sqdsb_name'], 'email' => $_POST['sqdsb_email'], 'role' => $_POST['sqdsb_role'], 'ign' => $_POST['sqdsb_ign']]
+                ];
+
+                foreach ($players as $player) {
+                    $sql = "INSERT INTO squad_players (squad_id, name, email, role, ign) VALUES (?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("issss", $squad_id, $player['name'], $player['email'], $player['role'], $player['ign']);
                     $stmt->execute();
-                    $squad_id = $stmt->insert_id;
                     $stmt->close();
-
-                    $players = [
-                        ['name'=>$_POST['sqdp1_name'], 'email'=>$_POST['sqdp1_email'], 'role'=>$_POST['sqdp1_role'], 'ign'=>$_POST['sqdp1_ign']],
-                        ['name'=>$_POST['sqdp2_name'], 'email'=>$_POST['sqdp2_email'], 'role'=>$_POST['sqdp2_role'], 'ign'=>$_POST['sqdp2_ign']],
-                        ['name'=>$_POST['sqdp3_name'], 'email'=>$_POST['sqdp3_email'], 'role'=>$_POST['sqdp3_role'], 'ign'=>$_POST['sqdp3_ign']],
-                        ['name'=>$_POST['sqdp4_name'], 'email'=>$_POST['sqdp4_email'], 'role'=>$_POST['sqdp4_role'], 'ign'=>$_POST['sqdp4_ign']],
-                        ['name'=>$_POST['sqdsb_name'], 'email'=>$_POST['sqdsb_email'], 'role'=>$_POST['sqdsb_role'], 'ign'=>$_POST['sqdsb_ign']]
-                    ];
-
-                    foreach ($players as $p) {
-                        $stmt = $conn->prepare("INSERT INTO squad_players (squad_id, name, email, role, ign) VALUES (?, ?, ?, ?, ?)");
-                        $stmt->bind_param("issss", $squad_id, $p['name'], $p['email'], $p['role'], $p['ign']);
-                        $stmt->execute();
-                        $stmt->close();
-                    }
-                    $success_message = "Squad registration successful.";
                 }
+                $success_message = "Squad registration successful.";
             }
-
-            if (!isset($error_message)) {
-                header("Location: success.php?tournament_id=" . $tournament_id);
-                exit;
-            }
-
-        } catch (Exception $e) {
-            $error_message = "Registration failed: " . $e->getMessage();
         }
+
+        // Redirect to success page if no errors occurred
+        if (!$error_message) {
+            header("Location: success.php?tournament_id=" . $tournament_id);
+            exit;
+        }
+
+    } catch (Exception $e) {
+        $error_message = "Registration failed: " . $e->getMessage();
     }
 }
 
+// Function to handle file upload
+function uploadFile($input_name) {
+    if (isset($_FILES[$input_name]) && $_FILES[$input_name]['error'] == 0) {
+        $target_dir = "uploads/";
+        $file_path = $target_dir . basename($_FILES[$input_name]["name"]);
+        if (move_uploaded_file($_FILES[$input_name]["tmp_name"], $file_path)) {
+            return $file_path;
+        }
+    }
+    return null;
+}
+}
+// Close the database connection
 $conn->close();
 ?>
-
 
 
 <link rel="stylesheet" href="css/tour_org.css">
@@ -534,32 +588,36 @@ $conn->close();
 
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++Form containrerer+++++++++++++++++++++++++++++++++++ -->
     
-<!-- Tournament HTML -->
 <div class="tournament-reg_container">
     <div class="content">
         <h1 style="color:aqua">Drop In. Gear Up. Take Over.</h1>
-        <h2><?php echo $tname; ?> (<?php echo $selected_game; ?>)</h2>
+        <h2><?php echo htmlspecialchars($tname); ?></h2>
         <br>
         <h2>JOIN US FOR THIS EXCLUSIVE LIVE EVENT</h2>
-        <h1 style="color:aliceblue"><?php echo $sdate; ?> at <?php echo $stime; ?></h1>
+        <h1 style="color:aliceblue"><?php echo htmlspecialchars($sdate); ?> at <?php echo htmlspecialchars($stime); ?></h1>
+        <!-- <a href="#" class="ctn_btn" >CLAIM MY SPOT!</a> -->
         <button class="ctn_btn" onclick="joinGame(<?php echo $tournament_id; ?>)">Already Registered</button>
         <br><br>
         <h3 style="color:white">THE TOURNAMENT STARTS IN:</h3>
         <div class="countdown">
             <div class="time-section">
-                <div id="days">0</div><span>Days</span>
+                <div id="days">0</div>
+                <span>Days</span>
             </div>
             <div class="separator">:</div>
             <div class="time-section">
-                <div id="hours">0</div><span>Hours</span>
+                <div id="hours">0</div>
+                <span>Hours</span>
             </div>
             <div class="separator">:</div>
             <div class="time-section">
-                <div id="minutes">0</div><span>Minutes</span>
+                <div id="minutes">0</div>
+                <span>Minutes</span>
             </div>
             <div class="separator">:</div>
             <div class="time-section">
-                <div id="seconds">0</div><span>Seconds</span>
+                <div id="seconds">0</div>
+                <span>Seconds</span>
             </div>
         </div>
     </div>
@@ -776,29 +834,25 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script>
-let countDownDate = new Date("<?php echo $tournament['sdate'] . ' ' . $tournament['stime']; ?>").getTime();
+        // Countdown function
+        function updateCountdown() {
+            var eventDate = new Date('<?php echo $sdate; ?> ' + '<?php echo $stime; ?>');
+            var now = new Date().getTime();
+            var timeLeft = eventDate - now;
 
-let countdownFunction = setInterval(function() {
-    let now = new Date().getTime();
-    let distance = countDownDate - now;
+            var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    if (distance <= 0) {
-        clearInterval(countdownFunction);
-        document.querySelector(".countdown").innerHTML = "<h2 style='color:yellow'>Tournament Started!</h2>";
-        return;
-    }
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+        }
 
-    let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById("days").innerText = days;
-    document.getElementById("hours").innerText = hours;
-    document.getElementById("minutes").innerText = minutes;
-    document.getElementById("seconds").innerText = seconds;
-
-}, 1000);
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
 
 
         // Show image preview
