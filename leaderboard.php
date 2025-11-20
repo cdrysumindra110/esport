@@ -19,20 +19,19 @@ if ($res->num_rows) {
 }
 $stmt->close();
 
-// Fetch leaderboard participants
-$participants = [];
+// Fetch leaderboard participants including logo_path
 if ($match_type == 'solo') {
-    $sql = "SELECT lb.id, sr.player_name AS team_name, lb.kills, lb.placement
+    $sql = "SELECT lb.id, sr.player_name AS team_name, sr.logo_path, lb.kills, lb.placement
             FROM leaderboard lb
             JOIN solo_registration sr ON lb.player_id = sr.solo_id
             WHERE lb.tournament_id=?";
 } elseif ($match_type == 'duo') {
-    $sql = "SELECT lb.id, dr.team_name, lb.kills, lb.placement
+    $sql = "SELECT lb.id, dr.team_name, dr.logo_path, lb.kills, lb.placement
             FROM leaderboard lb
             JOIN duo_registration dr ON lb.team_id = dr.duo_id
             WHERE lb.tournament_id=?";
 } elseif ($match_type == 'squad') {
-    $sql = "SELECT lb.id, sq.team_name, lb.kills, lb.placement
+    $sql = "SELECT lb.id, sq.team_name, sq.logo_path, lb.kills, lb.placement
             FROM leaderboard lb
             JOIN squad_registration sq ON lb.team_id = sq.squad_id
             WHERE lb.tournament_id=?";
@@ -43,19 +42,26 @@ $stmt->bind_param("i", $tournament_id);
 $stmt->execute();
 $res = $stmt->get_result();
 
-// === Algorithm to calculate total_score dynamically ===
+// Calculate total_score dynamically
+$P_max = 100;
+$K_weight = 10;
+
+$participants = [];
 while ($row = $res->fetch_assoc()) {
     $kills = intval($row['kills']);
     $placement = intval($row['placement']);
+    $KS = $kills * $K_weight;
+    $PS = max(0, $P_max - $placement);
+    $row['total_score'] = $KS + $PS;
 
-    // Example scoring algorithm
-    $kill_points = 10; // points per kill
-    $placement_points = max(0, 100 - $placement); // higher placement gets more points
-
-    $row['total_score'] = ($kills * $kill_points) + $placement_points;
+    // Ensure logo_path fallback if not uploaded
+    if (empty($row['logo_path'])) {
+        $row['logo_path'] = "https://via.placeholder.com/40";
+    }
 
     $participants[] = $row;
 }
+
 $stmt->close();
 $conn->close();
 
@@ -63,8 +69,6 @@ $conn->close();
 usort($participants, function($a, $b){
     return $b['total_score'] <=> $a['total_score'];
 });
-
-
 ?>
 
 <style>
@@ -248,7 +252,9 @@ body {
                         <td class="lbr-position"><?php echo $rank++; ?></td>
                         <td>
                             <div class="lbr-team-name">
-                                <img src="https://via.placeholder.com/40" class="lbr-team-flag" alt="Team">
+                                <img src="<?php echo !empty($p['logo_path']) ? htmlspecialchars($p['logo_path']) : 'https://via.placeholder.com/40'; ?>" 
+                                    class="lbr-team-flag" 
+                                    alt="<?php echo htmlspecialchars($p['team_name']); ?>">
                                 <?php echo htmlspecialchars($p['team_name']); ?>
                             </div>
                         </td>

@@ -631,25 +631,25 @@ $conn->close();
                     </button>
                     <button class="options"><i class='fa fa-share-alt'></i> Share</button>
 
-<div class="br-controls-dropdown">
-    <button class="br-btn" id="br-options-btn">
-        <i class="fas fa-cog"></i> Options
-    </button>
-    <div class="br-dropdown-content" id="br-dropdown">
-        <button class="br-btn-small" onclick="window.location.href='update_br_leaderboard.php?tournament_id=<?php echo $tournament_id; ?>'">
-            <i class="fas fa-chart-line"></i> Update Leaderboard
+    <div class="br-controls-dropdown">
+        <button class="br-btn" id="br-options-btn">
+            <i class="fas fa-cog"></i> Options
         </button>
-        <button class="br-btn-small" onclick="updateBrackets(<?php echo $tournament_id; ?>)">
-            <i class="fas fa-project-diagram"></i> Update Brackets
-        </button>
-        <button class="br-btn-small" onclick="simulateMatches(<?php echo $tournament_id; ?>)">
-            <i class="fas fa-dice"></i> Simulate Matches
-        </button>
-        <button class="br-btn-small" onclick="location.reload()">
-            <i class="fas fa-sync-alt"></i> Refresh
-        </button>
+        <div class="br-dropdown-content" id="br-dropdown">
+            <button class="br-btn-small" onclick="window.location.href='update_br_leaderboard.php?tournament_id=<?php echo $tournament_id; ?>'">
+                <i class="fas fa-chart-line"></i> Update Leaderboard
+            </button>
+            <button class="br-btn-small" onclick="updateBrackets(<?php echo $tournament_id; ?>)">
+                <i class="fas fa-project-diagram"></i> Update Brackets
+            </button>
+            <button class="br-btn-small" onclick="simulateMatches(<?php echo $tournament_id; ?>)">
+                <i class="fas fa-dice"></i> Simulate Matches
+            </button>
+            <button class="br-btn-small" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
     </div>
-</div>
 
                 </div>
             </div>
@@ -784,24 +784,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Functions for buttons
-// Redirect to update leaderboard page
-function updateLeaderboard(tournamentId) {
-    if (!tournamentId || isNaN(tournamentId)) return alert("❌ Invalid tournament ID");
-    window.location.href = 'update_br_leaderboard.php?tournament_id=' + tournamentId;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const brBtn = document.getElementById('br-options-btn');
+    const brDropdownWrapper = brBtn.closest('.br-controls-dropdown');
 
-// Redirect to update brackets page
-function updateBrackets(tournamentId) {
-    if (!tournamentId || isNaN(tournamentId)) return alert("❌ Invalid tournament ID");
-    window.location.href = 'update_br_brackets.php?tournament_id=' + tournamentId;
-}
+    brBtn.addEventListener('click', () => {
+        // Toggle 'show' class on the wrapper
+        brDropdownWrapper.classList.toggle('show');
+    });
 
-// Redirect to simulate matches page
-function simulateMatches(tournamentId) {
-    if (!tournamentId || isNaN(tournamentId)) return alert("❌ Invalid tournament ID");
-    window.location.href = 'simulate_matches.php?tournament_id=' + tournamentId;
-}
+    // Optional: close dropdown if clicked outside
+    document.addEventListener('click', (e) => {
+        if (!brDropdownWrapper.contains(e.target)) {
+            brDropdownWrapper.classList.remove('show');
+        }
+    });
+});
 </script>
 
 <?php include('footer.php'); ?>
