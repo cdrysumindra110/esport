@@ -64,36 +64,3 @@ function confirmDelete(tournamentId) {
         window.location.href = "delete_tour.php?tournament_id=" + encodeURIComponent(tournamentId);
     }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const dropdownBtn = document.getElementById('br-options-btn');
-    const dropdownContainer = document.querySelector('.br-controls-dropdown');
-
-    dropdownBtn.addEventListener('click', function(e) {
-        e.stopPropagation(); // prevent window click from immediately closing
-        dropdownContainer.classList.toggle('show');
-    });
-
-    window.addEventListener('click', function() {
-        dropdownContainer.classList.remove('show');
-    });
-});
-
-// Functions for buttons
-function updateLeaderboard(tournamentId) {
-    fetch('update_br_leaderboard.php?tournament_id=' + tournamentId)
-        .then(res => res.text())
-        .then(() => { alert("✅ Leaderboard updated!"); location.reload(); });
-}
-
-function updateBrackets(tournamentId) {
-    fetch('update_br_brackets.php?tournament_id=' + tournamentId)
-        .then(res => res.text())
-        .then(() => { alert("✅ Brackets updated!"); location.reload(); });
-}
-
-function simulateMatches(tournamentId) {
-    fetch('simulate_matches.php?tournament_id=' + tournamentId)
-        .then(res => res.text())
-        .then(() => { alert("🎲 Matches simulated!"); updateLeaderboard(tournamentId); });
-}
