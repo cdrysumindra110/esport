@@ -1,190 +1,273 @@
-<?php 
+<?php
 include('header.php');
+
+if (!isset($_GET['tournament_id']) || !is_numeric($_GET['tournament_id'])) {
+    die("Error: Tournament ID not provided.");
+}
+
+$tournament_id = intval($_GET['tournament_id']);
+include('config.php'); // DB connection
+
+// Fetch match type
+$match_type = 'solo';
+$stmt = $conn->prepare("SELECT match_type FROM brackets WHERE tournament_id=? LIMIT 1");
+$stmt->bind_param("i", $tournament_id);
+$stmt->execute();
+$res = $stmt->get_result();
+if ($res->num_rows) {
+    $match_type = $res->fetch_assoc()['match_type'];
+}
+$stmt->close();
+
+// Fetch leaderboard participants including logo_path
+if ($match_type == 'solo') {
+    $sql = "SELECT lb.id, sr.player_name AS team_name, sr.logo_path, lb.kills, lb.placement
+            FROM leaderboard lb
+            JOIN solo_registration sr ON lb.player_id = sr.solo_id
+            WHERE lb.tournament_id=?";
+} elseif ($match_type == 'duo') {
+    $sql = "SELECT lb.id, dr.team_name, dr.logo_path, lb.kills, lb.placement
+            FROM leaderboard lb
+            JOIN duo_registration dr ON lb.team_id = dr.duo_id
+            WHERE lb.tournament_id=?";
+} elseif ($match_type == 'squad') {
+    $sql = "SELECT lb.id, sq.team_name, sq.logo_path, lb.kills, lb.placement
+            FROM leaderboard lb
+            JOIN squad_registration sq ON lb.team_id = sq.squad_id
+            WHERE lb.tournament_id=?";
+}
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $tournament_id);
+$stmt->execute();
+$res = $stmt->get_result();
+
+// Calculate total_score dynamically
+$P_max = 100;
+$K_weight = 10;
+
+$participants = [];
+while ($row = $res->fetch_assoc()) {
+    $kills = intval($row['kills']);
+    $placement = intval($row['placement']);
+    $KS = $kills * $K_weight;
+    $PS = max(0, $P_max - $placement);
+    $row['total_score'] = $KS + $PS;
+
+    // Ensure logo_path fallback if not uploaded
+    if (empty($row['logo_path'])) {
+        $row['logo_path'] = "https://via.placeholder.com/40";
+    }
+
+    $participants[] = $row;
+}
+
+$stmt->close();
+$conn->close();
+
+// Sort participants by total_score descending
+usort($participants, function($a, $b){
+    return $b['total_score'] <=> $a['total_score'];
+});
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BR Tournament Group Stage</title>
 <style>
 :root {
-    --br-primary: #1f1f2e;
-    --br-secondary: #ff6f61;
-    --br-accent: #ffd700;
-    --br-light: #f4f4f9;
-    --br-dark: #0f0f1a;
-    --br-success: #2ecc71;
-    --br-warning: #f39c12;
-    --br-border-radius: 10px;
-    --br-box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    --br-transition: all 0.3s ease;
+    --lbr-primary-color: #2c3e50;
+    --lbr-secondary-color: #3498db;
+    --lbr-accent-color: #e74c3c;
+    --lbr-light-color: #ecf0f1;
+    --lbr-dark-color: #2c3e50;
+    --lbr-success-color: #2ecc71;
+    --lbr-warning-color: #f39c12;
+    --lbr-border-radius: 8px;
+    --lbr-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --lbr-transition: all 0.3s ease;
 }
 
-* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-/* body {
-    background-color: #12121f;
-    color: var(--br-light);
-    padding: 20px;
+body {
+    background-color: #f5f7fa;
+    color: var(--lbr-dark-color);
     line-height: 1.6;
+    padding: 20px;
 }
 
-.br-container { max-width: 1200px; margin: 0 auto; } */
+.lbr-container {
+    /* max-width: 1200px; */
+    margin: 0 auto;
+}
 
-.br-header {
+.lbr-header {
     text-align: center;
     margin-bottom: 30px;
     padding: 20px;
-    background: linear-gradient(135deg, var(--br-primary), var(--br-secondary));
-    color: var(--br-light);
-    border-radius: var(--br-border-radius);
-    box-shadow: var(--br-box-shadow);
+    background: linear-gradient(135deg, var(--lbr-primary-color), var(--lbr-secondary-color));
+    color: white;
+    border-radius: var(--lbr-border-radius);
+    box-shadow: var(--lbr-box-shadow);
 }
 
-.br-header h1 { font-size: 2.5rem; margin-bottom: 10px; }
-.br-tournament-info { display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-top:15px; }
-.br-info-item { background: rgba(255,255,255,0.1); padding:8px 15px; border-radius:20px; font-size:0.9rem; }
+.lbr-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
 
-.br-groups { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap:25px; margin-bottom:30px; }
-.br-group-card { background: var(--br-dark); border-radius: var(--br-border-radius); box-shadow: var(--br-box-shadow); overflow:hidden; transition: var(--br-transition); }
-.br-group-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.35); }
+.lbr-groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
 
-.br-group-header { background: var(--br-primary); color: var(--br-light); padding:15px; text-align:center; font-weight:bold; font-size:1.2rem; }
+.lbr-group-card {
+    background: white;
+    border-radius: var(--lbr-border-radius);
+    box-shadow: var(--lbr-box-shadow);
+    overflow: hidden;
+    transition: var(--lbr-transition);
+}
 
-.br-teams-table { width:100%; border-collapse: collapse; }
-.br-teams-table th { background-color: var(--br-dark); padding:12px 8px; text-align:left; font-weight:600; font-size:0.9rem; color: var(--br-light);}
-.br-teams-table td { padding:12px 8px; border-bottom: 1px solid #333; }
+.lbr-group-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
 
-.br-team-name { display:flex; align-items:center; gap:10px; }
-.br-team-flag { width:24px; height:16px; border-radius:2px; object-fit:cover; }
+.lbr-group-header {
+    background: var(--lbr-primary-color);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
 
-.br-qualified { background-color: rgba(46,204,113,0.1); font-weight:bold; }
-.br-qualified .br-position { color: var(--br-success); }
-.br-eliminated { opacity:0.5; }
+.lbr-teams-table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-.br-position { font-weight:bold; width:30px; text-align:center; }
-.br-points { font-weight:bold; color: var(--br-secondary); }
+.lbr-teams-table th {
+    background-color: var(--lbr-light-color);
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
 
-.br-matches { margin-top:40px; }
-.br-matches-header { text-align:center; margin-bottom:20px; color: var(--br-secondary); font-size:1.5rem; }
+.lbr-teams-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eee;
+}
 
-.br-matches-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(350px,1fr)); gap:20px; }
-.br-match-card { background: var(--br-dark); border-radius: var(--br-border-radius); box-shadow: var(--br-box-shadow); padding:15px; display:flex; flex-direction:column; gap:10px; transition: var(--br-transition); }
-.br-match-card:hover { transform: translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.3); }
+.lbr-teams-table tr:last-child td {
+    border-bottom: none;
+}
 
-.br-match-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid #333; font-size:0.9rem; color:#aaa; }
-.br-match-teams { display:flex; justify-content:space-between; align-items:center; }
-.br-team { display:flex; align-items:center; gap:10px; width:45%; }
-.br-team-home { justify-content:flex-start; }
-.br-team-away { justify-content:flex-end; flex-direction:row-reverse; text-align:right; }
-.br-team-logo { width:32px; height:32px; border-radius:50%; object-fit:cover; }
-.br-score { font-weight:bold; font-size:1.2rem; min-width:60px; text-align:center; padding:5px 10px; background: var(--br-dark); border-radius: var(--br-border-radius); }
-.br-match-status { display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:#aaa; }
-.br-status-live { color: var(--br-accent); font-weight:bold; display:flex; align-items:center; gap:5px; }
-.br-status-live::before { content:""; width:8px; height:8px; background: var(--br-accent); border-radius:50%; display:inline-block; animation:pulse 1.5s infinite; }
-@keyframes pulse { 0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;} }
+.lbr-team-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-.br-controls { display:flex; justify-content:center; gap:15px; margin:30px 0; flex-wrap:wrap; }
-.br-btn { padding:10px 20px; border:none; border-radius:var(--br-border-radius); background: var(--br-secondary); color:white; font-weight:bold; cursor:pointer; display:flex; align-items:center; gap:8px; transition: var(--br-transition);}
-.br-btn:hover { background: #e65c50; transform: translateY(-2px); }
-.br-btn-outline { background:transparent; border:2px solid var(--br-secondary); color:var(--br-secondary); }
-.br-btn-outline:hover { background: var(--br-secondary); color:white; }
+.lbr-team-flag {
+    width: 24px;
+    height: 16px;
+    border-radius: 2px;
+    object-fit: cover;
+}
 
-footer { text-align:center; margin-top:50px; padding:20px; color:#777; font-size:0.9rem; }
+.lbr-qualified {
+    background-color: rgba(46, 204, 113, 0.1);
+    font-weight: bold;
+    border-left: 5px solid var(--lbr-success-color);
+}
 
-@media(max-width:768px){ .br-groups{ grid-template-columns:1fr; } .br-matches-grid{ grid-template-columns:1fr; } }
-@media(max-width:480px){ .br-match-teams{ flex-direction:column; gap:10px; } .br-team{ width:100%; justify-content:center; } .br-team-away{ flex-direction:row; text-align:left; } .br-score{ order:-1; } }
+.lbr-eliminated {
+    opacity: 0.6;
+}
+
+.lbr-position {
+    font-weight: bold;
+    width: 30px;
+    text-align: center;
+}
+
+.lbr-points {
+    font-weight: bold;
+    color: var(--lbr-secondary-color);
+}
+
+@media (max-width: 768px) {
+    .lbr-groups-container {
+        grid-template-columns: 1fr;
+    }
+}
 
 </style>
-</head>
-<body>
 
-<div class="br-container">
+    <!-- MAIN -->
+    <main role="main">    
+      <article>
+        <!-- Header -->
+        <header class="section-head background-image" style="background-image:url(./img/full_bg.jpg); background-size: cover; ">
+          <div class="line">
+  
+            <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
+              <center>Leaderboard</center>
+            </h1>
+          </div>
+        </header>
+      </article>  
+    </main>
 
-    <header class="br-header">
-        <h1>BR Royale Tournament 2025</h1>
-        <p>Group Stage Standings & Matches</p>
-        <div class="br-tournament-info">
-            <div class="br-info-item">32 Teams</div>
-            <div class="br-info-item">8 Groups</div>
-            <div class="br-info-item">Top 2 Advance</div>
-        </div>
+<div class="lbr-container">
+    <header class="lbr-header">
+        <h1>Battle Royale Championship 2025</h1>
+        <p>Group Stage • Points Table & Match Results</p>
     </header>
 
-    <div class="br-controls">
-        <button class="br-btn">Simulate Matches</button>
-        <button class="br-btn br-btn-outline">Add Custom Team</button>
-    </div>
-
-    <div class="br-groups">
-        <!-- Example Group Card -->
-        <div class="br-group-card">
-            <div class="br-group-header">Group A</div>
-            <table class="br-teams-table">
+    <div class="lbr-groups-container">
+        <div class="lbr-group-card">
+            <div class="lbr-group-header">Leaderboard</div>
+            <table class="lbr-teams-table">
                 <thead>
                     <tr>
-                        <th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th>
+                        <th>#</th>
+                        <th>Team / Player</th>
+                        <th>Kills</th>
+                        <th>Placement</th>
+                        <th>Total Score</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="br-qualified">
-                        <td class="br-position">1</td>
-                        <td><div class="br-team-name"><img src="https://flagcdn.com/w40/gb.png" class="br-team-flag" alt="UK"> Alpha Squad</div></td>
-                        <td>4</td><td>3</td><td>1</td><td>0</td><td>+5</td><td class="br-points">10</td>
+                    <?php $rank = 1; foreach($participants as $p): ?>
+                    <tr class="<?php echo ($rank <= 2 ? 'lbr-qualified' : 'lbr-eliminated'); ?>">
+                        <td class="lbr-position"><?php echo $rank++; ?></td>
+                        <td>
+                            <div class="lbr-team-name">
+                                <img src="<?php echo !empty($p['logo_path']) ? htmlspecialchars($p['logo_path']) : 'https://via.placeholder.com/40'; ?>" 
+                                    class="lbr-team-flag" 
+                                    alt="<?php echo htmlspecialchars($p['team_name']); ?>">
+                                <?php echo htmlspecialchars($p['team_name']); ?>
+                            </div>
+                        </td>
+                        <td><?php echo $p['kills']; ?></td>
+                        <td><?php echo $p['placement']; ?></td>
+                        <td class="lbr-points"><?php echo $p['total_score']; ?></td>
                     </tr>
-                    <tr class="br-qualified">
-                        <td class="br-position">2</td>
-                        <td><div class="br-team-name"><img src="https://flagcdn.com/w40/es.png" class="br-team-flag" alt="ES"> Bravo Unit</div></td>
-                        <td>4</td><td>2</td><td>2</td><td>0</td><td>+3</td><td class="br-points">8</td>
-                    </tr>
-                    <tr>
-                        <td class="br-position">3</td>
-                        <td><div class="br-team-name"><img src="https://flagcdn.com/w40/it.png" class="br-team-flag" alt="IT"> Charlie Crew</div></td>
-                        <td>4</td><td>1</td><td>1</td><td>2</td><td>-1</td><td class="br-points">4</td>
-                    </tr>
-                    <tr class="br-eliminated">
-                        <td class="br-position">4</td>
-                        <td><div class="br-team-name"><img src="https://flagcdn.com/w40/nl.png" class="br-team-flag" alt="NL"> Delta Force</div></td>
-                        <td>4</td><td>0</td><td>0</td><td>4</td><td>-7</td><td class="br-points">0</td>
-                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-        <!-- Add more groups here... -->
     </div>
-
-    <div class="br-matches">
-        <h2 class="br-matches-header">Recent & Upcoming Matches</h2>
-        <div class="br-matches-grid">
-            <!-- Example Match -->
-            <div class="br-match-card">
-                <div class="br-match-header"><span>Group A</span><span>Matchday 4</span></div>
-                <div class="br-match-teams">
-                    <div class="br-team br-team-home"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/1200px-Manchester_United_FC_crest.svg.png" class="br-team-logo" alt="Alpha"> Alpha Squad</div>
-                    <div class="br-score">2 - 0</div>
-                    <div class="br-team br-team-away"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/1200px-FC_Barcelona_%28crest%29.svg.png" class="br-team-logo" alt="Bravo"> Bravo Unit</div>
-                </div>
-                <div class="br-match-status"><span>Completed</span><span>Oct 10, 2025</span></div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <p>BR Royale Tournament 2025 • All rights reserved © 2025</p>
-    </footer>
-
 </div>
 
-<script>
-// Simulation placeholder
-document.querySelector('.br-btn').addEventListener('click', function() {
-    alert('Simulating BR matches...');
-});
-</script>
-
-</body>
-</html>
 
 <?php include('footer.php'); ?>

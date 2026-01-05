@@ -450,7 +450,7 @@ $conn->close();
                                                 </td>
                                                 <td class="ut-table__cell ut-table__cell--date"><?php echo htmlspecialchars($tournament['sdate']); ?></td>
                                                 <td class="ut-table__cell ut-table__cell--prize" style="padding-left: 20px;">
-                                                    <?php echo htmlspecialchars($tournament['prizes']); ?>
+                                                    <?php echo html_entity_decode($tournament['prizes']); ?>
                                                 </td>
                                                 <td class="ut-table__cell">
                                                     <a href="tournament_details.php?tournament_id=<?php echo $tournament['id']; ?>">

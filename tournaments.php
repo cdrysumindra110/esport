@@ -393,7 +393,7 @@ $conn->close();
                                 <?php echo htmlspecialchars($tournament['sdate']); ?>
                             </td>
                             <td class="ut-table__cell ut-table__cell--prize">
-                                <?php echo htmlspecialchars($tournament['prizes']); ?>
+                                <?php echo html_entity_decode($tournament['prizes']); ?>
                             </td>
                             <td class="ut-table__cell">
                                 <a href="tour_freg.php?tournament_id=<?php echo $tournament['id']; ?>">

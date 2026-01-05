@@ -1,8 +1,4 @@
 <?php
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include('header.php');
 
 if (!isset($_SESSION['isSignin']) || !$_SESSION['isSignin']) {
@@ -77,52 +73,6 @@ function ensureDatabaseTables($conn, $tournament_id, $match_type) {
     return true;
 }
 
-// ==================== SYNC PARTICIPANTS FUNCTION ====================
-function syncTournamentParticipants($conn, $tournament_id, $match_type) {
-    // Get all participants from the appropriate registration table
-    if ($match_type == 'solo') {
-        $sql = "SELECT DISTINCT solo_id as team_id FROM solo_registration WHERE tournament_id = ?";
-    } elseif ($match_type == 'duo') {
-        $sql = "SELECT DISTINCT duo_id as team_id FROM duo_registration WHERE tournament_id = ?";
-    } elseif ($match_type == 'squad') {
-        $sql = "SELECT DISTINCT squad_id as team_id FROM squad_registration WHERE tournament_id = ?";
-    } else {
-        return 0;
-    }
-    
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) return 0;
-    
-    $stmt->bind_param("i", $tournament_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    $inserted = 0;
-    while ($row = $result->fetch_assoc()) {
-        $team_id = $row['team_id'];
-        
-        // Check if already exists
-        $check = $conn->prepare("SELECT id FROM tournament_participants WHERE tournament_id = ? AND team_id = ?");
-        $check->bind_param("ii", $tournament_id, $team_id);
-        $check->execute();
-        $check->store_result();
-        
-        if ($check->num_rows == 0) {
-            // Insert new participant
-            $insert = $conn->prepare("INSERT INTO tournament_participants (tournament_id, team_id) VALUES (?, ?)");
-            $insert->bind_param("ii", $tournament_id, $team_id);
-            if ($insert->execute()) {
-                $inserted++;
-            }
-            $insert->close();
-        }
-        $check->close();
-    }
-    $stmt->close();
-    
-    return $inserted;
-}
-
 // ==================== MAIN CODE ====================
 
 // Get tournament name
@@ -171,9 +121,8 @@ if ($check_column && $check_column->num_rows > 0) {
     }
 }
 
-// Setup database and sync participants
+// Setup database
 ensureDatabaseTables($conn, $tournament_id, $match_type);
-syncTournamentParticipants($conn, $tournament_id, $match_type);
 
 // ==================== FORM HANDLING ====================
 
@@ -181,10 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_match'])) {
     $placements = $_POST['placement'] ?? [];
     $kills = $_POST['kills'] ?? [];
     $participant_ids = $_POST['participant_id'] ?? [];
-    
-    // Debug log
-    error_log("Processing match #$current_match_number for tournament $tournament_id");
-    error_log("Participants: " . count($participant_ids));
     
     // Validate placements
     $placement_values = array_values($placements);
@@ -195,58 +140,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_match'])) {
             // Start transaction
             $conn->begin_transaction();
             
+            // TEMPORARILY DISABLE UNIQUE CHECKS
+            $conn->query("SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0");
+            $conn->query("SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0");
+            
             // 1. First, delete ALL existing results for this match
             $delete_stmt = $conn->prepare("DELETE FROM match_results WHERE tournament_id = ? AND match_number = ?");
             $delete_stmt->bind_param("ii", $tournament_id, $current_match_number);
             $delete_stmt->execute();
             $deleted_count = $delete_stmt->affected_rows;
-            error_log("Deleted $deleted_count existing records for match #$current_match_number");
             $delete_stmt->close();
             
             // 2. Insert all new results
+            $insert_success = true;
             $inserted_count = 0;
             
             foreach ($participant_ids as $index => $participant_id) {
-                if (!isset($placements[$index]) || !isset($kills[$index])) {
-                    continue;
-                }
-                
                 $placement = intval($placements[$index]);
                 $kill_count = intval($kills[$index]);
                 $score = ($kill_count * 10) + max(0, 100 - $placement);
                 
-                // Insert match result (ON DUPLICATE KEY UPDATE handles any duplicates)
-                $stmt = $conn->prepare("
-                    INSERT INTO match_results 
-                    (tournament_id, match_number, participant_id, placement, kills, score)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                    ON DUPLICATE KEY UPDATE
-                    placement = VALUES(placement),
-                    kills = VALUES(kills),
-                    score = VALUES(score)
-                ");
-                $stmt->bind_param("iiiidi", 
-                    $tournament_id, 
-                    $current_match_number,
-                    $participant_id,
-                    $placement,
-                    $kill_count,
-                    $score
-                );
+                // Check if participant exists
+                $check_participant = $conn->prepare("SELECT id FROM tournament_participants WHERE id = ?");
+                $check_participant->bind_param("i", $participant_id);
+                $check_participant->execute();
+                $check_result = $check_participant->get_result();
                 
-                if ($stmt->execute()) {
-                    if ($stmt->affected_rows > 0) {
+                if ($check_result->num_rows > 0) {
+                    // Use INSERT IGNORE to avoid duplicate errors
+                    $stmt = $conn->prepare("
+                        INSERT IGNORE INTO match_results 
+                        (tournament_id, match_number, participant_id, placement, kills, score)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    ");
+                    $stmt->bind_param("iiiidi", 
+                        $tournament_id, 
+                        $current_match_number,
+                        $participant_id,
+                        $placement,
+                        $kill_count,
+                        $score
+                    );
+                    
+                    if ($stmt->execute()) {
                         $inserted_count++;
+                    } else {
+                        // If INSERT IGNORE fails, try INSERT with ON DUPLICATE KEY UPDATE
+                        $stmt2 = $conn->prepare("
+                            INSERT INTO match_results 
+                            (tournament_id, match_number, participant_id, placement, kills, score)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                            ON DUPLICATE KEY UPDATE
+                            placement = VALUES(placement),
+                            kills = VALUES(kills),
+                            score = VALUES(score)
+                        ");
+                        $stmt2->bind_param("iiiidi", 
+                            $tournament_id, 
+                            $current_match_number,
+                            $participant_id,
+                            $placement,
+                            $kill_count,
+                            $score
+                        );
+                        
+                        if ($stmt2->execute()) {
+                            $inserted_count++;
+                        }
+                        $stmt2->close();
                     }
-                } else {
-                    error_log("Insert failed for participant $participant_id: " . $stmt->error);
+                    $stmt->close();
                 }
-                $stmt->close();
+                $check_participant->close();
             }
             
-            error_log("Successfully inserted/updated $inserted_count records");
+            // 3. RE-ENABLE UNIQUE CHECKS
+            $conn->query("SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS");
+            $conn->query("SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS");
             
-            // 3. Update participant totals
+            // 4. Update participant totals
             $update_stmt = $conn->prepare("
                 UPDATE tournament_participants tp
                 LEFT JOIN (
@@ -269,29 +241,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_match'])) {
             ");
             $update_stmt->bind_param("ii", $tournament_id, $tournament_id);
             $update_stmt->execute();
-            $affected_rows = $update_stmt->affected_rows;
-            error_log("Updated $affected_rows participant records");
             $update_stmt->close();
             
-            // 4. Always increment match number
-            $next_match = $current_match_number + 1;
-            $update_match = $conn->prepare("UPDATE brackets SET match_number = ? WHERE tournament_id = ?");
-            if ($update_match) {
-                $update_match->bind_param("ii", $next_match, $tournament_id);
-                $update_match->execute();
-                $update_match->close();
-                error_log("Updated match number to $next_match");
+            // 5. Increment match number if this is a new match
+            $check_existing = $conn->prepare("SELECT COUNT(*) as count FROM match_results WHERE tournament_id = ? AND match_number > ?");
+            $check_existing->bind_param("ii", $tournament_id, $current_match_number);
+            $check_existing->execute();
+            $existing_result = $check_existing->get_result();
+            $existing_row = $existing_result->fetch_assoc();
+            $has_future_matches = $existing_row['count'] > 0;
+            $check_existing->close();
+            
+            if (!$has_future_matches) {
+                $next_match = $current_match_number + 1;
+                $update_match = $conn->prepare("UPDATE brackets SET match_number = ? WHERE tournament_id = ?");
+                if ($update_match) {
+                    $update_match->bind_param("ii", $next_match, $tournament_id);
+                    $update_match->execute();
+                    $update_match->close();
+                }
             }
             
             $conn->commit();
             
-            $_SESSION['success'] = "Match #$current_match_number results saved successfully! (Updated: $inserted_count records)";
+            $_SESSION['success'] = "Match #$current_match_number results saved successfully! (Inserted: $inserted_count records)";
             header("Location: update_br_leaderboard.php?tournament_id=$tournament_id");
             exit();
             
         } catch (Exception $e) {
+            // RE-ENABLE UNIQUE CHECKS even if error occurs
+            $conn->query("SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS");
+            $conn->query("SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS");
             $conn->rollback();
-            error_log("Transaction error: " . $e->getMessage());
             $_SESSION['error'] = "Error saving match results: " . $e->getMessage();
         }
     }
@@ -353,59 +334,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recalculate_all'])) {
 
 $participants = [];
 
-// Get participants from tournament_participants
-$sql = "SELECT id, team_id, total_score, total_kills, average_placement, matches_played 
-        FROM tournament_participants 
-        WHERE tournament_id = ? 
-        ORDER BY total_score DESC";
-
-$stmt = $conn->prepare($sql);
-if ($stmt) {
-    $stmt->bind_param("i", $tournament_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+// First try to get participants from tournament_participants
+$check_table = $conn->query("SHOW TABLES LIKE 'tournament_participants'");
+if ($check_table && $check_table->num_rows > 0) {
+    $sql = "SELECT id, team_id, total_score, total_kills, average_placement, matches_played 
+            FROM tournament_participants 
+            WHERE tournament_id = ? 
+            ORDER BY total_score DESC";
     
-    while ($row = $result->fetch_assoc()) {
-        $team_id = $row['team_id'];
-        $team_name = '';
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $tournament_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
-        // Get team/player name based on match type
-        if ($match_type == 'solo') {
-            $name_sql = "SELECT player_name FROM solo_registration WHERE solo_id = ? AND tournament_id = ?";
-            $name_stmt = $conn->prepare($name_sql);
-            $name_stmt->bind_param("ii", $team_id, $tournament_id);
-            $name_stmt->execute();
-            $name_result = $name_stmt->get_result();
-            if ($name_row = $name_result->fetch_assoc()) {
-                $team_name = $name_row['player_name'];
+        while ($row = $result->fetch_assoc()) {
+            $team_id = $row['team_id'];
+            $team_name = '';
+            
+            // Get team/player name based on match type
+            if ($match_type == 'solo') {
+                $name_sql = "SELECT player_name FROM solo_registration WHERE solo_id = ? AND tournament_id = ?";
+                $name_stmt = $conn->prepare($name_sql);
+                $name_stmt->bind_param("ii", $team_id, $tournament_id);
+                $name_stmt->execute();
+                $name_result = $name_stmt->get_result();
+                if ($name_row = $name_result->fetch_assoc()) {
+                    $team_name = $name_row['player_name'];
+                }
+                $name_stmt->close();
+            } elseif ($match_type == 'duo') {
+                $name_sql = "SELECT team_name FROM duo_registration WHERE duo_id = ? AND tournament_id = ?";
+                $name_stmt = $conn->prepare($name_sql);
+                $name_stmt->bind_param("ii", $team_id, $tournament_id);
+                $name_stmt->execute();
+                $name_result = $name_stmt->get_result();
+                if ($name_row = $name_result->fetch_assoc()) {
+                    $team_name = $name_row['team_name'];
+                }
+                $name_stmt->close();
+            } elseif ($match_type == 'squad') {
+                $name_sql = "SELECT team_name FROM squad_registration WHERE squad_id = ? AND tournament_id = ?";
+                $name_stmt = $conn->prepare($name_sql);
+                $name_stmt->bind_param("ii", $team_id, $tournament_id);
+                $name_stmt->execute();
+                $name_result = $name_stmt->get_result();
+                if ($name_row = $name_result->fetch_assoc()) {
+                    $team_name = $name_row['team_name'];
+                }
+                $name_stmt->close();
             }
-            $name_stmt->close();
-        } elseif ($match_type == 'duo') {
-            $name_sql = "SELECT team_name FROM duo_registration WHERE duo_id = ? AND tournament_id = ?";
-            $name_stmt = $conn->prepare($name_sql);
-            $name_stmt->bind_param("ii", $team_id, $tournament_id);
-            $name_stmt->execute();
-            $name_result = $name_stmt->get_result();
-            if ($name_row = $name_result->fetch_assoc()) {
-                $team_name = $name_row['team_name'];
-            }
-            $name_stmt->close();
-        } elseif ($match_type == 'squad') {
-            $name_sql = "SELECT team_name FROM squad_registration WHERE squad_id = ? AND tournament_id = ?";
-            $name_stmt = $conn->prepare($name_sql);
-            $name_stmt->bind_param("ii", $team_id, $tournament_id);
-            $name_stmt->execute();
-            $name_result = $name_stmt->get_result();
-            if ($name_row = $name_result->fetch_assoc()) {
-                $team_name = $name_row['team_name'];
-            }
-            $name_stmt->close();
+            
+            $row['team_name'] = $team_name ?: 'Unknown';
+            $participants[] = $row;
         }
-        
-        $row['team_name'] = $team_name ?: 'Unknown';
-        $participants[] = $row;
+        $stmt->close();
     }
-    $stmt->close();
+}
+
+// If no participants found, check old leaderboard
+if (empty($participants)) {
+    if ($match_type == 'solo') {
+        $sql = "SELECT lb.id, lb.kills, lb.placement, lb.total_score, sr.player_name as team_name
+                FROM leaderboard lb
+                JOIN solo_registration sr ON lb.player_id = sr.solo_id
+                WHERE lb.tournament_id = ?";
+    } elseif ($match_type == 'duo') {
+        $sql = "SELECT lb.id, lb.kills, lb.placement, lb.total_score, dr.team_name
+                FROM leaderboard lb
+                JOIN duo_registration dr ON lb.team_id = dr.duo_id
+                WHERE lb.tournament_id = ?";
+    } elseif ($match_type == 'squad') {
+        $sql = "SELECT lb.id, lb.kills, lb.placement, lb.total_score, sq.team_name
+                FROM leaderboard lb
+                JOIN squad_registration sq ON lb.team_id = sq.squad_id
+                WHERE lb.tournament_id = ?";
+    }
+    
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $tournament_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        while ($row = $result->fetch_assoc()) {
+            $row['team_id'] = 0;
+            $row['total_kills'] = $row['kills'];
+            $row['average_placement'] = $row['placement'];
+            $row['matches_played'] = 1;
+            $row['team_name'] = $row['team_name'] ?? 'Unknown';
+            $participants[] = $row;
+        }
+        $stmt->close();
+    }
 }
 
 // Get match history
@@ -756,7 +777,7 @@ function updateAllEstimates() {
                                    max="<?php echo count($participants); ?>"
                                    required
                                    oninput="updateAllEstimates()">
-                            <input type="hidden" name="participant_id[]" value="<?php echo $p['id']; ?>">
+                            <input type="hidden" name="participant_id[]" value="<?php echo $p['id'] ?? $i; ?>">
                         </td>
                         <td>
                             <span class="badge bg-secondary">0</span>

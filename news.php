@@ -214,7 +214,7 @@ $conn->close();
                                     <h1><?php echo $tournamentName; ?></h1>
                                     <!-- Twitch Embed only  -->
                                     <iframe 
-                                        src="https://player.twitch.tv/?channel=<?php echo urlencode($channelName); ?>&parent=localhost" 
+                                        src="https://player.twitch.tv/?channel=<?php echo urlencode($channelName); ?>&parent=localhost&autoplay=true" 
                                         frameborder="0" 
                                         allowfullscreen="true" 
                                         scrolling="no" 

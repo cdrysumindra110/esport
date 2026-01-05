@@ -1,112 +1,176 @@
 <?php
 include('header.php');
 
-// Check if the user is logged in
 if (!isset($_SESSION['isSignin']) || !$_SESSION['isSignin']) {
     header('Location: signin.php');
     exit();
 }
 
-// Get the logged-in user ID
 if (!isset($_SESSION['user_id'])) {
-    die("Error: User ID not set in session.");
+    die("User not logged in.");
 }
 
 $user_id = $_SESSION['user_id'];
 
-// Check if form data is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve form data
-    $selected_game = $_POST['selected_game'] ?? null;
-    $tname = $_POST['tname'] ?? null;
-    $sdate = $_POST['sdate'] ?? null;
-    $stime = $_POST['stime'] ?? null;
-    $about = $_POST['about'] ?? null;
+// Initialize error/success messages
+$error_message = '';
+$success_message = '';
 
-    // Retrieve stream and social media data
-    $provider = $_POST['select-provider'] ?? null;
-    $channel_name = $_POST['channel-name'] ?? null;
-    $social_media = $_POST['social-media'] ?? null;
-    $social_media_input = $_POST['social-media-input'] ?? null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Basic validation
+    $selected_game = $_POST['selected_game'] ?? '';
+    $tname = $_POST['tname'] ?? '';
+    $sdate = $_POST['sdate'] ?? '';
+    $stime = $_POST['stime'] ?? '';
+    $about = $_POST['about'] ?? '';
 
-    // Validate required fields
-    if (empty($selected_game) || empty($tname) || empty($sdate) || empty($stime)) {
-        $error_message = "Required fields are missing.";
+    // Debug: Check what's being received
+    error_log("POST Data: " . print_r($_POST, true));
+    error_log("FILES Data: " . print_r($_FILES, true));
+
+    if (!$selected_game || !$tname || !$sdate || !$stime) {
+        $error_message = "Required fields missing: Game, Tournament Name, Start Date, and Start Time are required.";
     } else {
-        // Handle file upload and read binary data
+        /* ---------- IMAGE ---------- */
         $bannerimg = null;
-        if (isset($_FILES['bannerimg']) && $_FILES['bannerimg']['error'] === UPLOAD_ERR_OK) {
+        if (!empty($_FILES['bannerimg']['tmp_name']) && $_FILES['bannerimg']['error'] === UPLOAD_ERR_OK) {
             $bannerimg = file_get_contents($_FILES['bannerimg']['tmp_name']);
         }
 
-        // Insert into tournaments table
-        if (empty($error_message)) {
-            $stmt = $conn->prepare("INSERT INTO tournaments (user_id, selected_game, tname, sdate, stime, bannerimg, about) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        /* ---------- BRACKETS ---------- */
+        $bracket_type = $_POST['bracket-type'] ?? null;
+        $match_type = $_POST['match-type'] ?? null;
+        $solo_players = $_POST['solo-players'] ?? null;
+        $duo_teams = $_POST['duo-teams'] ?? null;
+        $duo_players = $_POST['duo-players'] ?? null;
+        $squad_teams = $_POST['squad-teams'] ?? null;
+        $squad_players = $_POST['squad-players'] ?? null;
+        $rounds = $_POST['rounds'] ?? null;
+        $placement = $_POST['placement'] ?? null;
+        $rules = $_POST['rules'] ?? null;
+        $prizes = $_POST['prizes'] ?? null;
+
+        /* ---------- STREAM ---------- */
+        $provider = $_POST['select-provider'] ?? null;
+        $channel_name = $_POST['channel-name'] ?? null;
+        $social_media = $_POST['social-media'] ?? null;
+        $social_media_input = $_POST['social-media-input'] ?? null;
+
+        /* ---------- TRANSACTION ---------- */
+        $conn->begin_transaction();
+
+        try {
+            /* Tournament */
+            $stmt = $conn->prepare("
+                INSERT INTO tournaments 
+                (user_id, selected_game, tname, sdate, stime, bannerimg, about)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ");
+            
+            // Check if statement was prepared successfully
             if (!$stmt) {
-                $error_message = "Prepare failed: " . $conn->error;
-            } else {
-                $stmt->bind_param("issssss", $user_id, $selected_game, $tname, $sdate, $stime, $bannerimg, $about);
-
-                if ($stmt->execute()) {
-                    // Get the last inserted ID
-                    $tournament_id = $stmt->insert_id;
-
-                    // Insert into brackets table
-                    $bracket_type = $_POST['bracket-type'] ?? null;
-                    $match_type = $_POST['match-type'] ?? null;
-                    $solo_players = $_POST['solo-players'] ?? null;
-                    $duo_teams = $_POST['duo-teams'] ?? null;
-                    $duo_players_per_team = $_POST['duo-players'] ?? null;
-                    $squad_teams = $_POST['squad-teams'] ?? null;
-                    $squad_players_per_team = $_POST['squad-players'] ?? null;
-                    $rounds = $_POST['rounds'] ?? null;
-                    $placement = $_POST['placement'] ?? null;
-                    $rules = $_POST['rules'] ?? null;
-                    $prizes = $_POST['prizes'] ?? null;
-
-                    // Insert into brackets table
-                    $stmt2 = $conn->prepare("INSERT INTO brackets (tournament_id, bracket_type, match_type, solo_players, duo_teams, duo_players_per_team, squad_teams, squad_players_per_team, rounds, placement, rules, prizes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                    if (!$stmt2) {
-                        $error_message = "Prepare failed: " . $conn->error;
-                    } else {
-                        $stmt2->bind_param("issiiiiiiiss", $tournament_id, $bracket_type, $match_type, $solo_players, $duo_teams, $duo_players_per_team, $squad_teams, $squad_players_per_team, $rounds, $placement, $rules, $prizes);
-                        if ($stmt2->execute()) {
-                            // Insert stream data if available
-                            if ($provider && $channel_name) {
-                                $stmt3 = $conn->prepare("INSERT INTO streams (tournament_id, provider, channel_name, social_media, social_media_input) VALUES (?, ?, ?, ?, ?)");
-                                if (!$stmt3) {
-                                    $error_message = "Prepare failed: " . $conn->error;
-                                } else {
-                                    $stmt3->bind_param("issss", $tournament_id, $provider, $channel_name, $social_media, $social_media_input);
-                                    if ($stmt3->execute()) {
-                                        $success_message = "Tournament, brackets, and related data successfully inserted!";
-                                        header('Location: mytournaments.php');
-                                        exit();
-                                    } else {
-                                        $error_message = "Error inserting stream: " . $stmt3->error;
-                                    }
-                                    $stmt3->close();
-                                }
-                            } else {
-                                $success_message = "Tournament and brackets successfully inserted!";
-                                header('Location: mytournaments.php');
-                                exit();
-                            }
-                        } else {
-                            $error_message = "Error inserting brackets: " . $stmt2->error;
-                        }
-                        $stmt2->close();
-                    }
-                } else {
-                    $error_message = "Error inserting tournament: " . $stmt->error;
-                }
-                $stmt->close();
+                throw new Exception("Prepare failed: " . $conn->error);
             }
+            
+            $stmt->bind_param("issssss", 
+                $user_id, 
+                $selected_game, 
+                $tname, 
+                $sdate, 
+                $stime, 
+                $bannerimg, 
+                $about
+            );
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Execute failed: " . $stmt->error);
+            }
+            
+            $tournament_id = $stmt->insert_id;
+            $stmt->close();
+
+            /* Brackets */
+            $stmt2 = $conn->prepare("
+                INSERT INTO brackets
+                (tournament_id, bracket_type, match_type, solo_players, duo_teams,
+                 duo_players_per_team, squad_teams, squad_players_per_team, rounds,
+                 placement, rules, prizes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            
+            if (!$stmt2) {
+                throw new Exception("Prepare failed for brackets: " . $conn->error);
+            }
+            
+            // Convert empty strings to NULL for integer fields
+            $solo_players = ($solo_players === '') ? null : (int)$solo_players;
+            $duo_teams = ($duo_teams === '') ? null : (int)$duo_teams;
+            $duo_players = ($duo_players === '') ? null : (int)$duo_players;
+            $squad_teams = ($squad_teams === '') ? null : (int)$squad_teams;
+            $squad_players = ($squad_players === '') ? null : (int)$squad_players;
+            $rounds = ($rounds === '') ? null : (int)$rounds;
+            
+            $stmt2->bind_param(
+                "issiiiiiiiss",
+                $tournament_id,
+                $bracket_type,
+                $match_type,
+                $solo_players,
+                $duo_teams,
+                $duo_players,
+                $squad_teams,
+                $squad_players,
+                $rounds,
+                $placement,
+                $rules,
+                $prizes
+            );
+            
+            if (!$stmt2->execute()) {
+                throw new Exception("Execute failed for brackets: " . $stmt2->error);
+            }
+            
+            $stmt2->close();
+
+            /* Streams (optional) */
+            if ($provider && $channel_name) {
+                $stmt3 = $conn->prepare("
+                    INSERT INTO streams
+                    (tournament_id, provider, channel_name, social_media, social_media_input)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                
+                if ($stmt3) {
+                    $stmt3->bind_param(
+                        "issss",
+                        $tournament_id,
+                        $provider,
+                        $channel_name,
+                        $social_media,
+                        $social_media_input
+                    );
+                    
+                    if (!$stmt3->execute()) {
+                        error_log("Stream insertion failed: " . $stmt3->error);
+                    }
+                    
+                    $stmt3->close();
+                }
+            }
+
+            $conn->commit();
+            $success_message = "Tournament created successfully!";
+            
+            // Redirect after successful creation
+            header("Location: mytournaments.php?success=1");
+            exit();
+
+        } catch (Exception $e) {
+            $conn->rollback();
+            $error_message = "Failed to create tournament: " . $e->getMessage();
+            error_log("Tournament creation error: " . $e->getMessage());
         }
     }
-
-    // Close connection
-    $conn->close();
 }
 ?>
 
@@ -400,17 +464,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
 
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script src="./js/tour_org.js"></script>
-<!-- Popup page Scripts -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(function() {
-        var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
-        myModal.show();
-    }, 1000); // 1-second delay before modal appears
-});
 
-document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize Quill editors
     var quillAbout = new Quill('#editor-container-about', {
         theme: 'snow',
@@ -469,156 +528,186 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-        // Update hidden input fields with Quill plain text content before form submission
-        document.querySelector('form').addEventListener('submit', function() {
-        document.getElementById('about').value = quillAbout.getText().trim();
-        document.getElementById('rules').value = quillRules.getText().trim();
-        document.getElementById('prizes').value = quillPrizes.getText().trim();
+    // Set default text for Quill editors
+    quillAbout.setText('About this tournament...');
+    quillRules.setText('1. Be respectful to all players\n2. No cheating or hacking\n3. Follow the game rules');
+    quillPrizes.setText('1st Place: $100\n2nd Place: $50\n3rd Place: $25');
+
+    // Update hidden input fields with Quill content before form submission
+    document.getElementById('msform').addEventListener('submit', function(e) {
+        // Only update if not already submitted
+        if (!this.classList.contains('submitting')) {
+            e.preventDefault();
+            
+            // Get content from Quill editors
+            document.getElementById('about').value = quillAbout.root.innerHTML;
+            document.getElementById('rules').value = quillRules.root.innerHTML;
+            document.getElementById('prizes').value = quillPrizes.root.innerHTML;
+            
+            // Validate required fields
+            const requiredFields = [
+                document.getElementById('selected_game'),
+                document.getElementById('tname'),
+                document.getElementById('sdate'),
+                document.getElementById('stime')
+            ];
+            
+            let isValid = true;
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'red';
+                    showPopupMessage(`Please fill in: ${field.previousElementSibling?.textContent || 'Required field'}`, 'error');
+                } else {
+                    field.style.borderColor = '';
+                }
+            }
+            
+            if (isValid) {
+                // Mark form as submitting to prevent multiple submissions
+                this.classList.add('submitting');
+                
+                // Show loading state
+                const submitBtn = document.querySelector('input[name="next"][type="submit"]');
+                if (submitBtn) {
+                    submitBtn.value = 'Creating...';
+                    submitBtn.disabled = true;
+                }
+                
+                // Submit the form
+                this.submit();
+            }
+        }
     });
-});
 
+    // Function to show the popup message
+    function showPopupMessage(message, type) {
+        const popup = document.getElementById('popup-alert');
+        const popupMessage = document.getElementById('popup-message');
+        
+        if (popup && popupMessage) {
+            popupMessage.textContent = message;
+            popup.className = 'popup';
+            
+            if (type === 'success') {
+                popup.classList.add('success');
+            } else if (type === 'error') {
+                popup.classList.add('error');
+            }
+            
+            popup.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 5000);
+        }
+        
+        // Also log to console for debugging
+        console.log(`${type.toUpperCase()}: ${message}`);
+    }
 
+    // Close popup handler
+    const closePopup = document.getElementById('close-popup');
+    if (closePopup) {
+        closePopup.addEventListener('click', function() {
+            document.getElementById('popup-alert').classList.add('hidden');
+        });
+    }
 
+    // Show PHP messages if any
+    <?php if (!empty($success_message)): ?>
+        showPopupMessage("<?php echo addslashes($success_message); ?>", 'success');
+    <?php elseif (!empty($error_message)): ?>
+        showPopupMessage("<?php echo addslashes($error_message); ?>", 'error');
+    <?php endif; ?>
 
-// Function to show the popup message
-function showPopupMessage(message, type) {
-  const popup = document.getElementById('popup-message');
-  popup.textContent = message;
-  popup.className = 'popup-message'; // Reset to default
-  if (type === 'success') {
-    popup.classList.add('success');
-  } else if (type === 'error') {
-    popup.classList.add('error');
-  }
-  popup.style.display = 'block'; // Show the popup
-  setTimeout(() => {
-    popup.style.display = 'none'; // Hide after 3 seconds
-  }, 3000);
-}
+    // Function to show image preview
+    function showPreview(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var previewImage = document.getElementById('bannerimg-preview');
+            if (previewImage) {
+                previewImage.src = reader.result;
+                
+                // Also update the final preview in step 4
+                var finalPreview = document.getElementById('final-banner-img');
+                if (finalPreview) {
+                    finalPreview.src = reader.result;
+                }
+            }
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
 
-// Example usage for PHP error and success messages
-document.addEventListener('DOMContentLoaded', function() {
-  <?php if (!empty($success_message)): ?>
-    showPopupMessage("<?php echo $success_message; ?>", 'success');
-  <?php elseif (!empty($error_message)): ?>
-    showPopupMessage("<?php echo $error_message; ?>", 'error');
-  <?php endif; ?>
-});
-</script>
-<script>
-document.querySelector('input[name="next"]').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default behavior of form submission
-    
-    // Get values from the form fields
-    const tournamentName = document.getElementById('tname').value;
-    const startDate = document.getElementById('sdate').value;
-    const bannerImage = document.getElementById('bannerimg-preview').src;
-
-    // Set the preview content in Step 4
-    document.getElementById('final-tournament-name').innerText = tournamentName;
-    document.getElementById('final-tournament-start-date').innerText = `Start Date: ${startDate}`;
-    document.getElementById('final-banner-img').src = bannerImage;
-
-    // Optionally, proceed to the next step or submit the form
-    // Example:
-    // document.getElementById('msform').submit();
-});
-
-function showPreview(event) {
-    var reader = new FileReader();
-    reader.onload = function() {
-        var previewImage = document.getElementById('bannerimg-preview');
-        previewImage.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-}
-
-  </script>
-  <script>
-    // Get today's date in the format YYYY-MM-DD
+    // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('sdate');
+    if (dateInput) {
+        dateInput.setAttribute('min', today);
+    }
 
-    document.getElementById('sdate').setAttribute('min', today);
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('msform');
-    const submitButton = document.getElementById('create_tour');
-    const popup = document.getElementById('popup-message');
-    const nextButton = document.getElementById('last-nextBtn'); // Assuming the last Next button has this ID
-
-    function validateForm() {
-        let isValid = true;
-        const requiredFields = form.querySelectorAll('[required]');
-
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                console.log(`Field ${field.name} is empty.`); // Debugging
+    // Match type selection handler
+    const matchTypeSelect = document.getElementById('match-type');
+    if (matchTypeSelect) {
+        matchTypeSelect.addEventListener('change', function() {
+            // Hide all containers first
+            document.querySelectorAll('.match-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            
+            // Show the selected container
+            const selectedValue = this.value;
+            if (selectedValue === 'solo') {
+                document.getElementById('solo-container').style.display = 'block';
+            } else if (selectedValue === 'duo') {
+                document.getElementById('duo-container').style.display = 'block';
+            } else if (selectedValue === 'squad') {
+                document.getElementById('squad-container').style.display = 'block';
             }
         });
-
-        // Additional custom validations
-        const startDate = document.getElementById('sdate').value;
-        if (startDate && new Date(startDate) < new Date()) {
-            isValid = false;
-            console.log('Start date is not in the future.'); // Debugging
-        }
-
-        console.log(`Form is valid: ${isValid}`); // Debugging
-        return isValid;
+        
+        // Trigger change event to show initial state
+        matchTypeSelect.dispatchEvent(new Event('change'));
     }
 
-    function showPopupMessage(message, type) {
-        console.log('Popup function called with message:', message); // Debugging
-        popup.textContent = message;
-        popup.className = 'popup-message'; // Reset to default
-        if (type === 'success') {
-            popup.classList.add('success');
-        } else if (type === 'error') {
-            popup.classList.add('error');
-        }
-        popup.style.display = 'block'; // Show the popup
-        setTimeout(() => {
-            popup.style.display = 'none'; // Hide after 3 seconds
-        }, 3000);
+    // Back button handler
+    const backButton = document.getElementById('back-arrow');
+    if (backButton) {
+        backButton.addEventListener('click', function() {
+            window.history.back();
+        });
     }
 
-    form.addEventListener('input', function () {
-        console.log('Input event triggered.'); // Debugging
-        if (validateForm()) {
-            submitButton.disabled = false;
-            console.log('Submit button enabled.'); // Debugging
-        } else {
-            submitButton.disabled = true;
-            console.log('Submit button disabled.'); // Debugging
-        }
+    // Update final preview when moving to step 4
+    const nextButtons = document.querySelectorAll('.next.action-button');
+    nextButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update preview in step 4
+            const tournamentName = document.getElementById('tname').value;
+            const startDate = document.getElementById('sdate').value;
+            
+            if (tournamentName) {
+                const finalName = document.getElementById('final-tournament-name');
+                if (finalName) {
+                    finalName.textContent = tournamentName;
+                }
+            }
+            
+            if (startDate) {
+                const finalDate = document.getElementById('final-tournament-start-date');
+                if (finalDate) {
+                    const formattedDate = new Date(startDate).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    finalDate.textContent = `Starts: ${formattedDate}`;
+                }
+            }
+        });
     });
-
-    nextButton.addEventListener('click', function (event) {
-        if (!validateForm()) {
-            event.preventDefault();
-            showPopupMessage('Please fill out all required fields correctly before proceeding.', 'error');
-        }
-    });
-
-    form.addEventListener('submit', function (event) {
-        console.log('Form submit event triggered.'); // Debugging
-        if (!validateForm()) {
-            event.preventDefault();
-            showPopupMessage('Please fill out all required fields correctly before submitting.', 'error');
-        } else {
-            showPopupMessage('Tournament Created successfully!', 'success');
-        }
-    });
-
-    // Initial check to disable the button if the form is invalid
-    submitButton.disabled = !validateForm();
 });
 </script>
-<!-- Accordian jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
-
 <?php include('footer.php'); ?>
