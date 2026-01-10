@@ -1034,19 +1034,36 @@ class AdvancedScoreboardEngine {
         if ($tables->num_rows === 0) {
             return 1000; // Default rating
         }
-        
+
+        // Get tournament's selected game
+        $tournamentInfo = $this->getTournamentInfo();
+        $tournamentGame = $tournamentInfo['selected_game'] ?? null;
+
+        if (empty($tournamentGame)) {
+            return 1000;
+        }
+
+        // Use direct comparison to the game string and bind parameters correctly
         $stmt = $this->conn->prepare("
             SELECT global_rating FROM player_skills 
             WHERE user_id = ? 
-            AND game = (SELECT selected_game FROM tournaments WHERE id = ?)
+            AND game = ?
+            LIMIT 1
         ");
-        
-        $tournamentInfo = $this->getTournamentInfo();
-        $stmt->bind_param("is", $playerId, $tournamentInfo['selected_game']);
+
+        if (!$stmt) {
+            return 1000;
+        }
+
+        $stmt->bind_param("is", $playerId, $tournamentGame);
         $stmt->execute();
         $result = $stmt->get_result();
-        
-        return $result->num_rows > 0 ? $result->fetch_assoc()['global_rating'] : 1000;
+
+        $rating = ($result->num_rows > 0) ? (float)$result->fetch_assoc()['global_rating'] : 1000;
+
+        $stmt->close();
+
+        return $rating;
     }
 }
 ?>

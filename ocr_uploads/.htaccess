@@ -1,0 +1,6 @@
+Order deny,allow
+Deny from all
+<Files ~ "\.(png|jpg|jpeg)$">
+Order allow,deny
+Allow from all
+</Files>

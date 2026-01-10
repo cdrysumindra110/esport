@@ -1,0 +1,15 @@
+# Minimal .htaccess - WILL WORK
+RewriteEngine On
+
+# Disable directory listing
+Options -Indexes
+
+# URL Rewriting
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^predict/(.*)$ prediction.php?action=$1 [L,QSA]
+
+# If you have API folder structure
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(.*)$ api/index.php?route=$1 [L,QSA]

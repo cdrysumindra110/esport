@@ -2,7 +2,7 @@
 // Include the config file
 require_once 'config.php';
 // Start the session
-session_start();
+// session_start();
 // Initialize messages
 $error_message = '';
 $success_message = '';

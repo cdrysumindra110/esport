@@ -1,7 +1,7 @@
 <?php
 // Include the config file for database connection
 require_once 'config.php';
-session_start();
+//session_start();
 
 // Initialize messages
 $error_message = '';

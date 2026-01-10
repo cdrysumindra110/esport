@@ -131,15 +131,27 @@ if (!empty($error_message)) {
       </div>
   </div>
   <script>
+  // Guarded bootstrap modal show (only if bootstrap is available and element exists)
   document.addEventListener('DOMContentLoaded', function () {
-    var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
-    myModal.show();
+    try {
+      if (typeof bootstrap !== 'undefined') {
+        var modalEl = document.getElementById('staticBackdrop');
+        if (modalEl) {
+          var myModal = new bootstrap.Modal(modalEl);
+          myModal.show();
+        }
+      }
+    } catch (e) {
+      // fail silently if bootstrap not present
+      console.error('Bootstrap modal init skipped:', e);
+    }
   });
 
     // Function to toggle password visibility
     function togglePasswordVisibility(passwordFieldId, toggleButtonId) {
     const passwordField = document.getElementById(passwordFieldId);
     const toggleButton = document.getElementById(toggleButtonId);
+    if (!passwordField || !toggleButton) return;
     
     if (passwordField.type === "password") {
       passwordField.type = "text";
@@ -150,11 +162,14 @@ if (!empty($error_message)) {
     }
   }
 
-  // Add event listeners to toggle buttons
-  document.getElementById('toggle-password').addEventListener('click', function() {
-    togglePasswordVisibility('password', 'toggle-password');
-  });
-
+  // Add event listener to toggle button only if it exists
+  var toggleBtnEl = document.getElementById('toggle-password');
+  if (toggleBtnEl) {
+    toggleBtnEl.addEventListener('click', function() {
+      togglePasswordVisibility('password', 'toggle-password');
+    });
+  }
+  
 // Function to show the popup message
 function showPopupMessage(message, type) {
   const popup = document.getElementById('popup-message');

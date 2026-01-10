@@ -1,14 +1,22 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "esport";
+// config.php - Simple Database Connection
+session_start();
+// Database credentials
+$db_host = 'localhost';
+$db_user = 'root';
+$db_pass = '';
+$db_name = 'esport';
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
-?>
+
+// Set charset
+mysqli_set_charset($conn, 'utf8mb4');
+
+// Optional: Set timezone
+date_default_timezone_set('Asia/Kathmandu');

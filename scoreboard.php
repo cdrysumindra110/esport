@@ -1,6 +1,6 @@
 <?php
 // scoreboard.php
-session_start();
+//session_start();
 require_once 'config.php';
 require_once 'algorithms/OptimizationEngine.php';
 require_once 'scoreboard/ScoreboardEngine.php';

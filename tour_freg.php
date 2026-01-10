@@ -370,7 +370,7 @@ $conn->close();
 
         .alert-danger {
             background-color: #f8d7da;
-            color: #721c24;
+            color: #ff0019ff;
             border: 1px solid #f5c6cb;
         }
 
@@ -439,9 +439,38 @@ $conn->close();
         <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
     <?php endif; ?>
     
-    <?php if (!empty($slots_full_message)): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($slots_full_message); ?></div>
-    <?php endif; ?>
+    <?php if (!empty($error_message) || !empty($slots_full_message)): ?>
+        <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Notice</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <?php if (!empty($error_message)): ?>
+                            <div class="alert alert-danger">
+                                <?php echo htmlspecialchars($error_message); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($slots_full_message)): ?>
+                            <div class="alert alert-danger">
+                                <?php echo htmlspecialchars($slots_full_message); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+<?php endif; ?>
 
     <div class="banner-cont">
         <div class="banner-container">
@@ -455,6 +484,7 @@ $conn->close();
                 </div>
             </div>
         </div>
+
 
         <div class="tournament">
             <div class="tournament-operation">
@@ -528,7 +558,7 @@ $conn->close();
                 <p class="content-title">About Game</p>
                 <p class="cont-title"><?php 
                     if (!empty($about)) {
-                        echo nl2br(htmlspecialchars($about));
+                        echo html_entity_decode(htmlspecialchars($about));
                     } else {
                         echo "No description available.";
                     }
@@ -540,7 +570,7 @@ $conn->close();
                 <p class="content-title">Game Critical Rules</p>
                 <p class="cont-title"><?php 
                     if (!empty($rules)) {
-                        echo nl2br(htmlspecialchars($rules));
+                       echo html_entity_decode(htmlspecialchars($rules));
                     } else {
                         echo "No rules specified.";
                     }
@@ -552,7 +582,7 @@ $conn->close();
                 <p class="content-title">Prize Details</p>
                 <p class="cont-title"><?php 
                     if (!empty($prizes)) {
-                        echo nl2br(htmlspecialchars($prizes));
+                        echo html_entity_decode(htmlspecialchars($prizes));
                     } else {
                         echo "No prize details available.";
                     }
@@ -635,6 +665,17 @@ $conn->close();
             window.location.href = 'leaderboard.php?tournament_id=' + tournamentId;
         }
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    var modalEl = document.getElementById('messageModal');
+    if (modalEl) {
+        var modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
+});
+</script>
+
+    
 </body>
 </html>
 

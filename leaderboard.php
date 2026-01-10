@@ -30,6 +30,23 @@ include('config.php');
  * 
  * Kill Points: 10 points per kill
  */
+// Channel name 
+// Check if there are tournaments with a channel
+$channelName = '';
+if (!empty($tournaments)) {
+    foreach ($tournaments as $tournament) {
+        if (!empty($tournament['channel_name'])) {
+            $channelName = $tournament['channel_name'];
+            break; // Take the first available channel
+        }
+    }
+}
+
+// If no channel, you can set a default or show nothing
+if (empty($channelName)) {
+    $channelName = 'twitch'; // fallback
+}
+// ====================== HELPER FUNCTIONS ====================
 function calculatePlacementPoints($placement) {
     // Power law distribution - top placements get exponentially more points
     switch($placement) {
@@ -722,62 +739,67 @@ $conn->close();
                 </div>
                 <div class="col-md-3 mb-2">
                     <strong>Status:</strong> <span class="badge bg-success"></span>
-<button type="button" class="btn btn-sm btn-danger ms-2" onclick="openLiveStreamPopup()">
+<!-- Button to open stream popup -->
+<button type="button" class="btn btn-sm btn-danger ms-2" onclick="openStreamPopup()">
     <i class="bi bi-play-circle"></i> Watch Live
 </button>
 
-<!-- Hidden container for stream content -->
-<div id="streamContent" style="display: none;">
-    <?php
-    if (!empty($tournaments)) {
-        foreach ($tournaments as $tournament) {
-            $tournamentName = htmlspecialchars($tournament['tname']);
-            $channelName = htmlspecialchars($tournament['channel_name']);
-            $startDate = $tournament['sdate']; 
-            $startTime = $tournament['stime']; 
-            $tournamentDateTime = $startDate . ' ' . $startTime;
-            $tournamentTimestamp = strtotime($tournamentDateTime);
-            $currentTimestamp = time();
+<!-- Stream Popup Overlay -->
+<div id="streamPopup" class="stream-popup-overlay" style="display: none;">
+    <div class="stream-popup-content">
+        <!-- Header -->
+        <div class="stream-header bg-danger text-white d-flex justify-content-between align-items-center p-2">
+            <h5 class="mb-0">
+                <i class="bi bi-broadcast"></i> Live Stream
+                <span class="badge bg-light text-danger ms-2">LIVE</span>
+            </h5>
+            <button type="button" class="btn btn-sm btn-light" onclick="closeStreamPopup()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
 
-            if ($currentTimestamp >= $tournamentTimestamp) {
-    ?>
-    <div class="stream-popup">
-        <div class="stream-header">
-            <h3><?php echo $tournamentName; ?></h3>
-            <span class="live-indicator">
-                <span class="pulse"></span> LIVE
-            </span>
-        </div>
-        <div class="stream-frame">
-            <iframe 
-                src="https://player.twitch.tv/?channel=<?php echo urlencode($channelName); ?>&parent=localhost&autoplay=true" 
-                frameborder="0" 
-                allowfullscreen="true" 
-                scrolling="no" 
-                height="540" 
-                width="960"
-                id="twitchStream">
-            </iframe>
-        </div>
-        <div class="stream-controls">
-            <button onclick="fullscreenStream()" class="btn-fullscreen">
-                <i class="bi bi-arrows-fullscreen"></i> Fullscreen
-            </button>
-            <a href="https://www.twitch.tv/<?php echo urlencode($channelName); ?>" 
-               target="_blank" 
-               class="btn-twitch">
-                <i class="bi bi-twitch"></i> Open in Twitch
-            </a>
-            <button onclick="closeStreamPopup()" class="btn-close">
-                <i class="bi bi-x-circle"></i> Close
-            </button>
+        <!-- Stream Iframe -->
+        <div class="stream-body p-0">
+            <div class="stream-container" style="background: #000; position:relative; width:100%; height:0; padding-bottom:56.25%;">
+                <!-- Dynamic iframe will be loaded here -->
+                <div id="twitchPlayer" style="position:absolute; top:0; left:0; width:100%; height:100%;">
+                    <div style="display:flex; align-items:center; justify-content:center; height:100%;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div id="chatPanel" style="display:none; margin-top:10px; height:300px; background:#000;">
+                <!-- Dynamic chat iframe will be loaded here -->
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="p-3 bg-light d-flex justify-content-between">
+                <div>
+                    <span class="text-muted">
+                        <i class="bi bi-twitch"></i> Streamer: 
+                        <strong id="streamerName"><?php echo htmlspecialchars($channelName ?? ''); ?></strong>
+                    </span>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-twitch me-2" onclick="toggleChatPanel()">
+                        <i class="bi bi-chat-left-text"></i> Chat
+                    </button>
+                    <button class="btn btn-sm btn-outline-dark me-2" onclick="fullscreenStream()">
+                        <i class="bi bi-arrows-fullscreen"></i> Fullscreen
+                    </button>
+                    <a href="https://www.twitch.tv/<?php echo urlencode($channelName ?? ''); ?>" 
+                       class="btn btn-sm btn-dark" 
+                       target="_blank">
+                        <i class="bi bi-box-arrow-up-right"></i> Open in Twitch
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-    <?php
-            }
-        }
-    }
-    ?>
 </div>
 
                 </div>
@@ -836,7 +858,7 @@ $conn->close();
                                 <div>
                                     <div class="team-name"><?php echo htmlspecialchars($p['team_name']); ?></div>
                                     <?php if (isset($p['source'])): ?>
-                                    <small class="data-source-badge"><?php echo $p['source']; ?></small>
+                                    <!-- <small class="data-source-badge"><?php echo $p['source']; ?></small> -->
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -941,118 +963,193 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<!-- JavaScript for popup and chat -->
+ 
 <script>
-function openLiveStreamPopup() {
-    // Create popup window
-    const streamWindow = window.open('', 'LiveStreamPopup', 
-        'width=1000,height=700,scrollbars=no,resizable=yes,toolbar=no,menubar=no,location=no');
-    
-    // Get stream content
-    const streamContent = document.getElementById('streamContent').innerHTML;
-    
-    // Write content to popup
-    streamWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Live Stream - Tournament</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-            <style>
-                body { margin: 0; padding: 0; background: #000; }
-                .stream-popup { 
-                    background: #1a1a1a; 
-                    color: white; 
-                    font-family: Arial, sans-serif;
-                }
-                .stream-header { 
-                    background: #9146ff; 
-                    padding: 15px 20px; 
-                    display: flex; 
-                    justify-content: space-between;
-                    align-items: center;
-                }
-                .live-indicator { 
-                    background: red; 
-                    padding: 5px 10px; 
-                    border-radius: 5px;
-                    font-weight: bold;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-                .pulse {
-                    width: 10px;
-                    height: 10px;
-                    background: white;
-                    border-radius: 50%;
-                    animation: pulse 1.5s infinite;
-                }
-                @keyframes pulse {
-                    0% { opacity: 1; }
-                    50% { opacity: 0.5; }
-                    100% { opacity: 1; }
-                }
-                .stream-frame {
-                    padding: 20px;
-                    background: #000;
-                }
-                .stream-controls {
-                    padding: 15px 20px;
-                    background: #2a2a2a;
-                    display: flex;
-                    gap: 10px;
-                    justify-content: center;
-                }
-                .btn-fullscreen, .btn-twitch, .btn-close {
-                    padding: 8px 15px;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    font-weight: bold;
-                    display: flex;
-                    align-items: center;
-                    gap: 5px;
-                }
-                .btn-fullscreen { background: #9146ff; color: white; }
-                .btn-twitch { background: #6441a5; color: white; text-decoration: none; }
-                .btn-close { background: #dc3545; color: white; }
-                iframe { border: 2px solid #9146ff; border-radius: 5px; }
-            </style>
-        </head>
-        <body>
-            ${streamContent}
-            <script>
-                function fullscreenStream() {
-                    const iframe = document.getElementById('twitchStream');
-                    if (iframe.requestFullscreen) {
-                        iframe.requestFullscreen();
-                    } else if (iframe.webkitRequestFullscreen) {
-                        iframe.webkitRequestFullscreen();
-                    } else if (iframe.msRequestFullscreen) {
-                        iframe.msRequestFullscreen();
-                    }
-                }
-                
-                function closeStreamPopup() {
-                    window.close();
-                }
-                
-                // Auto-close when browser/tab is closed
-                window.addEventListener('beforeunload', function() {
-                    const iframe = document.getElementById('twitchStream');
-                    if (iframe) {
-                        iframe.src = ''; // Stop the stream
-                    }
-                });
-            <\/script>
-        </body>
-        </html>
-    `);
-    
-    streamWindow.document.close();
+// Get current domain for Twitch parent parameter
+function getCurrentDomain() {
+    // If on localhost, return 'localhost'
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'localhost';
+    }
+    // Otherwise return the actual domain
+    return window.location.hostname;
 }
+
+// Function to load Twitch stream
+function loadTwitchStream(channelName) {
+    const domain = getCurrentDomain();
+    const playerDiv = document.getElementById('twitchPlayer');
+    
+    // Create iframe with correct parent domain
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('src', `https://player.twitch.tv/?channel=${encodeURIComponent(channelName)}&parent=${domain}&autoplay=true`);
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allowfullscreen', 'true');
+    iframe.setAttribute('allow', 'autoplay; fullscreen');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    iframe.style.position = 'absolute';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
+    
+    // Clear loading spinner and add iframe
+    playerDiv.innerHTML = '';
+    playerDiv.appendChild(iframe);
+    
+    // Store iframe reference
+    window.twitchIframe = iframe;
+}
+
+// Function to load Twitch chat
+function loadTwitchChat(channelName) {
+    const domain = getCurrentDomain();
+    const chatDiv = document.getElementById('chatPanel');
+    
+    // Create chat iframe
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('src', `https://www.twitch.tv/embed/${encodeURIComponent(channelName)}/chat?parent=${domain}&darkpopout`);
+    iframe.style.width = '100%';
+    iframe.style.height = '300px';
+    iframe.style.border = 'none';
+    iframe.style.borderRadius = '5px';
+    
+    chatDiv.innerHTML = '';
+    chatDiv.appendChild(iframe);
+}
+
+function openStreamPopup() {
+    const popup = document.getElementById('streamPopup');
+    const channelName = '<?php echo addslashes($channelName ?? ''); ?>';
+    
+    if (!channelName) {
+        alert('No stream channel available');
+        return;
+    }
+    
+    // Load the stream and chat
+    loadTwitchStream(channelName);
+    
+    // Show the popup
+    popup.style.display = 'flex';
+    
+    // Pre-load chat but keep it hidden
+    setTimeout(() => {
+        loadTwitchChat(channelName);
+    }, 1000);
+}
+
+function closeStreamPopup() {
+    const popup = document.getElementById('streamPopup');
+    popup.style.display = 'none';
+    
+    // Reset chat panel to hidden
+    document.getElementById('chatPanel').style.display = 'none';
+    
+    // Stop the stream when closing
+    if (window.twitchIframe) {
+        window.twitchIframe.src = '';
+        window.twitchIframe = null;
+    }
+}
+
+function toggleChatPanel() {
+    const chat = document.getElementById('chatPanel');
+    const isHidden = chat.style.display === 'none' || chat.style.display === '';
+    
+    if (isHidden) {
+        chat.style.display = 'block';
+        
+        // Re-load chat iframe if needed (handles case where iframe was removed)
+        if (chat.children.length === 0) {
+            const channelName = '<?php echo addslashes($channelName ?? ''); ?>';
+            loadTwitchChat(channelName);
+        }
+    } else {
+        chat.style.display = 'none';
+    }
+}
+
+function fullscreenStream() {
+    if (window.twitchIframe) {
+        const iframe = window.twitchIframe;
+        
+        if (iframe.requestFullscreen) {
+            iframe.requestFullscreen();
+        } else if (iframe.webkitRequestFullscreen) {
+            iframe.webkitRequestFullscreen();
+        } else if (iframe.msRequestFullscreen) {
+            iframe.msRequestFullscreen();
+        }
+    }
+}
+
+// Close popup when clicking outside content
+document.addEventListener('click', function(event) {
+    const popup = document.getElementById('streamPopup');
+    const content = document.querySelector('.stream-popup-content');
+    
+    if (popup && popup.style.display === 'flex' && !content.contains(event.target) && 
+        !event.target.closest('.btn-danger')) {
+        closeStreamPopup();
+    }
+});
+
+// Close popup with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const popup = document.getElementById('streamPopup');
+        if (popup && popup.style.display === 'flex') {
+            closeStreamPopup();
+        }
+    }
+});
 </script>
+
+<style>
+.stream-popup-overlay {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.85);
+    z-index:9999;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    backdrop-filter: blur(5px);
+}
+.stream-popup-content {
+    background:#fff;
+    border-radius:12px;
+    max-width:900px;
+    width:100%;
+    overflow:hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: popupFadeIn 0.3s ease;
+}
+@keyframes popupFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.btn-twitch {
+    background-color: #9146ff;
+    color: white;
+    border: none;
+}
+.btn-twitch:hover {
+    background-color: #772ce8;
+    color: white;
+}
+.stream-header {
+    background: linear-gradient(135deg, #9146ff 0%, #ff1e56 100%);
+}
+.stream-container {
+    border-bottom: 2px solid #9146ff;
+}
+</style>
+
 </body>
 </html>
 
