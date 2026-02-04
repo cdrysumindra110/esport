@@ -1222,6 +1222,37 @@ $_SESSION['csrf_token'] = $csrfToken;
             margin-bottom: var(--space-lg);
         }
 
+        /* Medal palettes */
+        .medal-gold {
+            background: linear-gradient(135deg, #fff8db 0%, #ffe28a 100%);
+            border-color: #f2c94c;
+            box-shadow: 0 12px 24px rgba(242, 201, 76, 0.25);
+        }
+
+        .medal-silver {
+            background: linear-gradient(135deg, #f6f7fb 0%, #dfe4ee 100%);
+            border-color: #bfc7d5;
+            box-shadow: 0 10px 20px rgba(191, 199, 213, 0.25);
+        }
+
+        .medal-bronze {
+            background: linear-gradient(135deg, #ffe6d2 0%, #f6b38a 100%);
+            border-color: #d08b5b;
+            box-shadow: 0 10px 20px rgba(208, 139, 91, 0.25);
+        }
+
+        .winner-card.medal-gold .winner-icon {
+            background: linear-gradient(135deg, #f2c94c, #f2994a);
+        }
+
+        .winner-card.medal-silver .winner-icon {
+            background: linear-gradient(135deg, #cfd6e3, #aeb7c8);
+        }
+
+        .winner-card.medal-bronze .winner-icon {
+            background: linear-gradient(135deg, #d08b5b, #b87333);
+        }
+
         .winner-icon {
             width: 100px;
             height: 100px;
@@ -1457,11 +1488,25 @@ $_SESSION['csrf_token'] = $csrfToken;
             transition: all 0.3s ease;
         }
 
-        .team-performance-card.winner {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border-color: var(--primary);
-            box-shadow: var(--shadow-lg);
+        .team-performance-card.medal-gold {
+            background: linear-gradient(135deg, #fff8db 0%, #ffe28a 100%);
+            border-color: #f2c94c;
+            color: #5c3b00;
+            box-shadow: 0 12px 24px rgba(242, 201, 76, 0.25);
+        }
+
+        .team-performance-card.medal-silver {
+            background: linear-gradient(135deg, #f6f7fb 0%, #dfe4ee 100%);
+            border-color: #bfc7d5;
+            color: #2f3a45;
+            box-shadow: 0 10px 20px rgba(191, 199, 213, 0.25);
+        }
+
+        .team-performance-card.medal-bronze {
+            background: linear-gradient(135deg, #ffe6d2 0%, #f6b38a 100%);
+            border-color: #d08b5b;
+            color: #5a2d00;
+            box-shadow: 0 10px 20px rgba(208, 139, 91, 0.25);
         }
 
         .team-rank {
@@ -3689,6 +3734,12 @@ function updateSoloResults() {
         document.getElementById('winnerDamage').textContent = winner.damage;
         document.getElementById('winnerSurvival').textContent = `${Math.floor(winner.survival / 60)}:${(winner.survival % 60).toString().padStart(2, '0')}`;
         document.getElementById('winnerRating').textContent = winner.rating.toFixed(1);
+
+        const winnerCard = document.querySelector('.winner-card');
+        if (winnerCard) {
+            winnerCard.classList.remove('medal-gold', 'medal-silver', 'medal-bronze');
+            winnerCard.classList.add('medal-gold');
+        }
         
         // Calculate confidence
         const confidence = calculateConfidence(players);
@@ -3789,6 +3840,12 @@ function updateTeamResults() {
         document.getElementById('winnerDamage').textContent = winner.totalDamage;
         document.getElementById('winnerSurvival').textContent = `${Math.floor(winner.avgSurvival / 60)}:${(winner.avgSurvival % 60).toString().padStart(2, '0')}`;
         document.getElementById('winnerRating').textContent = winner.teamRating.toFixed(1);
+
+        const winnerCard = document.querySelector('.winner-card');
+        if (winnerCard) {
+            winnerCard.classList.remove('medal-gold', 'medal-silver', 'medal-bronze');
+            winnerCard.classList.add('medal-gold');
+        }
         
         // Calculate confidence
         const confidence = calculateTeamConfidence(teams);
@@ -3830,7 +3887,8 @@ function updateTeamResults() {
                 
                 teams.slice(0, 3).forEach((team, index) => {
                     const teamCard = document.createElement('div');
-                    teamCard.className = `team-performance-card ${index === 0 ? 'winner' : ''}`;
+                    const medalClass = index === 0 ? 'medal-gold' : index === 1 ? 'medal-silver' : 'medal-bronze';
+                    teamCard.className = `team-performance-card ${medalClass}`;
                     teamCard.innerHTML = `
                         <div class="team-rank">${index + 1}</div>
                         <div class="team-name">${team.name}</div>
