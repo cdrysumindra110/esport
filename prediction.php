@@ -22,316 +22,1906 @@ $_SESSION['csrf_token'] = $csrfToken;
     
     <!-- Inline CSS for critical styles -->
     <style>
-        .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* CSS Variables - Professional Color Scheme */
+        :root {
+            --primary: #4361ee;
+            --secondary: #7209b7;
+            --success: #06d6a0;
+            --warning: #ffd60a;
+            --danger: #ef476f;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --border: #cbd5e1;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
         }
-        
-        /* Loading Spinner */
+
+        /* Professional Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #ffffff 100%);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header - Professional Design */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--space-lg) var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(40px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            letter-spacing: -0.5px;
+        }
+
+        .hero-title i {
+            font-size: 1.75rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            margin-bottom: var(--space-md);
+            font-weight: 500;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            margin-bottom: var(--space-sm);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .game-badges {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .bg-pubg { background: #2ecc71; color: white; }
+        .bg-freefire { background: #e74c3c; color: white; }
+        .bg-cod { background: #3498db; color: white; }
+        .bg-apex { background: #e91e63; color: white; }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar Cards */
+        .sidebar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+        }
+        .sidebar-card {
+            padding: 0;
+            overflow: hidden;
+        }
+        .sidebar-card:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: var(--space-md) var(--space-md);
+            margin: 0;
+        }
+
+        .card-title i {
+            font-size: 1.1rem;
+        }
+
+        /* Input Method Selector */
+        .input-method-selector {
+            padding: var(--space-lg);
+        }
+
+        .method-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: var(--space-lg);
+            background: var(--light);
+            padding: 4px;
+            border-radius: var(--radius-md);
+        }
+
+        .method-tab {
+            padding: var(--space-md);
+            background: white;
+            border: 2px solid transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--gray);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .method-tab i {
+            font-size: 1.25rem;
+        }
+
+        .method-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .method-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .method-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(114, 9, 183, 0.05));
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
+            transform: scale(1.01);
+        }
+
+        .upload-zone.highlight {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.15), rgba(114, 9, 183, 0.15));
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .upload-zone h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .upload-hint {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--dark);
+            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: white;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+            background: white;
+        }
+
+        .form-control:hover {
+            border-color: var(--primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--gray);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: none;
+            letter-spacing: 0.3px;
+            line-height: 1.4;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+            border-color: var(--primary);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef476f, #d62828);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 71, 111, 0.3);
+        }
+
+        .btn-sm {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+        }
+
+        .btn-lg {
+            padding: 14px 32px;
+            font-size: 1rem;
+            width: 100%;
+            font-weight: 700;
+        }
+
+        .btn-process {
+            width: 100%;
+            margin-top: var(--space-md);
+            font-size: 1.05rem;
+            padding: 16px;
+        }
+
+        /* Match Type Selector */
+        .match-type-selector {
+            margin-bottom: var(--space-lg);
+        }
+
+        .match-type-selector h3 {
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .match-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .match-option input {
+            display: none;
+        }
+
+        .match-option .option-content {
+            padding: var(--space-md);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .match-option input:checked + .option-content {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.05));
+            color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .match-option .option-content i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .match-option .option-content span {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .match-option .option-content small {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        /* Team Configuration */
+        .team-config-section {
+            margin-bottom: var(--space-lg);
+            padding: var(--space-md);
+            background: var(--light);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary);
+        }
+
+        .team-config-section h3 {
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.95rem;
+        }
+
+        .team-controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            align-items: end;
+        }
+
+        .team-controls .form-group {
+            margin-bottom: 0;
+        }
+
+        /* Team Inputs Container */
+        .team-inputs-container {
+            max-height: 700px;
+            overflow-y: auto;
+            padding: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .team-players-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        @media (max-width: 992px) {
+            .team-players-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .team-section {
+            margin-bottom: var(--space-lg);
+            padding: var(--space-lg);
+            background: linear-gradient(to bottom, white 0%, #f8fafc 100%);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .team-section:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+
+        .team-header {
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .team-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .team-header h4 {
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .team-header h4 i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .team-name-group {
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+        }
+
+        .team-name-group label {
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .team-name-input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .team-name-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .remove-team-btn {
+            background: linear-gradient(135deg, #ef476f, #d62828);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .remove-team-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 71, 111, 0.3);
+        }
+
+        .remove-team-btn:active {
+            transform: translateY(0);
+        }
+
+        .team-player-input {
+            margin-bottom: 0;
+            padding: var(--space-md);
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-player-input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        }
+
+        .team-player-input:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateX(2px);
+        }
+
+        .team-player-input h5 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .team-player-input h5 i {
+            font-size: 0.85rem;
+        }
+
+        .team-player-name,
+        .team-player-kills,
+        .team-player-damage,
+        .team-player-survival-min,
+        .team-player-survival-sec,
+        .team-player-headshots,
+        .team-player-assists {
+            padding: 10px 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: var(--light);
+            color: var(--dark);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .team-player-name:focus,
+        .team-player-kills:focus,
+        .team-player-damage:focus,
+        .team-player-survival-min:focus,
+        .team-player-survival-sec:focus,
+        .team-player-headshots:focus,
+        .team-player-assists:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .team-player-name:hover:not(:focus),
+        .team-player-kills:hover:not(:focus),
+        .team-player-damage:hover:not(:focus),
+        .team-player-survival-min:hover:not(:focus),
+        .team-player-survival-sec:hover:not(:focus),
+        .team-player-headshots:hover:not(:focus),
+        .team-player-assists:hover:not(:focus) {
+            border-color: #94a3b8;
+            background: white;
+        }
+
+        .team-player-name::placeholder,
+        .team-player-kills::placeholder,
+        .team-player-damage::placeholder,
+        .team-player-survival-min::placeholder,
+        .team-player-survival-sec::placeholder,
+        .team-player-headshots::placeholder,
+        .team-player-assists::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Input Grid */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm) var(--space-md);
+            flex: 1;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .input-group input {
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: var(--light);
+            color: var(--dark);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .input-group input:hover:not(:focus) {
+            border-color: #94a3b8;
+            background: white;
+        }
+
+        .input-group input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Survival Time Wrapper */
+        .survival-time-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 40%;
+            justify-content: flex-start;
+        }
+
+        .survival-time-wrapper input {
+            flex: 0 0 auto;
+            min-width: 70px;
+            width: 70px;
+            padding: 10px 12px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0px;
+            box-sizing: border-box;
+        }
+
+        .survival-time-wrapper span {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 12px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Player Input Section */
+        .player-input-section {
+            margin-bottom: 0;
+            padding: var(--space-md);
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            width: 100%;
+        }
+
+        .player-input-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        }
+
+        .player-input-section:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateX(2px);
+        }
+
+        .player-input-section h4 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .player-input-section h4 i {
+            font-size: 0.85rem;
+        }
+
+        .player-name,
+        .player-kills,
+        .player-damage,
+        .player-survival-min,
+        .player-survival-sec,
+        .player-headshots,
+        .player-assists {
+            padding: 10px 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: var(--light);
+            color: var(--dark);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .player-name:focus,
+        .player-kills:focus,
+        .player-damage:focus,
+        .player-survival-min:focus,
+        .player-survival-sec:focus,
+        .player-headshots:focus,
+        .player-assists:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .player-name:hover:not(:focus),
+        .player-kills:hover:not(:focus),
+        .player-damage:hover:not(:focus),
+        .player-survival-min:hover:not(:focus),
+        .player-survival-sec:hover:not(:focus),
+        .player-headshots:hover:not(:focus),
+        .player-assists:hover:not(:focus) {
+            border-color: #94a3b8;
+            background: white;
+        }
+
+        .player-name::placeholder,
+        .player-kills::placeholder,
+        .player-damage::placeholder,
+        .player-survival-min::placeholder,
+        .player-survival-sec::placeholder,
+        .player-headshots::placeholder,
+        .player-assists::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .btn i {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Player Inputs Container */
+        .player-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        /* Process Actions */
+        .process-actions {
+            margin-top: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        /* Recent Predictions */
+        /* .recent-list {
+            max-height: 400px;
+            overflow-y: auto;
+        } */
+
+        .recent-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-lg);
+        }
+
         .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #e0e0e0;
-            border-top: 4px solid #667eea;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        /* Improved Team Inputs */
-        .team-inputs-container {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-top: 15px;
-            background: #f9f9f9;
-        }
-        
-        .team-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            background: white;
-        }
-        
-        .team-section h4 {
-            color: #667eea;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .team-player-input {
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 6px;
-        }
-        
-        /* Scrollbar styling */
-        .team-inputs-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .team-inputs-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .team-inputs-container::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
-        }
-        
-        .team-inputs-container::-webkit-scrollbar-thumb:hover {
-            background: #a1a1a1;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .input-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-            
-            .team-inputs-container {
-                max-height: 300px;
-            }
-        }
-        
-        /* Match option improvements */
-        .match-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .match-option {
-            flex: 1;
-        }
-        
-        .match-option input[type="radio"] {
-            display: none;
-        }
-        
-        .match-option .option-content {
+
+        /* Main Content */
+        .main-content {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
+            gap: var(--space-lg);
         }
-        
-        .match-option input[type="radio"]:checked + .option-content {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-        
-        .match-option .option-content i {
-            font-size: 24px;
-            margin-bottom: 8px;
-            color: #667eea;
-        }
-        
-        /* Drag & Drop Highlight */
-        .upload-zone.highlight {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-            transform: scale(1.02);
-        }
-        
-        /* Career Stats Styles */
-        .career-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .stat-card {
-            display: flex;
-            align-items: center;
-            padding: 15px;
+
+        .card {
             background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            gap: 15px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
         }
-        
-        .stat-card:hover {
+
+        .card:hover {
+            box-shadow: var(--shadow-xl);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 10px;
+
+        .card h2,
+        .card h3 {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+        }
+
+        /* Processing Section */
+        .processing-section {
+            padding: var(--space-xl);
+        }
+
+        .processing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .processing-time {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .processing-steps {
+            margin-bottom: var(--space-lg);
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: 50px 1fr 50px;
+            gap: var(--space-md);
+            align-items: center;
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            background: var(--light);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.05));
+            border-left-color: var(--primary);
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 18px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
         }
-        
-        .stat-content {
-            flex: 1;
+
+        .step-content h4 {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--dark);
         }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
+
+        .step-content p {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin: 0;
         }
-        
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .raw-text-preview {
-            margin: 25px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        
-        .text-preview {
-            font-family: monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            color: #666;
-            max-height: 150px;
-            overflow-y: auto;
-            padding: 10px;
+
+        .step-status {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             background: white;
-            border-radius: 6px;
-            border: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--gray);
+            box-shadow: var(--shadow-sm);
         }
-        
-        .career-note {
-            margin-top: 10px;
-            padding: 10px;
-            background: #e8f4fd;
-            border-radius: 6px;
-            border-left: 4px solid #2196F3;
-            font-size: 14px;
-            color: #0d47a1;
+
+        .step.active .step-status {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
         }
-        
-        .career-note i {
-            margin-right: 8px;
+
+        /* Progress Bar */
+        .progress-container {
+            height: 8px;
+            background: var(--light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: var(--space-lg);
         }
-        
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: var(--space-lg);
+        }
+
+        .result-meta {
+            display: flex;
+            gap: var(--space-lg);
+            margin-top: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .confidence-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            text-align: center;
+            min-width: 140px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .confidence-value {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .confidence-label {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+
+        /* Winner Section */
+        .winner-section {
+            padding: var(--space-xl);
+        }
+
+        .winner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .winner-tag {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .winner-card {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(114, 9, 183, 0.05));
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .winner-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .winner-info h4 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .winner-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .winner-stats .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: var(--gray);
+        }
+
+        .winner-stats .stat i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .winner-stats .stat strong {
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        /* Performance Grid */
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+        }
+
+        .performance-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(248, 250, 252, 1));
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .performance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .performance-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-4px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .card-header h4 {
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        .performer-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .performer-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .performer-stats .stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .performer-stats .stat strong {
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .synergy-score {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: var(--space-md);
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .synergy-meter {
+            height: 6px;
+            background: var(--light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: var(--space-sm);
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Error Section */
+        .error-section {
+            padding: var(--space-xl);
+            background: linear-gradient(135deg, rgba(239, 71, 111, 0.05), rgba(214, 40, 40, 0.05));
+            border-left: 4px solid #ef476f;
+        }
+
+        .error-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            color: #ef476f;
+        }
+
+        .error-header i {
+            font-size: 1.5rem;
+        }
+
+        .error-header h3 {
+            color: #ef476f;
+        }
+
+        .error-body p {
+            color: var(--gray);
+            margin-bottom: var(--space-lg);
+        }
+
+        .error-actions {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        /* New Prediction Section */
+        .new-prediction-section {
+            text-align: center;
+            padding: var(--space-xl);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .new-prediction-section h3 {
+            color: white;
+        }
+
+        /* Team Members */
+        .team-members {
+            margin-top: var(--space-lg);
+            padding-top: var(--space-lg);
+            border-top: 2px solid var(--border);
+        }
+
+        .team-members h5 {
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .team-performance-card {
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            background: var(--light);
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .team-performance-card.winner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .team-rank {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .team-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .team-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
         /* Notification Styles */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: white;
-            border-radius: 8px;
-            padding: 15px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow-xl);
             z-index: 9999;
-            transform: translateX(100%);
             opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            max-width: 350px;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            max-width: 400px;
         }
-        
+
         .notification.show {
-            transform: translateX(0);
             opacity: 1;
+            transform: translateX(0);
         }
-        
+
         .notification-success {
-            border-left: 4px solid #4CAF50;
+            background: linear-gradient(135deg, var(--success), #059669);
         }
-        
+
         .notification-error {
-            border-left: 4px solid #f44336;
+            background: linear-gradient(135deg, var(--danger), #d62828);
         }
-        
+
         .notification-info {
-            border-left: 4px solid #2196F3;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
-        
+
         .notification-content {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-        
+
         .notification-content i {
-            font-size: 18px;
+            font-size: 1.2rem;
         }
-        
-        .notification-success .notification-content i {
-            color: #4CAF50;
+
+        /* OCR Preview Styles */
+        .ocr-results {
+            background: var(--light);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
         }
-        
-        .notification-error .notification-content i {
-            color: #f44336;
+
+        .ocr-header {
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--border);
         }
-        
-        .notification-info .notification-content i {
-            color: #2196F3;
+
+        .ocr-header h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        /* Team performance grid */
-        .team-performance-grid {
+
+        .ocr-header h4 i {
+            color: var(--success);
+            font-size: 1.3rem;
+        }
+
+        .ocr-meta {
+            display: flex;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+            margin-top: var(--space-sm);
+        }
+
+        .ocr-meta .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .ocr-meta .meta-item i {
+            color: var(--primary);
+        }
+
+        .confidence-display {
+            background: white;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+            border-left: 4px solid var(--primary);
+        }
+
+        .confidence-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .confidence-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: var(--space-sm);
+        }
+
+        .confidence-value.high {
+            color: var(--success);
+        }
+
+        .confidence-value.medium {
+            color: var(--warning);
+        }
+
+        .confidence-value.low {
+            color: var(--danger);
+        }
+
+        .confidence-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .career-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
-        
-        .team-performance-card {
-            padding: 15px;
-            border-radius: 8px;
-            background: #f5f5f5;
-            position: relative;
+
+        .stat-card {
+            background: white;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            transition: all 0.3s ease;
         }
-        
-        .team-performance-card.winner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: black;
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
-        
-        .team-rank {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            font-weight: bold;
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.05));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--primary);
+            flex-shrink: 0;
         }
-        
-        .team-name {
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 16px;
+
+        .stat-content {
+            flex: 1;
         }
-        
-        .team-stats {
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .raw-text-preview {
+            background: white;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+            border-left: 4px solid var(--border);
+        }
+
+        .raw-text-preview h5 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .raw-text-preview h5 i {
+            color: var(--primary);
+        }
+
+        .text-preview {
+            background: var(--light);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-family: 'Courier New', monospace;
+            max-height: 150px;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .ocr-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .ocr-actions .btn {
+            width: 100%;
+            padding: 12px 20px;
+        }
+
+        @media (max-width: 768px) {
+            .ocr-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ocr-error {
+            background: linear-gradient(135deg, rgba(239, 71, 111, 0.05), rgba(214, 40, 40, 0.05));
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--danger);
+            text-align: center;
+        }
+
+        .error-icon {
+            margin-bottom: var(--space-md);
+        }
+
+        .ocr-error h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+
+        .ocr-error p {
+            margin-bottom: var(--space-lg);
+            line-height: 1.6;
+        }
+
+        .error-actions {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            font-size: 14px;
+            gap: var(--space-sm);
+        }
+
+        .error-actions .btn {
+            width: 100%;
+        }
+
+        .ocr-processing {
+            padding: var(--space-xl);
+        }
+
+        .ocr-processing .spinner {
+            margin: 0 auto;
+        }
+
+        .ocr-processing p {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: var(--space-lg);
+        }
+
+        .career-note {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(114, 9, 183, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .career-note i {
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .btn-outline-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--border);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(6, 214, 160, 0.3);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 214, 160, 0.4);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-title {
+                font-size: 1.75rem;
+            }
+
+            .match-options {
+                grid-template-columns: 1fr;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .winner-card {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+                text-align: center;
+            }
+
+            .winner-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+
+            .method-tabs {
+                grid-template-columns: 1fr;
+            }
+
+            .team-controls {
+                grid-template-columns: 1fr;
+                align-items: stretch;
+            }
+
+            .team-header {
+                gap: var(--space-sm);
+            }
+
+            .team-header-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .team-name-group {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -468,37 +2058,42 @@ $_SESSION['csrf_token'] = $csrfToken;
                             <!-- Player Inputs (for solo) -->
                             <div class="player-inputs" id="playerInputs">
                                 <div class="player-input-section">
-                                    <h4><i class="fas fa-user"></i> Player 1</h4>
+                                    <h4><i class="fas fa-user-circle"></i> Player 1</h4>
                                     <div class="input-grid">
                                         <div class="input-group">
                                             <label>Player Name</label>
-                                            <input type="text" class="form-control player-name" 
-                                                   placeholder="Enter player name" value="Player 1" required>
+                                            <input type="text" class="player-name" 
+                                                   placeholder="Enter name" value="Player 1">
                                         </div>
                                         <div class="input-group">
                                             <label>Kills</label>
-                                            <input type="number" class="form-control player-kills" 
-                                                   min="0" max="50" value="5" required>
+                                            <input type="number" class="player-kills" 
+                                                   min="0" max="50" placeholder="0" value="5">
                                         </div>
                                         <div class="input-group">
                                             <label>Damage</label>
-                                            <input type="number" class="form-control player-damage" 
-                                                   min="0" max="5000" value="250" required>
+                                            <input type="number" class="player-damage" 
+                                                   min="0" max="5000" placeholder="0" value="250">
                                         </div>
                                         <div class="input-group">
-                                            <label>Survival (sec)</label>
-                                            <input type="number" class="form-control player-survival" 
-                                                   min="0" max="1800" value="450" required>
+                                            <label>Survival Time</label>
+                                            <div class="survival-time-wrapper">
+                                                <input type="number" class="player-survival-min" 
+                                                       min="0" max="30" placeholder="MM" value="7" title="Minutes">
+                                                <span>:</span>
+                                                <input type="number" class="player-survival-sec" 
+                                                       min="0" max="59" placeholder="SS" value="30" title="Seconds">
+                                            </div>
                                         </div>
                                         <div class="input-group">
                                             <label>Headshots</label>
-                                            <input type="number" class="form-control player-headshots" 
-                                                   min="0" max="50" value="2">
+                                            <input type="number" class="player-headshots" 
+                                                   min="0" max="50" placeholder="0" value="2">
                                         </div>
                                         <div class="input-group">
                                             <label>Assists</label>
-                                            <input type="number" class="form-control player-assists" 
-                                                   min="0" max="20" value="0">
+                                            <input type="number" class="player-assists" 
+                                                   min="0" max="20" placeholder="0" value="0">
                                         </div>
                                     </div>
                                     <button class="btn btn-danger btn-sm remove-player" onclick="removePlayerInput(this)">
@@ -546,7 +2141,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                     </div>
                 </div>
                 
-                <!-- Recent Predictions -->
+                <!-- Recent Predictions
                 <div class="sidebar-card" id="recentPredictions">
                     <h2 class="card-title">
                         <i class="fas fa-history"></i> Recent Predictions
@@ -556,7 +2151,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                             <div class="spinner" style="width: 20px; height: 20px;"></div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             
             <!-- Main Content - Results & Analytics -->
@@ -1113,10 +2708,30 @@ function generateTeams() {
     for (let i = 0; i < teamCount; i++) {
         const teamDiv = document.createElement('div');
         teamDiv.className = 'team-section';
-        teamDiv.innerHTML = `<h4><i class="fas fa-users"></i> Team ${i + 1}</h4>`;
+        teamDiv.innerHTML = `
+            <div class="team-header">
+                <div class="team-header-row">
+                    <h4><i class="fas fa-users"></i> Team ${i + 1}</h4>
+                    <button class="remove-team-btn" onclick="removeTeam(this)" title="Remove this team">
+                        <i class="fas fa-trash-alt"></i>
+                        Remove Team
+                    </button>
+                </div>
+                <div class="input-group team-name-group">
+                    <label>Team Name</label>
+                    <input type="text" class="form-control team-name-input" 
+                        placeholder="Enter team name" 
+                        value="Team ${i + 1}">
+                </div>
+            </div>
+            <div class="team-players-grid">
+            </div>
+        `;
         
+        // Add players to the grid container
+        const playersGrid = teamDiv.querySelector('.team-players-grid');
         for (let j = 0; j < playersPerTeam; j++) {
-            teamDiv.appendChild(createTeamPlayerInput(i, j));
+            playersGrid.appendChild(createTeamPlayerInput(i, j));
         }
         
         teamInputs.appendChild(teamDiv);
@@ -1136,36 +2751,44 @@ function createTeamPlayerInput(teamIndex, playerIndex) {
     const div = document.createElement('div');
     div.className = 'team-player-input';
     div.innerHTML = `
+        <h5><i class="fas fa-user-circle"></i> Player ${playerIndex + 1}</h5>
         <div class="input-grid">
             <div class="input-group">
-                <label>Player ${playerIndex + 1} Name</label>
-                <input type="text" class="form-control team-player-name" 
-                    placeholder="Team ${teamIndex + 1} Player ${playerIndex + 1}" 
-                    value="Team ${teamIndex + 1} Player ${playerIndex + 1}">
+                <label>Name</label>
+                <input type="text" class="team-player-name" 
+                    placeholder="Player name" 
+                    value="Player ${playerIndex + 1}">
             </div>
             <div class="input-group">
                 <label>Kills</label>
-                <input type="number" class="form-control team-player-kills" 
+                <input type="number" class="team-player-kills" 
                     min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 10)}">
             </div>
             <div class="input-group">
                 <label>Damage</label>
-                <input type="number" class="form-control team-player-damage" 
+                <input type="number" class="team-player-damage" 
                     min="0" max="5000" placeholder="0" value="${Math.floor(Math.random() * 500) + 100}">
             </div>
             <div class="input-group">
-                <label>Survival (sec)</label>
-                <input type="number" class="form-control team-player-survival" 
-                    min="0" max="1800" placeholder="0" value="${Math.floor(Math.random() * 600) + 300}">
+                <label>Survival Time</label>
+                <div class="survival-time-wrapper">
+                    <input type="number" class="team-player-survival-min" 
+                        min="0" max="30" placeholder="MM" value="${Math.floor(Math.random() * 10 + 5)}" 
+                        title="Minutes">
+                    <span>:</span>
+                    <input type="number" class="team-player-survival-sec" 
+                        min="0" max="59" placeholder="SS" value="${Math.floor(Math.random() * 60)}" 
+                        title="Seconds">
+                </div>
             </div>
             <div class="input-group">
                 <label>Headshots</label>
-                <input type="number" class="form-control team-player-headshots" 
+                <input type="number" class="team-player-headshots" 
                     min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 5)}">
             </div>
             <div class="input-group">
                 <label>Assists</label>
-                <input type="number" class="form-control team-player-assists" 
+                <input type="number" class="team-player-assists" 
                     min="0" max="20" placeholder="0" value="${Math.floor(Math.random() * 3)}">
             </div>
         </div>
@@ -1201,36 +2824,43 @@ function createPlayerInput(index) {
     const div = document.createElement('div');
     div.className = 'player-input-section fade-in';
     div.innerHTML = `
-        <h4><i class="fas fa-user"></i> Player ${index + 1}</h4>
+        <h4><i class="fas fa-user-circle"></i> Player ${index + 1}</h4>
         <div class="input-grid">
             <div class="input-group">
                 <label>Player Name</label>
-                <input type="text" class="form-control player-name" 
-                       placeholder="Player ${index + 1}" value="Player ${index + 1}">
+                <input type="text" class="player-name" 
+                       placeholder="Enter name" value="Player ${index + 1}">
             </div>
             <div class="input-group">
                 <label>Kills</label>
-                <input type="number" class="form-control player-kills" 
+                <input type="number" class="player-kills" 
                        min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 10)}">
             </div>
             <div class="input-group">
                 <label>Damage</label>
-                <input type="number" class="form-control player-damage" 
+                <input type="number" class="player-damage" 
                        min="0" max="5000" placeholder="0" value="${Math.floor(Math.random() * 500) + 100}">
             </div>
             <div class="input-group">
-                <label>Survival (sec)</label>
-                <input type="number" class="form-control player-survival" 
-                       min="0" max="1800" placeholder="0" value="${Math.floor(Math.random() * 600) + 300}">
+                <label>Survival Time</label>
+                <div class="survival-time-wrapper">
+                    <input type="number" class="player-survival-min" 
+                        min="0" max="30" placeholder="MM" value="${Math.floor(Math.random() * 10 + 5)}" 
+                        title="Minutes">
+                    <span>:</span>
+                    <input type="number" class="player-survival-sec" 
+                        min="0" max="59" placeholder="SS" value="${Math.floor(Math.random() * 60)}" 
+                        title="Seconds">
+                </div>
             </div>
             <div class="input-group">
                 <label>Headshots</label>
-                <input type="number" class="form-control player-headshots" 
+                <input type="number" class="player-headshots" 
                        min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 5)}">
             </div>
             <div class="input-group">
                 <label>Assists</label>
-                <input type="number" class="form-control player-assists" 
+                <input type="number" class="player-assists" 
                        min="0" max="20" placeholder="0" value="${Math.floor(Math.random() * 3)}">
             </div>
         </div>
@@ -1275,13 +2905,55 @@ function renumberPlayers() {
         // Update heading
         const h4 = section.querySelector('h4');
         if (h4) {
-            h4.innerHTML = `<i class="fas fa-user"></i> Player ${index + 1}`;
+            h4.innerHTML = `<i class="fas fa-user-circle"></i> Player ${index + 1}`;
         }
         
         // Update placeholder name if empty
         const nameInput = section.querySelector('.player-name');
         if (nameInput && !nameInput.value) {
             nameInput.placeholder = `Player ${index + 1}`;
+        }
+    });
+}
+
+// 10a. Remove Team
+function removeTeam(button) {
+    const teamSection = button.closest('.team-section');
+    if (!teamSection) return;
+    
+    const teamInputs = document.getElementById('teamInputs');
+    const sections = teamInputs.querySelectorAll('.team-section');
+    
+    // Don't remove if there are only 2 teams
+    if (sections.length <= 2) {
+        showNotification('Cannot have less than 2 teams!', 'error');
+        return;
+    }
+    
+    teamSection.remove();
+    
+    // Renumber remaining teams
+    renumberTeams();
+    
+    showNotification('Team removed successfully!', 'info');
+}
+
+// 10b. Renumber Teams
+function renumberTeams() {
+    const teamInputs = document.getElementById('teamInputs');
+    const sections = teamInputs.querySelectorAll('.team-section');
+    
+    sections.forEach((section, index) => {
+        // Update team heading
+        const h4 = section.querySelector('.team-header h4');
+        if (h4) {
+            h4.innerHTML = `<i class="fas fa-users"></i> Team ${index + 1}`;
+        }
+        
+        // Update team name placeholder if it's the default value
+        const teamNameInput = section.querySelector('.team-name-input');
+        if (teamNameInput && teamNameInput.value.startsWith('Team ')) {
+            teamNameInput.value = `Team ${index + 1}`;
         }
     });
 }
@@ -1306,21 +2978,35 @@ function updateRemoveButtons() {
     }
 }
 
-// 12. Show OCR Processing - UPDATED
+    // 12. Show OCR Processing - UPDATED
 function showOCRProcessing() {
+    const uploadZone = document.getElementById('uploadZone');
     const ocrPreview = document.getElementById('ocrPreview');
+    
     if (ocrPreview) {
         ocrPreview.classList.remove('hidden');
         ocrPreview.innerHTML = `
-            <div class="ocr-processing" style="text-align: center; padding: 20px;">
-                <div class="spinner"></div>
-                <p style="margin-top: 10px;">Uploading and analyzing image...</p>
-                <div class="progress" style="margin-top: 20px; height: 6px; background: #e0e0e0; border-radius: 3px;">
-                    <div class="progress-bar" style="width: 0%; height: 100%; background: #667eea; border-radius: 3px; transition: width 0.3s;"></div>
+            <div class="ocr-processing">
+                <div class="spinner" style="margin: 0 auto; margin-bottom: 20px;"></div>
+                <p>Uploading and analyzing image...</p>
+                <div class="progress-container" style="margin-top: 20px;">
+                    <div class="progress-bar" style="width: 0%; transition: width 0.3s;"></div>
                 </div>
             </div>
         `;
     }
+    
+    // Hide upload zone
+    if (uploadZone) {
+        uploadZone.style.display = 'none';
+    }
+    
+    // Scroll to OCR preview
+    setTimeout(() => {
+        if (ocrPreview) {
+            ocrPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 100);
 }
 
 // 13. NEW: Process OCR file with backend - FIXED VERSION
@@ -1565,9 +3251,14 @@ function createPlayerFromCareerStats(stats) {
                        min="0" max="5000" value="${Math.round(estimatedDamage)}">
             </div>
             <div class="input-group">
-                <label>Survival (sec) (Estimated)</label>
-                <input type="number" class="form-control player-survival" 
-                       min="0" max="1800" value="${estimatedSurvival}">
+                <label>Survival Time (Estimated)</label>
+                <div class="survival-time-wrapper">
+                    <input type="number" class="form-control player-survival-min" 
+                           min="0" max="30" placeholder="MM" value="${Math.floor(estimatedSurvival / 60)}" title="Minutes">
+                    <span>:</span>
+                    <input type="number" class="form-control player-survival-sec" 
+                           min="0" max="59" placeholder="SS" value="${estimatedSurvival % 60}" title="Seconds">
+                </div>
             </div>
             <div class="input-group">
                 <label>Headshots (Estimated)</label>
@@ -1650,9 +3341,14 @@ function addOpponentPlayers(careerStats) {
                            min="0" max="5000" value="${opponentDamage}">
                 </div>
                 <div class="input-group">
-                    <label>Survival (sec)</label>
-                    <input type="number" class="form-control player-survival" 
-                           min="0" max="1800" value="${opponentSurvival}">
+                    <label>Survival Time</label>
+                    <div class="survival-time-wrapper">
+                        <input type="number" class="form-control player-survival-min" 
+                               min="0" max="30" placeholder="MM" value="${Math.floor(opponentSurvival / 60)}" title="Minutes">
+                        <span>:</span>
+                        <input type="number" class="form-control player-survival-sec" 
+                               min="0" max="59" placeholder="SS" value="${opponentSurvival % 60}" title="Seconds">
+                    </div>
                 </div>
                 <div class="input-group">
                     <label>Headshots</label>
@@ -1791,13 +3487,15 @@ function validateInputs() {
             const name = input.querySelector('.player-name')?.value.trim();
             const kills = input.querySelector('.player-kills')?.value;
             const damage = input.querySelector('.player-damage')?.value;
+            const survivalMin = input.querySelector('.player-survival-min')?.value;
+            const survivalSec = input.querySelector('.player-survival-sec')?.value;
             
             if (!name) {
                 showNotification(`Please enter name for Player ${index + 1}`, 'error');
                 hasErrors = true;
             }
             
-            if (kills === '' || damage === '') {
+            if (kills === '' || damage === '' || survivalMin === '' || survivalSec === '') {
                 showNotification(`Please fill all required fields for Player ${index + 1}`, 'error');
                 hasErrors = true;
             }
@@ -1812,6 +3510,14 @@ function validateInputs() {
         }
         
         teamSections.forEach((team, teamIndex) => {
+            const teamNameInput = team.querySelector('.team-name-input');
+            const teamName = teamNameInput?.value.trim();
+            
+            if (!teamName) {
+                showNotification(`Please enter a name for Team ${teamIndex + 1}`, 'error');
+                hasErrors = true;
+            }
+            
             const playerInputs = team.querySelectorAll('.team-player-input');
             
             playerInputs.forEach((input, playerIndex) => {
@@ -1819,12 +3525,12 @@ function validateInputs() {
                 const kills = input.querySelector('.team-player-kills')?.value;
                 
                 if (!name) {
-                    showNotification(`Please enter name for Player ${playerIndex + 1} in Team ${teamIndex + 1}`, 'error');
+                    showNotification(`Please enter name for Player ${playerIndex + 1} in ${teamName || 'Team ' + (teamIndex + 1)}`, 'error');
                     hasErrors = true;
                 }
                 
                 if (kills === '') {
-                    showNotification(`Please enter kills for Player ${playerIndex + 1} in Team ${teamIndex + 1}`, 'error');
+                    showNotification(`Please enter kills for Player ${playerIndex + 1} in ${teamName || 'Team ' + (teamIndex + 1)}`, 'error');
                     hasErrors = true;
                 }
             });
@@ -1910,8 +3616,10 @@ function showResults() {
             }, 1000);
         }
         
-        // Scroll to results
-        resultsSection.scrollIntoView({ behavior: 'smooth' });
+        // Scroll to results smoothly
+        setTimeout(() => {
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
     }
 }
 
@@ -1949,7 +3657,9 @@ function updateSoloResults() {
         const name = input.querySelector('.player-name')?.value.trim() || `Player ${index + 1}`;
         const kills = parseInt(input.querySelector('.player-kills')?.value) || 0;
         const damage = parseInt(input.querySelector('.player-damage')?.value) || 0;
-        const survival = parseInt(input.querySelector('.player-survival')?.value) || 0;
+        const survivalMin = parseInt(input.querySelector('.player-survival-min')?.value) || 0;
+        const survivalSec = parseInt(input.querySelector('.player-survival-sec')?.value) || 0;
+        const survival = (survivalMin * 60) + survivalSec;
         const headshots = parseInt(input.querySelector('.player-headshots')?.value) || 0;
         const assists = parseInt(input.querySelector('.player-assists')?.value) || 0;
         
@@ -2012,6 +3722,10 @@ function updateTeamResults() {
     
     // Collect team data
     teamSections.forEach((teamSection, teamIndex) => {
+        // Get team name from input
+        const teamNameInput = teamSection.querySelector('.team-name-input');
+        const teamName = teamNameInput?.value.trim() || `Team ${teamIndex + 1}`;
+        
         const playerInputs = teamSection.querySelectorAll('.team-player-input');
         const teamPlayers = [];
         let teamTotalKills = 0;
@@ -2021,10 +3735,12 @@ function updateTeamResults() {
         let teamTotalAssists = 0;
         
         playerInputs.forEach((input, playerIndex) => {
-            const name = input.querySelector('.team-player-name')?.value.trim() || `Team ${teamIndex + 1} Player ${playerIndex + 1}`;
+            const name = input.querySelector('.team-player-name')?.value.trim() || `${teamName} Player ${playerIndex + 1}`;
             const kills = parseInt(input.querySelector('.team-player-kills')?.value) || 0;
             const damage = parseInt(input.querySelector('.team-player-damage')?.value) || 0;
-            const survival = parseInt(input.querySelector('.team-player-survival')?.value) || 0;
+            const survivalMin = parseInt(input.querySelector('.team-player-survival-min')?.value) || 0;
+            const survivalSec = parseInt(input.querySelector('.team-player-survival-sec')?.value) || 0;
+            const survival = (survivalMin * 60) + survivalSec;
             const headshots = parseInt(input.querySelector('.team-player-headshots')?.value) || 0;
             const assists = parseInt(input.querySelector('.team-player-assists')?.value) || 0;
             
@@ -2052,7 +3768,7 @@ function updateTeamResults() {
         const teamRating = calculateTeamRating(avgPlayerRating, teamTotalKills, teamTotalDamage, teamTotalSurvival);
         
         teams.push({
-            name: `Team ${teamIndex + 1}`,
+            name: teamName,
             players: teamPlayers,
             totalKills: teamTotalKills,
             totalDamage: teamTotalDamage,
@@ -2237,6 +3953,12 @@ function resetForm() {
     const statsFile = document.getElementById('statsFile');
     if (statsFile) statsFile.value = '';
     
+    // Show upload zone again
+    const uploadZone = document.getElementById('uploadZone');
+    if (uploadZone) {
+        uploadZone.style.display = 'block';
+    }
+    
     // Switch to upload tab
     document.querySelector('.method-tab[data-method="upload"]').click();
     
@@ -2249,36 +3971,41 @@ function resetForm() {
     if (playerInputs) {
         playerInputs.innerHTML = `
             <div class="player-input-section">
-                <h4><i class="fas fa-user"></i> Player 1</h4>
+                <h4><i class="fas fa-user-circle"></i> Player 1</h4>
                 <div class="input-grid">
                     <div class="input-group">
                         <label>Player Name</label>
-                        <input type="text" class="form-control player-name" 
-                               placeholder="Enter player name" value="Player 1">
+                        <input type="text" class="player-name" 
+                               placeholder="Enter name" value="Player 1">
                     </div>
                     <div class="input-group">
                         <label>Kills</label>
-                        <input type="number" class="form-control player-kills" 
+                        <input type="number" class="player-kills" 
                                min="0" max="50" placeholder="0" value="5">
                     </div>
                     <div class="input-group">
                         <label>Damage</label>
-                        <input type="number" class="form-control player-damage" 
+                        <input type="number" class="player-damage" 
                                min="0" max="5000" placeholder="0" value="250">
                     </div>
                     <div class="input-group">
-                        <label>Survival (sec)</label>
-                        <input type="number" class="form-control player-survival" 
-                               min="0" max="1800" placeholder="0" value="450">
+                        <label>Survival Time</label>
+                        <div class="survival-time-wrapper">
+                            <input type="number" class="player-survival-min" 
+                                   min="0" max="30" placeholder="MM" value="7" title="Minutes">
+                            <span>:</span>
+                            <input type="number" class="player-survival-sec" 
+                                   min="0" max="59" placeholder="SS" value="30" title="Seconds">
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>Headshots</label>
-                        <input type="number" class="form-control player-headshots" 
+                        <input type="number" class="player-headshots" 
                                min="0" max="50" placeholder="0" value="2">
                     </div>
                     <div class="input-group">
                         <label>Assists</label>
-                        <input type="number" class="form-control player-assists" 
+                        <input type="number" class="player-assists" 
                                min="0" max="20" placeholder="0" value="0">
                     </div>
                 </div>
@@ -2296,8 +4023,13 @@ function resetForm() {
         teamInputs.innerHTML = '';
     }
     
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to upload section
+    setTimeout(() => {
+        const uploadSection = document.querySelector('.sidebar-card');
+        if (uploadSection) {
+            uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 300);
     
     showNotification('Form reset successfully!', 'info');
 }

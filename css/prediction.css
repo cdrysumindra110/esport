@@ -121,7 +121,7 @@ body {
 
 /* Main Container */
 .infiknight-container {
-    max-width: 1600px;
+    max-width: 1900px;
     margin: 0 auto;
     padding: var(--spacing-xl);
 }
@@ -185,7 +185,7 @@ body {
 /* Layout */
 .main-layout {
     display: grid;
-    grid-template-columns: 350px 1fr;
+    grid-template-columns: 380px 1fr;
     gap: var(--spacing-xl);
     min-height: calc(100vh - 200px);
 }
@@ -752,14 +752,18 @@ body {
 .results-section {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl);
+    padding: 0;
 }
 
 .results-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-lg);
+    align-items: flex-start;
+    padding: var(--spacing-xl);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
 }
 
 .header-left h2 {

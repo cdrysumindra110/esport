@@ -1,4 +1,5 @@
 <?php
+// config_pubg.php
 // PUBG Mobile-specific OCR configuration
 class PUBGConfig {
     // Focus on specific stats needed for prediction
