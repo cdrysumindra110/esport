@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Include header
 include_once('header.php');
 
@@ -11,7 +11,7 @@ $_SESSION['csrf_token'] = $csrfToken;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infiknight AI Prediction System v2.0</title>
+    <title>InfiKnight AI Prediction System v3.0 - Career Stats Algorithm</title>
     
     <!-- External CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -20,9 +20,8 @@ $_SESSION['csrf_token'] = $csrfToken;
     <!-- External JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Inline CSS for critical styles -->
     <style>
-        /* CSS Variables - Professional Color Scheme */
+        
         :root {
             --primary: #4361ee;
             --secondary: #7209b7;
@@ -48,7 +47,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             --space-xl: 32px;
         }
 
-        /* Professional Typography */
         * {
             margin: 0;
             padding: 0;
@@ -62,7 +60,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             line-height: 1.6;
         }
 
-        /* Header - Professional Design */
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -153,7 +150,6 @@ $_SESSION['csrf_token'] = $csrfToken;
         .bg-cod { background: #3498db; color: white; }
         .bg-apex { background: #e91e63; color: white; }
 
-        /* Main Layout */
         .main-layout {
             display: flex;
             flex-direction: column;
@@ -162,7 +158,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             margin: 0 auto;
         }
 
-        /* Sidebar Cards */
         .sidebar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
@@ -176,11 +171,10 @@ $_SESSION['csrf_token'] = $csrfToken;
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--border);
-        }
-        .sidebar-card {
             padding: 0;
             overflow: hidden;
         }
+
         .sidebar-card:hover {
             box-shadow: var(--shadow-xl);
             transform: translateY(-2px);
@@ -202,7 +196,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             font-size: 1.1rem;
         }
 
-        /* Input Method Selector */
         .input-method-selector {
             padding: var(--space-lg);
         }
@@ -259,7 +252,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             to { opacity: 1; }
         }
 
-        /* Upload Zone */
         .upload-zone {
             border: 2px dashed var(--border);
             border-radius: var(--radius-md);
@@ -301,7 +293,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             margin-bottom: var(--space-sm);
         }
 
-        /* Form Elements */
         .form-group {
             margin-bottom: var(--space-md);
         }
@@ -344,7 +335,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             color: var(--gray);
         }
 
-        /* Buttons */
         .btn {
             padding: 12px 24px;
             border-radius: var(--radius-sm);
@@ -421,7 +411,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             padding: 16px;
         }
 
-        /* Match Type Selector */
         .match-type-selector {
             margin-bottom: var(--space-lg);
         }
@@ -479,7 +468,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             color: var(--gray);
         }
 
-        /* Team Configuration */
         .team-config-section {
             margin-bottom: var(--space-lg);
             padding: var(--space-md);
@@ -510,7 +498,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             margin-bottom: 0;
         }
 
-        /* Team Inputs Container */
         .team-inputs-container {
             max-height: 700px;
             overflow-y: auto;
@@ -698,75 +685,31 @@ $_SESSION['csrf_token'] = $csrfToken;
             font-size: 0.85rem;
         }
 
-        .team-player-name,
-        .team-player-kills,
-        .team-player-damage,
-        .team-player-survival-min,
-        .team-player-survival-sec,
-        .team-player-headshots,
-        .team-player-assists {
-            padding: 10px 12px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 0.95rem;
-            font-weight: 600;
-            background: var(--light);
-            color: var(--dark);
-            transition: all 0.3s ease;
-            font-family: inherit;
-            width: 100%;
-        }
-
-        .team-player-name:focus,
-        .team-player-kills:focus,
-        .team-player-damage:focus,
-        .team-player-survival-min:focus,
-        .team-player-survival-sec:focus,
-        .team-player-headshots:focus,
-        .team-player-assists:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-            background: white;
-            transform: translateY(-1px);
-        }
-
-        .team-player-name:hover:not(:focus),
-        .team-player-kills:hover:not(:focus),
-        .team-player-damage:hover:not(:focus),
-        .team-player-survival-min:hover:not(:focus),
-        .team-player-survival-sec:hover:not(:focus),
-        .team-player-headshots:hover:not(:focus),
-        .team-player-assists:hover:not(:focus) {
-            border-color: #94a3b8;
-            background: white;
-        }
-
-        .team-player-name::placeholder,
-        .team-player-kills::placeholder,
-        .team-player-damage::placeholder,
-        .team-player-survival-min::placeholder,
-        .team-player-survival-sec::placeholder,
-        .team-player-headshots::placeholder,
-        .team-player-assists::placeholder {
-            color: #94a3b8;
-            font-weight: 500;
-        }
-
-        /* Input Grid */
         .input-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            /* Use 1fr to ensure equal distribution of remaining space */
+            grid-template-columns: repeat(2, 1fr); 
+            /* Use 'minmax' if you want to prevent inputs from getting too small */
+            /* grid-template-columns: repeat(2, minmax(0, 1fr)); */
             gap: var(--space-sm) var(--space-md);
-            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
+            /* Ensure the group doesn't force a width larger than its grid cell */
+            min-width: 0; 
         }
 
-        .input-group label {
+        /* Ensure the actual input fields don't overflow their containers */
+        .input-group input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .input-group label {s
             font-weight: 600;
             font-size: 0.7rem;
             color: var(--gray);
@@ -808,7 +751,33 @@ $_SESSION['csrf_token'] = $csrfToken;
             font-weight: 500;
         }
 
-        /* Survival Time Wrapper */
+        .input-hint {
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-top: 4px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .career-stats-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.2);
+        }
+
+        .career-stats-info i {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
         .survival-time-wrapper {
             display: flex;
             gap: 12px;
@@ -842,16 +811,19 @@ $_SESSION['csrf_token'] = $csrfToken;
             justify-content: center;
         }
 
-        /* Player Input Section */
         .player-input-section {
             margin-bottom: 0;
-            padding: var(--space-md);
+            padding: var(--space-lg);
             background: white;
             border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            transition: all 0.3s ease;
+            border-radius: var(--radius-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             width: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .player-input-section::before {
@@ -859,87 +831,35 @@ $_SESSION['csrf_token'] = $csrfToken;
             position: absolute;
             top: 0;
             left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
         .player-input-section:hover {
             border-color: var(--primary);
-            box-shadow: var(--shadow-md);
-            transform: translateX(2px);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
         }
 
         .player-input-section h4 {
-            font-size: 0.75rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: var(--space-sm);
+            color: var(--dark);
+            text-transform: none;
+            letter-spacing: 0px;
+            margin-bottom: var(--space-md);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--gray-light);
+            margin-top: var(--space-md);
         }
 
         .player-input-section h4 i {
-            font-size: 0.85rem;
-        }
-
-        .player-name,
-        .player-kills,
-        .player-damage,
-        .player-survival-min,
-        .player-survival-sec,
-        .player-headshots,
-        .player-assists {
-            padding: 10px 12px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 0.95rem;
-            font-weight: 600;
-            background: var(--light);
-            color: var(--dark);
-            transition: all 0.3s ease;
-            font-family: inherit;
-            width: 100%;
-        }
-
-        .player-name:focus,
-        .player-kills:focus,
-        .player-damage:focus,
-        .player-survival-min:focus,
-        .player-survival-sec:focus,
-        .player-headshots:focus,
-        .player-assists:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-            background: white;
-            transform: translateY(-1px);
-        }
-
-        .player-name:hover:not(:focus),
-        .player-kills:hover:not(:focus),
-        .player-damage:hover:not(:focus),
-        .player-survival-min:hover:not(:focus),
-        .player-survival-sec:hover:not(:focus),
-        .player-headshots:hover:not(:focus),
-        .player-assists:hover:not(:focus) {
-            border-color: #94a3b8;
-            background: white;
-        }
-
-        .player-name::placeholder,
-        .player-kills::placeholder,
-        .player-damage::placeholder,
-        .player-survival-min::placeholder,
-        .player-survival-sec::placeholder,
-        .player-headshots::placeholder,
-        .player-assists::placeholder {
-            color: #94a3b8;
-            font-weight: 500;
+            font-size: 1rem;
+            color: var(--primary);
         }
 
         .btn i {
@@ -957,49 +877,22 @@ $_SESSION['csrf_token'] = $csrfToken;
             transform: none;
         }
 
-        /* Player Inputs Container */
         .player-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
         }
 
-        /* Process Actions */
         .process-actions {
             margin-top: var(--space-lg);
             display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-
-        /* Recent Predictions */
-        /* .recent-list {
-            max-height: 400px;
-            overflow-y: auto;
-        } */
-
-        .recent-loading {
-            display: flex;
+            flex-direction: row;
+            gap: var(--space-md);
             justify-content: center;
-            align-items: center;
-            padding: var(--space-lg);
+            flex-wrap: wrap;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Main Content */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -1035,7 +928,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             font-size: 1.25rem;
         }
 
-        /* Processing Section */
         .processing-section {
             padding: var(--space-xl);
         }
@@ -1120,7 +1012,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             color: white;
         }
 
-        /* Progress Bar */
         .progress-container {
             height: 8px;
             background: var(--light);
@@ -1137,7 +1028,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             width: 0%;
         }
 
-        /* Results Section */
         .results-section {
             display: flex;
             flex-direction: column;
@@ -1188,7 +1078,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             opacity: 0.9;
         }
 
-        /* Winner Section */
         .winner-section {
             padding: var(--space-xl);
         }
@@ -1222,7 +1111,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             margin-bottom: var(--space-lg);
         }
 
-        /* Medal palettes */
         .medal-gold {
             background: linear-gradient(135deg, #fff8db 0%, #ffe28a 100%);
             border-color: #f2c94c;
@@ -1297,7 +1185,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             font-size: 1.1rem;
         }
 
-        /* Performance Grid */
         .performance-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1414,7 +1301,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             transition: width 0.5s ease;
         }
 
-        /* Error Section */
         .error-section {
             padding: var(--space-xl);
             background: linear-gradient(135deg, rgba(239, 71, 111, 0.05), rgba(214, 40, 40, 0.05));
@@ -1447,7 +1333,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             gap: var(--space-md);
         }
 
-        /* New Prediction Section */
         .new-prediction-section {
             text-align: center;
             padding: var(--space-xl);
@@ -1459,7 +1344,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             color: white;
         }
 
-        /* Team Members */
         .team-members {
             margin-top: var(--space-lg);
             padding-top: var(--space-lg);
@@ -1528,7 +1412,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             font-size: 0.9rem;
         }
 
-        /* Utility Classes */
         .hidden {
             display: none !important;
         }
@@ -1541,7 +1424,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             text-align: center;
         }
 
-        /* Notification Styles */
         .notification {
             position: fixed;
             top: 20px;
@@ -1585,7 +1467,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             font-size: 1.2rem;
         }
 
-        /* OCR Preview Styles */
         .ocr-results {
             background: var(--light);
             border-radius: var(--radius-md);
@@ -1885,7 +1766,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             box-shadow: 0 6px 20px rgba(6, 214, 160, 0.4);
         }
 
-        /* Scrollbar Styling */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -1904,7 +1784,6 @@ $_SESSION['csrf_token'] = $csrfToken;
             background: var(--primary);
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar {
                 grid-template-columns: 1fr;
@@ -1968,25 +1847,42 @@ $_SESSION['csrf_token'] = $csrfToken;
                 max-width: 100%;
             }
         }
+
+        
     </style>
 </head>
 <body>
+    
+    <!-- MAIN -->
+    <main role="main">    
+      <article>
+        <!-- Header -->
+        <header class="section-head background-image" style="background-image:url(./img/full_bg.jpg); background-size: cover; ">
+          <div class="line">
+  
+            <h1 class="text-white text-s-size-30 text-m-size-40 text-l-size-50 text-size-70 headline">
+              <center>Prediction</center>
+            </h1>
+          </div>
+        </header>
+      </article>  
+    </main>
     <!-- Theme Toggle -->
-    <div class="theme-toggle">
+    <!-- <div class="theme-toggle">
         <button class="toggle-btn" id="themeToggle">
             <i class="fas fa-moon"></i>
         </button>
-    </div>
+    </div> -->
 
     <div class="infiknight-container">
         <!-- Header Section -->
         <header class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    <i class="fas fa-robot"></i> Infiknight AI Prediction System
+                    <i class="fas fa-robot"></i> InfiKnight AI v3.0
                 </h1>
-                <p class="hero-subtitle">Advanced Battle Royale Winner Prediction with OCR & ML</p>
-                <div class="version-badge">v2.0</div>
+                <p class="hero-subtitle">Career Stats Prediction with PUBG Elite Benchmarks & Scientific Weights</p>
+                <div class="version-badge">v3.0</div>
                 <div class="game-badges">
                     <span class="badge bg-pubg">PUBG</span>
                     <span class="badge bg-freefire">Free Fire</span>
@@ -2041,7 +1937,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                             </div>
                         </div>
                         
-                        <!-- Manual Input Section -->
+                        <!-- Manual Input Section - FIXED: Now uses proper InfiKnight fields -->
                         <div class="method-content" id="manualMethod">
                             <div class="match-type-selector">
                                 <h3>Match Type</h3>
@@ -2100,8 +1996,12 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 </div>
                             </div>
                             
-                            <!-- Player Inputs (for solo) -->
+                            <!-- Player Inputs (for solo) - FIXED: Now uses InfiKnight algorithm fields -->
                             <div class="player-inputs" id="playerInputs">
+                                <!-- <div class="career-stats-info">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Enter career statistics - InfiKnight will calculate skill, damage & survival scores
+                                </div> -->
                                 <div class="player-input-section">
                                     <h4><i class="fas fa-user-circle"></i> Player 1</h4>
                                     <div class="input-grid">
@@ -2111,34 +2011,46 @@ $_SESSION['csrf_token'] = $csrfToken;
                                                    placeholder="Enter name" value="Player 1">
                                         </div>
                                         <div class="input-group">
-                                            <label>Kills</label>
-                                            <input type="number" class="player-kills" 
-                                                   min="0" max="50" placeholder="0" value="5">
+                                            <label><i class="fas fa-crosshairs"></i> K/D Ratio</label>
+                                            <input type="number" class="player-kd" 
+                                                   min="0.1" max="15" step="0.1" placeholder="2.5" value="2.5"
+                                                   title="Kill/Death ratio (0.5 - 10.0 typical)">
+                                            <small class="input-hint">Range: 0.5 - 10.0</small>
                                         </div>
                                         <div class="input-group">
-                                            <label>Damage</label>
-                                            <input type="number" class="player-damage" 
-                                                   min="0" max="5000" placeholder="0" value="250">
+                                            <label><i class="fas fa-trophy"></i> Win Rate %</label>
+                                            <input type="number" class="player-winrate" 
+                                                   min="0" max="100" step="0.1" placeholder="15" value="15"
+                                                   title="Percentage of matches won (1% - 50% typical)">
+                                            <small class="input-hint">Range: 1% - 50%</small>
                                         </div>
                                         <div class="input-group">
-                                            <label>Survival Time</label>
-                                            <div class="survival-time-wrapper">
-                                                <input type="number" class="player-survival-min" 
-                                                       min="0" max="30" placeholder="MM" value="7" title="Minutes">
-                                                <span>:</span>
-                                                <input type="number" class="player-survival-sec" 
-                                                       min="0" max="59" placeholder="SS" value="30" title="Seconds">
-                                            </div>
+                                            <label><i class="fas fa-medal"></i> Top 10 Rate %</label>
+                                            <input type="number" class="player-top10" 
+                                                   min="0" max="100" step="0.1" placeholder="40" value="40"
+                                                   title="Percentage of Top 10 finishes (5% - 80% typical)">
+                                            <small class="input-hint">Range: 5% - 80%</small>
                                         </div>
                                         <div class="input-group">
-                                            <label>Headshots</label>
-                                            <input type="number" class="player-headshots" 
-                                                   min="0" max="50" placeholder="0" value="2">
+                                            <label><i class="fas fa-fire"></i> Avg Damage</label>
+                                            <input type="number" class="player-avgdamage" 
+                                                   min="0" max="2000" step="10" placeholder="350" value="350"
+                                                   title="Average damage per match (100 - 1000 typical)">
+                                            <small class="input-hint">Range: 100 - 1000</small>
                                         </div>
                                         <div class="input-group">
-                                            <label>Assists</label>
-                                            <input type="number" class="player-assists" 
-                                                   min="0" max="20" placeholder="0" value="0">
+                                            <label><i class="fas fa-bullseye"></i> Headshot Rate %</label>
+                                            <input type="number" class="player-headshot" 
+                                                   min="0" max="100" step="0.1" placeholder="25" value="25"
+                                                   title="Percentage of kills that are headshots (10% - 70% typical)">
+                                            <small class="input-hint">Range: 10% - 70%</small>
+                                        </div>
+                                        <div class="input-group">
+                                            <label><i class="fas fa-percent"></i> Accuracy %</label>
+                                            <input type="number" class="player-accuracy" 
+                                                   min="0" max="100" step="0.1" placeholder="20" value="20"
+                                                   title="Overall shooting accuracy (10% - 50% typical)">
+                                            <small class="input-hint">Range: 10% - 50%</small>
                                         </div>
                                     </div>
                                     <button class="btn btn-danger btn-sm remove-player" onclick="removePlayerInput(this)">
@@ -2185,18 +2097,6 @@ $_SESSION['csrf_token'] = $csrfToken;
                         <input type="hidden" id="csrfToken" value="<?php echo htmlspecialchars($csrfToken); ?>">
                     </div>
                 </div>
-                
-                <!-- Recent Predictions
-                <div class="sidebar-card" id="recentPredictions">
-                    <h2 class="card-title">
-                        <i class="fas fa-history"></i> Recent Predictions
-                    </h2>
-                    <div class="recent-list" id="recentList">
-                        <div class="recent-loading">
-                            <div class="spinner" style="width: 20px; height: 20px;"></div>
-                        </div>
-                    </div>
-                </div> -->
             </div>
             
             <!-- Main Content - Results & Analytics -->
@@ -2239,7 +2139,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                             </div>
                             <div class="step-content">
                                 <h4>AI Analysis</h4>
-                                <p>Running ML algorithms...</p>
+                                <p>Running InfiKnight algorithm...</p>
                             </div>
                             <div class="step-status"></div>
                         </div>
@@ -2278,11 +2178,11 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 </span>
                                 <span class="meta-item">
                                     <i class="fas fa-code-branch"></i>
-                                    <span id="algorithmVersion">v2.1</span>
+                                    <span id="algorithmVersion">InfiKnight v3.0</span>
                                 </span>
                                 <span class="meta-item">
                                     <i class="fas fa-robot"></i>
-                                    <span id="mlStatus">ML Enhanced</span>
+                                    <span id="mlStatus">Career Stats AI</span>
                                 </span>
                             </div>
                         </div>
@@ -2294,7 +2194,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                         </div>
                     </div>
                     
-                    <!-- Winner Card -->
+                    <!-- Winner Card - FIXED: Shows all three scores -->
                     <div class="winner-section card">
                         <div class="winner-header">
                             <h3><i class="fas fa-crown"></i> Predicted Winner</h3>
@@ -2309,7 +2209,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 <div class="winner-stats">
                                     <div class="stat">
                                         <i class="fas fa-skull"></i>
-                                        <span>Kills: <strong id="winnerKills">0</strong></span>
+                                        <span>Skill: <strong id="winnerSkill">0</strong></span>
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-bullseye"></i>
@@ -2317,7 +2217,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-clock"></i>
-                                        <span>Survival: <strong id="winnerSurvival">0m</strong></span>
+                                        <span>Survival: <strong id="winnerSurvival">0</strong></span>
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-star"></i>
@@ -2334,7 +2234,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                         </div>
                     </div>
                     
-                    <!-- Performance Grid -->
+                    <!-- Performance Grid - FIXED: Shows InfiKnight metrics -->
                     <div class="performance-section card">
                         <h3><i class="fas fa-chart-line"></i> Performance Analysis</h3>
                         <div class="performance-grid">
@@ -2346,9 +2246,9 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 <div class="card-body">
                                     <div class="performer-name" id="topPerformerName">Loading...</div>
                                     <div class="performer-stats">
-                                        <span class="stat">K/D: <strong id="topPerformerKD">0.0</strong></span>
-                                        <span class="stat">DMG: <strong id="topPerformerDMG">0</strong></span>
-                                        <span class="stat">Rating: <strong id="topPerformerRating">0.0</strong></span>
+                                        <span class="stat">Skill: <strong id="topPerformerSkill">0.0</strong></span>
+                                        <span class="stat">Damage: <strong id="topPerformerDamage">0</strong></span>
+                                        <span class="stat">Survival: <strong id="topPerformerSurvival">0</strong></span>
                                     </div>
                                 </div>
                             </div>
@@ -2361,9 +2261,9 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 <div class="card-body">
                                     <div class="performer-name" id="weakLinkName">Loading...</div>
                                     <div class="performer-stats">
-                                        <span class="stat">K/D: <strong id="weakLinkKD">0.0</strong></span>
-                                        <span class="stat">DMG: <strong id="weakLinkDMG">0</strong></span>
-                                        <span class="stat">Rating: <strong id="weakLinkRating">0.0</strong></span>
+                                        <span class="stat">Skill: <strong id="weakLinkSkill">0.0</strong></span>
+                                        <span class="stat">Damage: <strong id="weakLinkDamage">0</strong></span>
+                                        <span class="stat">Survival: <strong id="weakLinkSurvival">0</strong></span>
                                     </div>
                                     <div class="improvement-tip" id="improvementTip">
                                         Focus on positioning and aim training
@@ -2401,11 +2301,11 @@ $_SESSION['csrf_token'] = $csrfToken;
                                         <div class="accuracy-label">Confidence</div>
                                     </div>
                                     <div class="prediction-desc" id="predictionDesc">
-                                        Based on ML analysis
+                                        Based on InfiKnight algorithm
                                     </div>
                                     <div class="algorithm-info">
-                                        <span class="info-tag" id="algorithmTag">v2.1</span>
-                                        <span class="info-tag" id="mlTag">ML Enhanced</span>
+                                        <span class="info-tag" id="algorithmTag">v3.0</span>
+                                        <span class="info-tag" id="mlTag">Career AI</span>
                                     </div>
                                 </div>
                             </div>
@@ -2445,107 +2345,70 @@ $_SESSION['csrf_token'] = $csrfToken;
         </div>
     </div>
 
-    <!-- JavaScript Files -->
+    <!-- JavaScript Files - FIXED: Complete rewrite of critical functions -->
     <script>
-// Initialize after DOM loads
+// =============================================
+// INFIKNIGHT AI PREDICTION SYSTEM v3.0 - FIXED
+// =============================================
+
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing app...');
-    
-    // Initialize everything
+    console.log('InfiKnight AI v3.0 - Initializing...');
     initializeApp();
-    
-    // Set initial state
-    updateInputMode();
 });
 
+// ============= INITIALIZATION =============
 function initializeApp() {
-    console.log('Initializing application...');
-    
-    // 1. Initialize Theme Toggle
     initializeTheme();
-    
-    // 2. Initialize Tabs
     initializeTabs();
-    
-    // 3. Add Drag & Drop
     addDragAndDrop();
-    
-    // 4. Initialize Event Listeners
     initializeEventListeners();
-    
-    console.log('Application initialized successfully');
+    updateInputMode();
+    console.log('InfiKnight AI initialized successfully');
 }
 
-// 1. Theme Toggle Function
+// ============= THEME =============
 function initializeTheme() {
     const themeToggle = document.getElementById('themeToggle');
     if (!themeToggle) return;
     
-    // Set initial theme from localStorage or default to light
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
     
-    // Update icon based on current theme
     const icon = themeToggle.querySelector('i');
-    if (icon) {
-        icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
+    if (icon) icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     
-    // Add click event
     themeToggle.addEventListener('click', function() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        // Update theme
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        
-        // Update icon
-        if (icon) {
-            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
+        if (icon) icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     });
 }
 
-// 2. Tab Switching Function
+// ============= TABS =============
 function initializeTabs() {
     const methodTabs = document.querySelectorAll('.method-tab');
     const methodContents = document.querySelectorAll('.method-content');
     
-    if (methodTabs.length === 0) return;
-    
-    // Add click event to each tab
     methodTabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const method = this.getAttribute('data-method');
-            console.log('Switching to tab:', method);
             
-            // Remove active class from all tabs
             methodTabs.forEach(t => t.classList.remove('active'));
-            
-            // Add active class to clicked tab
             this.classList.add('active');
             
-            // Hide all method contents
-            methodContents.forEach(content => {
-                content.classList.remove('active');
-            });
+            methodContents.forEach(content => content.classList.remove('active'));
             
-            // Show the selected method content
             const targetContent = document.getElementById(method + 'Method');
-            if (targetContent) {
-                targetContent.classList.add('active');
-            }
+            if (targetContent) targetContent.classList.add('active');
             
-            // If switching to manual input, update match type
-            if (method === 'manual') {
-                updateInputMode();
-            }
+            if (method === 'manual') updateInputMode();
         });
     });
 }
 
-// 2.5 Add Drag & Drop Function
+// ============= DRAG & DROP =============
 function addDragAndDrop() {
     const uploadZone = document.getElementById('uploadZone');
     if (!uploadZone) return;
@@ -2560,24 +2423,18 @@ function addDragAndDrop() {
     }
     
     ['dragenter', 'dragover'].forEach(eventName => {
-        uploadZone.addEventListener(eventName, highlight, false);
+        uploadZone.addEventListener(eventName, function() {
+            uploadZone.classList.add('highlight');
+        }, false);
     });
     
     ['dragleave', 'drop'].forEach(eventName => {
-        uploadZone.addEventListener(eventName, unhighlight, false);
+        uploadZone.addEventListener(eventName, function() {
+            uploadZone.classList.remove('highlight');
+        }, false);
     });
     
-    function highlight() {
-        uploadZone.classList.add('highlight');
-    }
-    
-    function unhighlight() {
-        uploadZone.classList.remove('highlight');
-    }
-    
-    uploadZone.addEventListener('drop', handleDrop, false);
-    
-    function handleDrop(e) {
+    uploadZone.addEventListener('drop', function(e) {
         const dt = e.dataTransfer;
         const files = dt.files;
         
@@ -2587,148 +2444,105 @@ function addDragAndDrop() {
             dataTransfer.items.add(files[0]);
             fileInput.files = dataTransfer.files;
             
-            // Trigger change event
             const event = new Event('change', { bubbles: true });
             fileInput.dispatchEvent(event);
             
             showNotification('File dropped successfully!', 'success');
         }
-    }
+    }, false);
 }
 
-// 3. Initialize All Event Listeners
+// ============= EVENT LISTENERS =============
 function initializeEventListeners() {
-    console.log('Initializing event listeners...');
-    
-    // A. Browse Files Button
+    // Browse button
     const browseBtn = document.getElementById('browseBtn');
     const statsFile = document.getElementById('statsFile');
     if (browseBtn && statsFile) {
-        browseBtn.addEventListener('click', function() {
-            statsFile.click();
-        });
+        browseBtn.addEventListener('click', () => statsFile.click());
     }
     
-    // B. File Input Change - FIXED
+    // File input change
     if (statsFile) {
         statsFile.addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
-                const fileName = e.target.files[0].name;
-                console.log('File selected:', fileName);
                 showOCRProcessing();
-                // Call processOCRFile directly
                 processOCRFile(e.target.files[0]);
             }
         });
     }
     
-    // C. Match Type Radio Buttons
+    // Match type change
     document.querySelectorAll('input[name="matchType"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            console.log('Match type changed to:', this.value);
-            updateInputMode();
-        });
+        radio.addEventListener('change', updateInputMode);
     });
     
-    // D. Add Player Button
+    // Add player button
     const addPlayerBtn = document.getElementById('addPlayerBtn');
     if (addPlayerBtn) {
-        addPlayerBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Add Player button clicked');
-            addPlayerInput();
-        });
+        addPlayerBtn.addEventListener('click', addPlayerInput);
     }
     
-    // E. Generate Teams Button
+    // Generate teams button
     const generateTeamsBtn = document.getElementById('generateTeams');
     if (generateTeamsBtn) {
-        generateTeamsBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            generateTeams();
-        });
+        generateTeamsBtn.addEventListener('click', generateTeams);
     }
     
-    // F. Team Count Select
+    // Team count change
     const teamCountEl = document.getElementById('teamCount');
     if (teamCountEl) {
-        teamCountEl.addEventListener('change', function() {
-            generateTeams();
-        });
+        teamCountEl.addEventListener('change', generateTeams);
     }
     
-    // G. Process Button
+    // Process button
     const processBtn = document.getElementById('processBtn');
     if (processBtn) {
-        processBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            processData();
-        });
+        processBtn.addEventListener('click', processData);
     }
     
-    // H. Import API Button
-    const importApiBtn = document.getElementById('importApi');
-    if (importApiBtn) {
-        importApiBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            importFromAPI();
-        });
-    }
-    
-    // I. New Prediction Button
+    // New prediction button
     const newPredictionBtn = document.getElementById('newPrediction');
     if (newPredictionBtn) {
-        newPredictionBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            resetForm();
-        });
+        newPredictionBtn.addEventListener('click', resetForm);
     }
     
-    // J. Retry Button
+    // Retry button
     const retryBtn = document.getElementById('retryButton');
     if (retryBtn) {
-        retryBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            retryProcessing();
-        });
+        retryBtn.addEventListener('click', retryProcessing);
     }
     
-    console.log('All event listeners initialized');
+    // Import API button
+    const importApiBtn = document.getElementById('importApi');
+    if (importApiBtn) {
+        importApiBtn.addEventListener('click', importFromAPI);
+    }
 }
 
-// 4. Update Input Mode Based on Match Type
+// ============= UPDATE INPUT MODE =============
 function updateInputMode() {
     const matchType = document.querySelector('input[name="matchType"]:checked').value;
     const teamConfig = document.getElementById('teamConfig');
     const playerInputs = document.getElementById('playerInputs');
     const addPlayerBtn = document.getElementById('addPlayerBtn');
     
-    console.log('Updating input mode for:', matchType);
-    
     if (matchType === 'solo') {
-        // Solo mode - show individual player inputs
         if (teamConfig) teamConfig.classList.add('hidden');
         if (playerInputs) playerInputs.classList.remove('hidden');
         if (addPlayerBtn) addPlayerBtn.style.display = 'block';
-        
-        // Update winner tag
         document.getElementById('winnerTag').textContent = 'Solo Winner';
+        document.getElementById('teamMembers')?.classList.add('hidden');
     } else {
-        // Team modes - show team configuration
         if (teamConfig) teamConfig.classList.remove('hidden');
         if (playerInputs) playerInputs.classList.add('hidden');
         if (addPlayerBtn) addPlayerBtn.style.display = 'none';
-        
-        // Update winner tag
         document.getElementById('winnerTag').textContent = matchType === 'duo' ? 'Duo Winner' : 'Squad Winner';
-        
-        // Generate teams
+        document.getElementById('teamMembers')?.classList.remove('hidden');
         generateTeams();
     }
 }
 
-// 5. Generate Teams Function - IMPROVED
+// ============= GENERATE TEAMS (FIXED) =============
 function generateTeams() {
     const teamInputs = document.getElementById('teamInputs');
     if (!teamInputs) return;
@@ -2736,17 +2550,10 @@ function generateTeams() {
     const teamCount = parseInt(document.getElementById('teamCount').value) || 2;
     const matchType = document.querySelector('input[name="matchType"]:checked').value;
     
-    // Determine players per team based on match type
     let playersPerTeam;
-    if (matchType === 'solo') {
-        playersPerTeam = 1;
-    } else if (matchType === 'duo') {
-        playersPerTeam = 2;
-    } else { // squad
-        playersPerTeam = 4;
-    }
-    
-    console.log('Generating teams:', teamCount, 'teams,', playersPerTeam, 'players per team');
+    if (matchType === 'solo') playersPerTeam = 1;
+    else if (matchType === 'duo') playersPerTeam = 2;
+    else playersPerTeam = 4;
     
     teamInputs.innerHTML = '';
     
@@ -2758,22 +2565,18 @@ function generateTeams() {
                 <div class="team-header-row">
                     <h4><i class="fas fa-users"></i> Team ${i + 1}</h4>
                     <button class="remove-team-btn" onclick="removeTeam(this)" title="Remove this team">
-                        <i class="fas fa-trash-alt"></i>
-                        Remove Team
+                        <i class="fas fa-trash-alt"></i> Remove Team
                     </button>
                 </div>
                 <div class="input-group team-name-group">
                     <label>Team Name</label>
                     <input type="text" class="form-control team-name-input" 
-                        placeholder="Enter team name" 
-                        value="Team ${i + 1}">
+                        placeholder="Enter team name" value="Team ${i + 1}">
                 </div>
             </div>
-            <div class="team-players-grid">
-            </div>
+            <div class="team-players-grid"></div>
         `;
         
-        // Add players to the grid container
         const playersGrid = teamDiv.querySelector('.team-players-grid');
         for (let j = 0; j < playersPerTeam; j++) {
             playersGrid.appendChild(createTeamPlayerInput(i, j));
@@ -2781,93 +2584,94 @@ function generateTeams() {
         
         teamInputs.appendChild(teamDiv);
     }
-    
-    // Auto-scroll to team inputs
-    setTimeout(() => {
-        const teamContainer = document.querySelector('.team-inputs-container');
-        if (teamContainer) {
-            teamContainer.scrollTop = 0;
-        }
-    }, 100);
 }
 
-// 6. Create Team Player Input
+// ============= CREATE TEAM PLAYER INPUT (FIXED) =============
 function createTeamPlayerInput(teamIndex, playerIndex) {
     const div = document.createElement('div');
     div.className = 'team-player-input';
+    
+    const kd = (Math.random() * 4 + 1).toFixed(1);
+    const winrate = (Math.random() * 25 + 5).toFixed(1);
+    const top10 = (Math.random() * 40 + 20).toFixed(1);
+    const avgdmg = Math.floor(Math.random() * 400 + 200);
+    const headshot = (Math.random() * 30 + 15).toFixed(1);
+    const accuracy = (Math.random() * 20 + 15).toFixed(1);
+    
     div.innerHTML = `
         <h5><i class="fas fa-user-circle"></i> Player ${playerIndex + 1}</h5>
         <div class="input-grid">
             <div class="input-group">
                 <label>Name</label>
                 <input type="text" class="team-player-name" 
-                    placeholder="Player name" 
-                    value="Player ${playerIndex + 1}">
+                    placeholder="Player name" value="Player ${playerIndex + 1}">
             </div>
             <div class="input-group">
-                <label>Kills</label>
-                <input type="number" class="team-player-kills" 
-                    min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 10)}">
+                <label><i class="fas fa-crosshairs"></i> K/D</label>
+                <input type="number" class="team-player-kd" 
+                    min="0.1" max="15" step="0.1" placeholder="2.5" value="${kd}">
+                <small class="input-hint">0.5-10</small>
             </div>
             <div class="input-group">
-                <label>Damage</label>
-                <input type="number" class="team-player-damage" 
-                    min="0" max="5000" placeholder="0" value="${Math.floor(Math.random() * 500) + 100}">
+                <label><i class="fas fa-trophy"></i> Win %</label>
+                <input type="number" class="team-player-winrate" 
+                    min="0" max="100" step="0.1" placeholder="15" value="${winrate}">
+                <small class="input-hint">1-50%</small>
             </div>
             <div class="input-group">
-                <label>Survival Time</label>
-                <div class="survival-time-wrapper">
-                    <input type="number" class="team-player-survival-min" 
-                        min="0" max="30" placeholder="MM" value="${Math.floor(Math.random() * 10 + 5)}" 
-                        title="Minutes">
-                    <span>:</span>
-                    <input type="number" class="team-player-survival-sec" 
-                        min="0" max="59" placeholder="SS" value="${Math.floor(Math.random() * 60)}" 
-                        title="Seconds">
-                </div>
+                <label><i class="fas fa-medal"></i> Top10 %</label>
+                <input type="number" class="team-player-top10" 
+                    min="0" max="100" step="0.1" placeholder="40" value="${top10}">
+                <small class="input-hint">5-80%</small>
             </div>
             <div class="input-group">
-                <label>Headshots</label>
-                <input type="number" class="team-player-headshots" 
-                    min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 5)}">
+                <label><i class="fas fa-fire"></i> Avg Dmg</label>
+                <input type="number" class="team-player-avgdamage" 
+                    min="0" max="2000" step="10" placeholder="350" value="${avgdmg}">
+                <small class="input-hint">100-1000</small>
             </div>
             <div class="input-group">
-                <label>Assists</label>
-                <input type="number" class="team-player-assists" 
-                    min="0" max="20" placeholder="0" value="${Math.floor(Math.random() * 3)}">
+                <label><i class="fas fa-bullseye"></i> HS %</label>
+                <input type="number" class="team-player-headshot" 
+                    min="0" max="100" step="0.1" placeholder="25" value="${headshot}">
+                <small class="input-hint">10-70%</small>
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-percent"></i> Acc %</label>
+                <input type="number" class="team-player-accuracy" 
+                    min="0" max="100" step="0.1" placeholder="20" value="${accuracy}">
+                <small class="input-hint">10-50%</small>
             </div>
         </div>
     `;
     return div;
 }
 
-// 7. Add Player Input
+// ============= ADD PLAYER INPUT =============
 function addPlayerInput() {
     const playerInputs = document.getElementById('playerInputs');
-    if (!playerInputs) {
-        console.error('Player inputs container not found!');
-        return;
-    }
+    if (!playerInputs) return;
     
-    // Get current number of players
     const currentPlayers = playerInputs.querySelectorAll('.player-input-section').length;
-    
-    // Create new player input
     const newPlayer = createPlayerInput(currentPlayers);
     playerInputs.appendChild(newPlayer);
     
-    console.log('Added player', currentPlayers + 1);
-    
-    // Update remove buttons visibility
     updateRemoveButtons();
-    
     showNotification(`Player ${currentPlayers + 1} added successfully!`, 'success');
 }
 
-// 8. Create Player Input
+// ============= CREATE PLAYER INPUT =============
 function createPlayerInput(index) {
     const div = document.createElement('div');
     div.className = 'player-input-section fade-in';
+    
+    const kd = (Math.random() * 4 + 1).toFixed(1);
+    const winrate = (Math.random() * 25 + 5).toFixed(1);
+    const top10 = (Math.random() * 40 + 20).toFixed(1);
+    const avgdmg = Math.floor(Math.random() * 400 + 200);
+    const headshot = (Math.random() * 30 + 15).toFixed(1);
+    const accuracy = (Math.random() * 20 + 15).toFixed(1);
+    
     div.innerHTML = `
         <h4><i class="fas fa-user-circle"></i> Player ${index + 1}</h4>
         <div class="input-grid">
@@ -2877,36 +2681,40 @@ function createPlayerInput(index) {
                        placeholder="Enter name" value="Player ${index + 1}">
             </div>
             <div class="input-group">
-                <label>Kills</label>
-                <input type="number" class="player-kills" 
-                       min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 10)}">
+                <label><i class="fas fa-crosshairs"></i> K/D Ratio</label>
+                <input type="number" class="player-kd" 
+                       min="0.1" max="15" step="0.1" placeholder="2.5" value="${kd}">
+                <small class="input-hint">Range: 0.5 - 10.0</small>
             </div>
             <div class="input-group">
-                <label>Damage</label>
-                <input type="number" class="player-damage" 
-                       min="0" max="5000" placeholder="0" value="${Math.floor(Math.random() * 500) + 100}">
+                <label><i class="fas fa-trophy"></i> Win Rate %</label>
+                <input type="number" class="player-winrate" 
+                       min="0" max="100" step="0.1" placeholder="15" value="${winrate}">
+                <small class="input-hint">Range: 1% - 50%</small>
             </div>
             <div class="input-group">
-                <label>Survival Time</label>
-                <div class="survival-time-wrapper">
-                    <input type="number" class="player-survival-min" 
-                        min="0" max="30" placeholder="MM" value="${Math.floor(Math.random() * 10 + 5)}" 
-                        title="Minutes">
-                    <span>:</span>
-                    <input type="number" class="player-survival-sec" 
-                        min="0" max="59" placeholder="SS" value="${Math.floor(Math.random() * 60)}" 
-                        title="Seconds">
-                </div>
+                <label><i class="fas fa-medal"></i> Top 10 Rate %</label>
+                <input type="number" class="player-top10" 
+                       min="0" max="100" step="0.1" placeholder="40" value="${top10}">
+                <small class="input-hint">Range: 5% - 80%</small>
             </div>
             <div class="input-group">
-                <label>Headshots</label>
-                <input type="number" class="player-headshots" 
-                       min="0" max="50" placeholder="0" value="${Math.floor(Math.random() * 5)}">
+                <label><i class="fas fa-fire"></i> Avg Damage</label>
+                <input type="number" class="player-avgdamage" 
+                       min="0" max="2000" step="10" placeholder="350" value="${avgdmg}">
+                <small class="input-hint">Range: 100 - 1000</small>
             </div>
             <div class="input-group">
-                <label>Assists</label>
-                <input type="number" class="player-assists" 
-                       min="0" max="20" placeholder="0" value="${Math.floor(Math.random() * 3)}">
+                <label><i class="fas fa-bullseye"></i> Headshot Rate %</label>
+                <input type="number" class="player-headshot" 
+                       min="0" max="100" step="0.1" placeholder="25" value="${headshot}">
+                <small class="input-hint">Range: 10% - 70%</small>
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-percent"></i> Accuracy %</label>
+                <input type="number" class="player-accuracy" 
+                       min="0" max="100" step="0.1" placeholder="20" value="${accuracy}">
+                <small class="input-hint">Range: 10% - 50%</small>
             </div>
         </div>
         <button class="btn btn-danger btn-sm remove-player" onclick="removePlayerInput(this)">
@@ -2916,7 +2724,7 @@ function createPlayerInput(index) {
     return div;
 }
 
-// 9. Remove Player Input
+// ============= REMOVE PLAYER INPUT =============
 function removePlayerInput(button) {
     const playerSection = button.closest('.player-input-section');
     if (!playerSection) return;
@@ -2924,86 +2732,29 @@ function removePlayerInput(button) {
     const playerInputs = document.getElementById('playerInputs');
     const sections = playerInputs.querySelectorAll('.player-input-section');
     
-    // Don't remove if it's the only player
     if (sections.length <= 1) {
         showNotification('Cannot remove the only player!', 'error');
         return;
     }
     
     playerSection.remove();
-    
-    // Renumber remaining players
     renumberPlayers();
-    
-    // Update remove buttons
     updateRemoveButtons();
-    
     showNotification('Player removed successfully!', 'info');
 }
 
-// 10. Renumber Players
+// ============= RENUMBER PLAYERS =============
 function renumberPlayers() {
     const playerInputs = document.getElementById('playerInputs');
     const sections = playerInputs.querySelectorAll('.player-input-section');
     
     sections.forEach((section, index) => {
-        // Update heading
         const h4 = section.querySelector('h4');
-        if (h4) {
-            h4.innerHTML = `<i class="fas fa-user-circle"></i> Player ${index + 1}`;
-        }
-        
-        // Update placeholder name if empty
-        const nameInput = section.querySelector('.player-name');
-        if (nameInput && !nameInput.value) {
-            nameInput.placeholder = `Player ${index + 1}`;
-        }
+        if (h4) h4.innerHTML = `<i class="fas fa-user-circle"></i> Player ${index + 1}`;
     });
 }
 
-// 10a. Remove Team
-function removeTeam(button) {
-    const teamSection = button.closest('.team-section');
-    if (!teamSection) return;
-    
-    const teamInputs = document.getElementById('teamInputs');
-    const sections = teamInputs.querySelectorAll('.team-section');
-    
-    // Don't remove if there are only 2 teams
-    if (sections.length <= 2) {
-        showNotification('Cannot have less than 2 teams!', 'error');
-        return;
-    }
-    
-    teamSection.remove();
-    
-    // Renumber remaining teams
-    renumberTeams();
-    
-    showNotification('Team removed successfully!', 'info');
-}
-
-// 10b. Renumber Teams
-function renumberTeams() {
-    const teamInputs = document.getElementById('teamInputs');
-    const sections = teamInputs.querySelectorAll('.team-section');
-    
-    sections.forEach((section, index) => {
-        // Update team heading
-        const h4 = section.querySelector('.team-header h4');
-        if (h4) {
-            h4.innerHTML = `<i class="fas fa-users"></i> Team ${index + 1}`;
-        }
-        
-        // Update team name placeholder if it's the default value
-        const teamNameInput = section.querySelector('.team-name-input');
-        if (teamNameInput && teamNameInput.value.startsWith('Team ')) {
-            teamNameInput.value = `Team ${index + 1}`;
-        }
-    });
-}
-
-// 11. Update Remove Buttons Visibility
+// ============= UPDATE REMOVE BUTTONS =============
 function updateRemoveButtons() {
     const playerInputs = document.getElementById('playerInputs');
     if (!playerInputs) return;
@@ -3011,19 +2762,46 @@ function updateRemoveButtons() {
     const sections = playerInputs.querySelectorAll('.player-input-section');
     const removeButtons = playerInputs.querySelectorAll('.remove-player');
     
-    // Show remove button only if there's more than 1 player
-    if (sections.length > 1) {
-        removeButtons.forEach(btn => {
-            btn.style.display = 'block';
-        });
-    } else {
-        removeButtons.forEach(btn => {
-            btn.style.display = 'none';
-        });
-    }
+    removeButtons.forEach(btn => {
+        btn.style.display = sections.length > 1 ? 'block' : 'none';
+    });
 }
 
-    // 12. Show OCR Processing - UPDATED
+// ============= REMOVE TEAM =============
+function removeTeam(button) {
+    const teamSection = button.closest('.team-section');
+    if (!teamSection) return;
+    
+    const teamInputs = document.getElementById('teamInputs');
+    const sections = teamInputs.querySelectorAll('.team-section');
+    
+    if (sections.length <= 2) {
+        showNotification('Cannot have less than 2 teams!', 'error');
+        return;
+    }
+    
+    teamSection.remove();
+    renumberTeams();
+    showNotification('Team removed successfully!', 'info');
+}
+
+// ============= RENUMBER TEAMS =============
+function renumberTeams() {
+    const teamInputs = document.getElementById('teamInputs');
+    const sections = teamInputs.querySelectorAll('.team-section');
+    
+    sections.forEach((section, index) => {
+        const h4 = section.querySelector('.team-header h4');
+        if (h4) h4.innerHTML = `<i class="fas fa-users"></i> Team ${index + 1}`;
+        
+        const teamNameInput = section.querySelector('.team-name-input');
+        if (teamNameInput && teamNameInput.value.startsWith('Team ')) {
+            teamNameInput.value = `Team ${index + 1}`;
+        }
+    });
+}
+
+// ============= SHOW OCR PROCESSING =============
 function showOCRProcessing() {
     const uploadZone = document.getElementById('uploadZone');
     const ocrPreview = document.getElementById('ocrPreview');
@@ -3033,7 +2811,7 @@ function showOCRProcessing() {
         ocrPreview.innerHTML = `
             <div class="ocr-processing">
                 <div class="spinner" style="margin: 0 auto; margin-bottom: 20px;"></div>
-                <p>Uploading and analyzing image...</p>
+                <p>Uploading and analyzing image with InfiKnight OCR...</p>
                 <div class="progress-container" style="margin-top: 20px;">
                     <div class="progress-bar" style="width: 0%; transition: width 0.3s;"></div>
                 </div>
@@ -3041,30 +2819,17 @@ function showOCRProcessing() {
         `;
     }
     
-    // Hide upload zone
-    if (uploadZone) {
-        uploadZone.style.display = 'none';
-    }
-    
-    // Scroll to OCR preview
-    setTimeout(() => {
-        if (ocrPreview) {
-            ocrPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }, 100);
+    if (uploadZone) uploadZone.style.display = 'none';
 }
 
-// 13. NEW: Process OCR file with backend - FIXED VERSION
+// ============= PROCESS OCR FILE =============
 async function processOCRFile(file) {
     try {
-        console.log('Starting OCR processing for file:', file.name, file.size);
-        
         const formData = new FormData();
         formData.append('statsFile', file);
         formData.append('csrf_token', document.getElementById('csrfToken').value);
         formData.append('match_type', document.querySelector('input[name="matchType"]:checked').value);
         
-        // Show upload progress
         const progressBar = document.querySelector('.progress-bar');
         let progress = 0;
         const progressInterval = setInterval(() => {
@@ -3074,8 +2839,6 @@ async function processOCRFile(file) {
             }
         }, 300);
         
-        // Send to backend with proper error handling
-        console.log('Sending to backend...');
         const response = await fetch('ocr_backend.php', {
             method: 'POST',
             body: formData
@@ -3084,29 +2847,20 @@ async function processOCRFile(file) {
         clearInterval(progressInterval);
         if (progressBar) progressBar.style.width = '100%';
         
-        console.log('Response status:', response.status);
-        
-        // Get response as text first to debug
         const responseText = await response.text();
-        console.log('Raw response:', responseText);
-        
-        // Try to parse JSON
         let result;
+        
         try {
             result = JSON.parse(responseText);
-            console.log('Parsed JSON:', result);
         } catch (e) {
             console.error('JSON parse error:', e);
-            console.log('Response text (first 500 chars):', responseText.substring(0, 500));
-            showOCRError(`Server returned invalid JSON. Check if PHP errors are showing. Response: ${responseText.substring(0, 200)}...`);
+            showOCRError('Server returned invalid JSON. Please try again.');
             return;
         }
         
         if (result.success) {
-            console.log('OCR successful, displaying stats...');
             displayCareerStats(result.data);
         } else {
-            console.error('OCR failed:', result.error);
             showOCRError(result.error || 'OCR processing failed');
         }
         
@@ -3116,14 +2870,14 @@ async function processOCRFile(file) {
     }
 }
 
-// 14. NEW: Show OCR Error
+// ============= SHOW OCR ERROR =============
 function showOCRError(message) {
     const ocrPreview = document.getElementById('ocrPreview');
     if (!ocrPreview) return;
     
     ocrPreview.classList.remove('hidden');
     ocrPreview.innerHTML = `
-        <div class="ocr-error" style="text-align: center; padding: 30px;">
+        <div class="ocr-error">
             <div class="error-icon" style="font-size: 48px; color: #f44336; margin-bottom: 20px;">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
@@ -3139,11 +2893,9 @@ function showOCRError(message) {
             </div>
         </div>
     `;
-    
-    console.error('OCR Error:', message);
 }
 
-// 15. NEW: Display career stats instead of player list
+// ============= DISPLAY CAREER STATS =============
 function displayCareerStats(data) {
     const ocrPreview = document.getElementById('ocrPreview');
     if (!ocrPreview) return;
@@ -3155,13 +2907,13 @@ function displayCareerStats(data) {
     let html = `
         <div class="ocr-results">
             <div class="ocr-header">
-                <h4><i class="fas fa-user-circle text-success"></i> Career Stats Analyzed</h4>
+                <h4><i class="fas fa-user-circle"></i> Career Stats Analyzed</h4>
                 <div class="ocr-meta">
                     <span class="meta-item">
                         <i class="fas fa-database"></i> Source: Career Screenshot
                     </span>
                     <span class="meta-item">
-                        <i class="fas fa-gamepad"></i> PUBG Mobile
+                        <i class="fas fa-robot"></i> InfiKnight OCR
                     </span>
                 </div>
             </div>
@@ -3179,20 +2931,17 @@ function displayCareerStats(data) {
             <div class="career-stats-grid">
     `;
     
-    // Key stats to display
     const keyStats = [
-        { key: 'matches_played', label: 'Matches Played', icon: 'fa-gamepad', format: v => v.toLocaleString() },
+        { key: 'matches_played', label: 'Matches', icon: 'fa-gamepad', format: v => v.toLocaleString() },
         { key: 'wins', label: 'Wins', icon: 'fa-trophy', format: v => v.toLocaleString() },
         { key: 'win_rate', label: 'Win Rate', icon: 'fa-chart-line', format: v => v + '%' },
         { key: 'eliminations', label: 'Total Kills', icon: 'fa-skull', format: v => v.toLocaleString() },
         { key: 'kd_ratio', label: 'K/D Ratio', icon: 'fa-balance-scale', format: v => v },
-        { key: 'avg_kills', label: 'Avg Kills/Match', icon: 'fa-crosshairs', format: v => v },
+        { key: 'avg_kills', label: 'Avg Kills', icon: 'fa-crosshairs', format: v => v },
         { key: 'total_damage', label: 'Total Damage', icon: 'fa-fire', format: v => formatNumber(v) },
         { key: 'avg_damage', label: 'Avg Damage', icon: 'fa-bullseye', format: v => v },
-        { key: 'headshot_rate', label: 'Headshot Rate', icon: 'fa-crosshairs', format: v => v + '%' },
-        { key: 'accuracy', label: 'Accuracy', icon: 'fa-bullseye', format: v => v + '%' },
-        { key: 'assists', label: 'Assists', icon: 'fa-handshake', format: v => v.toLocaleString() },
-        { key: 'most_eliminations', label: 'Most Kills (Match)', icon: 'fa-crown', format: v => v }
+        { key: 'headshot_rate', label: 'HS Rate', icon: 'fa-bullseye', format: v => v + '%' },
+        { key: 'accuracy', label: 'Accuracy', icon: 'fa-bullseye', format: v => v + '%' }
     ];
     
     keyStats.forEach(stat => {
@@ -3213,7 +2962,6 @@ function displayCareerStats(data) {
     
     html += `</div>`;
     
-    // Raw text preview (for debugging)
     if (ocrText) {
         html += `
             <div class="raw-text-preview">
@@ -3227,143 +2975,160 @@ function displayCareerStats(data) {
     
     html += `
         <div class="ocr-actions">
-            <button class="btn btn-success" onclick="useCareerStatsForPrediction(${JSON.stringify(stats).replace(/"/g, '&quot;')})">
+            <button class="btn btn-success" onclick="useCareerStatsForPrediction()">
                 <i class="fas fa-robot"></i> Generate Career-Based Prediction
             </button>
-            <button class="btn btn-primary" onclick="createPlayerFromCareerStats(${JSON.stringify(stats).replace(/"/g, '&quot;')})">
+            <button class="btn btn-primary" onclick="createVirtualPlayerFromCareerStats()">
                 <i class="fas fa-user-plus"></i> Create Virtual Player
             </button>
             <button class="btn btn-outline-secondary" onclick="switchToManualInput()">
-                <i class="fas fa-keyboard"></i> Enter Match Stats Manually
+                <i class="fas fa-keyboard"></i> Enter Data Manually
             </button>
         </div>
     </div>`;
     
     ocrPreview.innerHTML = html;
     
-    // Store for later use
     window.careerStats = stats;
     window.ocrData = data;
     
     showNotification('Career stats extracted successfully!', 'success');
 }
 
-// 16. NEW: Format large numbers
+// ============= FORMAT NUMBER =============
 function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
-    }
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toLocaleString();
 }
 
-// 17. NEW: Create virtual player from career stats
-function createPlayerFromCareerStats(stats) {
+// ============= INFIKNIGHT ALGORITHM: CALCULATE SKILL SCORE =============
+function calculateSkillScore(careerStats) {
+    // Skill Score = (K/D * 0.4) + (Win Rate * 0.3) + (Top 10 Rate * 0.2) + (Headshot Rate * 0.1)
+    const kd = parseFloat(careerStats.kd_ratio) || 1.0;
+    const winRate = (parseFloat(careerStats.win_rate) || 15) / 100;
+    const top10 = (parseFloat(careerStats.top10_rate) || 40) / 100;
+    const headshot = (parseFloat(careerStats.headshot_rate) || 25) / 100;
+    
+    // Normalize to 0-100 scale
+    const skill = (kd * 10 * 0.4) + (winRate * 100 * 0.3) + (top10 * 100 * 0.2) + (headshot * 100 * 0.1);
+    return Math.min(100, Math.round(skill));
+}
+
+// ============= INFIKNIGHT ALGORITHM: CALCULATE DAMAGE SCORE =============
+function calculateDamageScore(careerStats) {
+    // Damage Score = Avg Damage normalized (0-100)
+    const avgDamage = parseFloat(careerStats.avg_damage) || 300;
+    return Math.min(100, Math.round(avgDamage / 6)); // 600 damage = 100 points
+}
+
+// ============= INFIKNIGHT ALGORITHM: CALCULATE SURVIVAL SCORE =============
+function calculateSurvivalScore(careerStats) {
+    // Survival Score = Win Rate * 0.7 + Top 10 Rate * 0.3
+    const winRate = (parseFloat(careerStats.win_rate) || 15) / 100;
+    const top10 = (parseFloat(careerStats.top10_rate) || 40) / 100;
+    
+    const survival = (winRate * 100 * 0.7) + (top10 * 100 * 0.3);
+    return Math.min(100, Math.round(survival));
+}
+
+// ============= INFIKNIGHT ALGORITHM: CALCULATE OVERALL RATING =============
+function calculateOverallRating(skill, damage, survival) {
+    // Weighted average: Skill 40%, Damage 35%, Survival 25%
+    return ((skill * 0.4) + (damage * 0.35) + (survival * 0.25)).toFixed(1);
+}
+
+// ============= CREATE VIRTUAL PLAYER FROM CAREER STATS (FIXED) =============
+function createVirtualPlayerFromCareerStats() {
+    const stats = window.careerStats;
+    if (!stats) {
+        showNotification('No career stats available', 'error');
+        return;
+    }
+    
     // Switch to manual input tab
     document.querySelector('.method-tab[data-method="manual"]').click();
     
-    // Clear existing inputs
+    // Get current number of players
     const playerInputs = document.getElementById('playerInputs');
-    playerInputs.innerHTML = '';
+    const currentPlayers = playerInputs.querySelectorAll('.player-input-section').length;
     
-    // Calculate estimated per-match stats
-    const estimatedKills = stats.avg_kills || (stats.kd_ratio * 2) || 5;
-    const estimatedDamage = stats.avg_damage || 300;
-    const estimatedSurvival = estimateSurvivalTime(stats);
-    const estimatedHeadshots = Math.round(estimatedKills * ((stats.headshot_rate || 15) / 100));
-    const estimatedAssists = stats.avg_assists || 1.5;
+    // Calculate InfiKnight scores
+    const skillScore = calculateSkillScore(stats);
+    const damageScore = calculateDamageScore(stats);
+    const survivalScore = calculateSurvivalScore(stats);
+    const overallRating = calculateOverallRating(skillScore, damageScore, survivalScore);
     
-    // Create player input
-    const playerDiv = document.createElement('div');
-    playerDiv.className = 'player-input-section fade-in';
-    playerDiv.innerHTML = `
-        <h4><i class="fas fa-user-crown"></i> Career Player (Estimated)</h4>
+    // Create virtual player
+    const virtualPlayer = document.createElement('div');
+    virtualPlayer.className = 'player-input-section fade-in';
+    virtualPlayer.innerHTML = `
+        <h4><i class="fas fa-user-crown"></i> Virtual Player (Career)</h4>
         <div class="input-grid">
             <div class="input-group">
                 <label>Player Name</label>
-                <input type="text" class="form-control player-name" 
-                       value="Career Pro" placeholder="Career Player">
+                <input type="text" class="player-name" value="Career Pro" placeholder="Career Pro">
             </div>
             <div class="input-group">
-                <label>Kills (Estimated)</label>
-                <input type="number" class="form-control player-kills" 
-                       min="0" max="50" value="${Math.round(estimatedKills)}">
+                <label>K/D Ratio</label>
+                <input type="number" class="player-kd" step="0.1" min="0.1" max="15" 
+                       value="${stats.kd_ratio || 2.5}">
             </div>
             <div class="input-group">
-                <label>Damage (Estimated)</label>
-                <input type="number" class="form-control player-damage" 
-                       min="0" max="5000" value="${Math.round(estimatedDamage)}">
+                <label>Win Rate %</label>
+                <input type="number" class="player-winrate" step="0.1" min="0" max="100" 
+                       value="${stats.win_rate || 15}">
             </div>
             <div class="input-group">
-                <label>Survival Time (Estimated)</label>
-                <div class="survival-time-wrapper">
-                    <input type="number" class="form-control player-survival-min" 
-                           min="0" max="30" placeholder="MM" value="${Math.floor(estimatedSurvival / 60)}" title="Minutes">
-                    <span>:</span>
-                    <input type="number" class="form-control player-survival-sec" 
-                           min="0" max="59" placeholder="SS" value="${estimatedSurvival % 60}" title="Seconds">
-                </div>
+                <label>Top 10 Rate %</label>
+                <input type="number" class="player-top10" step="0.1" min="0" max="100" 
+                       value="${stats.top10_rate || 40}">
             </div>
             <div class="input-group">
-                <label>Headshots (Estimated)</label>
-                <input type="number" class="form-control player-headshots" 
-                       min="0" max="50" value="${estimatedHeadshots}">
+                <label>Avg Damage</label>
+                <input type="number" class="player-avgdamage" step="10" min="0" max="2000" 
+                       value="${stats.avg_damage || 350}">
             </div>
             <div class="input-group">
-                <label>Assists (Estimated)</label>
-                <input type="number" class="form-control player-assists" 
-                       min="0" max="20" value="${Math.round(estimatedAssists)}">
+                <label>Headshot Rate %</label>
+                <input type="number" class="player-headshot" step="0.1" min="0" max="100" 
+                       value="${stats.headshot_rate || 25}">
+            </div>
+            <div class="input-group">
+                <label>Accuracy %</label>
+                <input type="number" class="player-accuracy" step="0.1" min="0" max="100" 
+                       value="${stats.accuracy || 20}">
             </div>
         </div>
         <div class="career-note">
-            <i class="fas fa-info-circle"></i> Stats estimated from career data: ${stats.matches_played || 0} matches, ${stats.win_rate || 0}% win rate
+            <i class="fas fa-info-circle"></i> 
+            InfiKnight Scores: Skill ${skillScore} | Damage ${damageScore} | Survival ${survivalScore} | Rating ${overallRating}/10
         </div>
+        <button class="btn btn-danger btn-sm remove-player" onclick="removePlayerInput(this)">
+            <i class="fas fa-times"></i> Remove Player
+        </button>
     `;
     
-    playerInputs.appendChild(playerDiv);
+    playerInputs.appendChild(virtualPlayer);
     
-    // Add opponent players for comparison
+    // Add opponent players
     addOpponentPlayers(stats);
     
-    showNotification('Virtual player created from career stats! Add opponents for prediction.', 'success');
+    showNotification('Virtual player created with InfiKnight scores!', 'success');
 }
 
-// 18. NEW: Estimate survival time from career stats
-function estimateSurvivalTime(stats) {
-    // Base survival time (in seconds)
-    let survival = 300; // 5 minutes base
-    
-    // Add based on win rate
-    if (stats.win_rate) {
-        survival += stats.win_rate * 3; // +3 seconds per % win rate
-    }
-    
-    // Add based on KD ratio
-    if (stats.kd_ratio) {
-        survival += stats.kd_ratio * 20; // +20 seconds per KD point
-    }
-    
-    // Add based on top 10 rate
-    if (stats.top10_rate) {
-        survival += stats.top10_rate * 2; // +2 seconds per % top 10 rate
-    }
-    
-    return Math.min(1200, Math.max(300, Math.round(survival))); // Between 5-20 minutes
-}
-
-// 19. NEW: Add opponent players for comparison
+// ============= ADD OPPONENT PLAYERS (FIXED) =============
 function addOpponentPlayers(careerStats) {
     const playerInputs = document.getElementById('playerInputs');
-    
-    // Create 3 opponent players with stats based on career player
     const opponentCount = 3;
     
     for (let i = 1; i <= opponentCount; i++) {
-        // Generate opponent stats (slightly worse than career player)
-        const opponentKills = Math.max(1, Math.round((careerStats.avg_kills || 5) * (0.5 + Math.random() * 0.7)));
-        const opponentDamage = Math.round((careerStats.avg_damage || 300) * (0.6 + Math.random() * 0.8));
-        const opponentSurvival = Math.round(estimateSurvivalTime(careerStats) * (0.7 + Math.random() * 0.6));
+        const opponentKd = (parseFloat(careerStats.kd_ratio) * (0.6 + Math.random() * 0.3)).toFixed(1);
+        const opponentWinrate = (parseFloat(careerStats.win_rate) * (0.6 + Math.random() * 0.3)).toFixed(1);
+        const opponentTop10 = (parseFloat(careerStats.top10_rate) * (0.7 + Math.random() * 0.4)).toFixed(1);
+        const opponentDmg = Math.round(parseFloat(careerStats.avg_damage) * (0.6 + Math.random() * 0.3));
+        const opponentHs = (parseFloat(careerStats.headshot_rate) * (0.5 + Math.random() * 0.5)).toFixed(1);
+        const opponentAcc = (parseFloat(careerStats.accuracy) * (0.6 + Math.random() * 0.4)).toFixed(1);
         
         const opponentDiv = document.createElement('div');
         opponentDiv.className = 'player-input-section fade-in';
@@ -3372,38 +3137,31 @@ function addOpponentPlayers(careerStats) {
             <div class="input-grid">
                 <div class="input-group">
                     <label>Player Name</label>
-                    <input type="text" class="form-control player-name" 
-                           value="Opponent ${i}" placeholder="Opponent ${i}">
+                    <input type="text" class="player-name" value="Opponent ${i}">
                 </div>
                 <div class="input-group">
-                    <label>Kills</label>
-                    <input type="number" class="form-control player-kills" 
-                           min="0" max="50" value="${opponentKills}">
+                    <label>K/D Ratio</label>
+                    <input type="number" class="player-kd" step="0.1" value="${opponentKd}">
                 </div>
                 <div class="input-group">
-                    <label>Damage</label>
-                    <input type="number" class="form-control player-damage" 
-                           min="0" max="5000" value="${opponentDamage}">
+                    <label>Win Rate %</label>
+                    <input type="number" class="player-winrate" step="0.1" value="${opponentWinrate}">
                 </div>
                 <div class="input-group">
-                    <label>Survival Time</label>
-                    <div class="survival-time-wrapper">
-                        <input type="number" class="form-control player-survival-min" 
-                               min="0" max="30" placeholder="MM" value="${Math.floor(opponentSurvival / 60)}" title="Minutes">
-                        <span>:</span>
-                        <input type="number" class="form-control player-survival-sec" 
-                               min="0" max="59" placeholder="SS" value="${opponentSurvival % 60}" title="Seconds">
-                    </div>
+                    <label>Top 10 Rate %</label>
+                    <input type="number" class="player-top10" step="0.1" value="${opponentTop10}">
                 </div>
                 <div class="input-group">
-                    <label>Headshots</label>
-                    <input type="number" class="form-control player-headshots" 
-                           min="0" max="50" value="${Math.round(opponentKills * 0.2)}">
+                    <label>Avg Damage</label>
+                    <input type="number" class="player-avgdamage" step="10" value="${opponentDmg}">
                 </div>
                 <div class="input-group">
-                    <label>Assists</label>
-                    <input type="number" class="form-control player-assists" 
-                           min="0" max="20" value="${Math.round(opponentKills * 0.3)}">
+                    <label>Headshot Rate %</label>
+                    <input type="number" class="player-headshot" step="0.1" value="${opponentHs}">
+                </div>
+                <div class="input-group">
+                    <label>Accuracy %</label>
+                    <input type="number" class="player-accuracy" step="0.1" value="${opponentAcc}">
                 </div>
             </div>
             <button class="btn btn-danger btn-sm remove-player" onclick="removePlayerInput(this)">
@@ -3417,110 +3175,82 @@ function addOpponentPlayers(careerStats) {
     updateRemoveButtons();
 }
 
-// 20. NEW: Use career stats directly for prediction
-function useCareerStatsForPrediction(stats) {
-    // Create virtual match with career player vs average opponents
-    const players = [];
-    
-    // Career player
-    players.push({
-        name: 'Career Pro',
-        kills: Math.round(stats.avg_kills || (stats.kd_ratio * 2) || 5),
-        damage: Math.round(stats.avg_damage || 300),
-        survival: estimateSurvivalTime(stats),
-        headshots: Math.round((stats.avg_kills || 5) * ((stats.headshot_rate || 15) / 100)),
-        assists: Math.round(stats.avg_assists || 1.5),
-        is_career_player: true,
-        career_stats: stats
-    });
-    
-    // Add 3 opponents
-    for (let i = 1; i <= 3; i++) {
-        const skillMultiplier = 0.5 + (Math.random() * 0.7); // 50-120% of career player
-        
-        players.push({
-            name: `Opponent ${i}`,
-            kills: Math.max(1, Math.round(players[0].kills * skillMultiplier)),
-            damage: Math.round(players[0].damage * skillMultiplier),
-            survival: Math.round(players[0].survival * (0.7 + Math.random() * 0.6)),
-            headshots: Math.round(players[0].headshots * skillMultiplier),
-            assists: Math.round(players[0].assists * skillMultiplier)
-        });
+// ============= USE CAREER STATS FOR PREDICTION (FIXED) =============
+function useCareerStatsForPrediction() {
+    const stats = window.careerStats;
+    if (!stats) {
+        showNotification('No career stats available', 'error');
+        return;
     }
     
-    // Process the prediction
-    processVirtualMatch(players, stats);
-}
-
-// 21. NEW: Process virtual match
-function processVirtualMatch(players, careerStats) {
+    // Switch to manual input
+    document.querySelector('.method-tab[data-method="manual"]').click();
+    
+    // Clear existing players
+    const playerInputs = document.getElementById('playerInputs');
+    playerInputs.innerHTML = '';
+    
+    // Create virtual player
+    const virtualPlayer = document.createElement('div');
+    virtualPlayer.className = 'player-input-section fade-in';
+    virtualPlayer.innerHTML = `
+        <h4><i class="fas fa-user-crown"></i> Career Pro</h4>
+        <div class="input-grid">
+            <div class="input-group">
+                <label>Player Name</label>
+                <input type="text" class="player-name" value="Career Pro">
+            </div>
+            <div class="input-group">
+                <label>K/D Ratio</label>
+                <input type="number" class="player-kd" step="0.1" value="${stats.kd_ratio || 2.5}">
+            </div>
+            <div class="input-group">
+                <label>Win Rate %</label>
+                <input type="number" class="player-winrate" step="0.1" value="${stats.win_rate || 15}">
+            </div>
+            <div class="input-group">
+                <label>Top 10 Rate %</label>
+                <input type="number" class="player-top10" step="0.1" value="${stats.top10_rate || 40}">
+            </div>
+            <div class="input-group">
+                <label>Avg Damage</label>
+                <input type="number" class="player-avgdamage" step="10" value="${stats.avg_damage || 350}">
+            </div>
+            <div class="input-group">
+                <label>Headshot Rate %</label>
+                <input type="number" class="player-headshot" step="0.1" value="${stats.headshot_rate || 25}">
+            </div>
+            <div class="input-group">
+                <label>Accuracy %</label>
+                <input type="number" class="player-accuracy" step="0.1" value="${stats.accuracy || 20}">
+            </div>
+        </div>
+    `;
+    
+    playerInputs.appendChild(virtualPlayer);
+    
+    // Add opponents
+    addOpponentPlayers(stats);
+    
     // Show processing section
     document.getElementById('processingSection').classList.remove('hidden');
     document.getElementById('ocrPreview').classList.add('hidden');
     
-    // Update processing message for career stats
-    document.querySelector('.processing-steps .step:nth-child(2) .step-content p').textContent = 
-        'Analyzing career statistics...';
-    document.querySelector('.processing-steps .step:nth-child(3) .step-content p').textContent = 
-        'Generating career-based prediction...';
-    
-    // Start processing animation
+    // Start processing animation and run prediction
     startProcessingAnimation();
     
-    // Store players for results
-    window.virtualMatchPlayers = players;
-    window.careerStatsForPrediction = careerStats;
+    // Process the data
+    setTimeout(() => {
+        processData();
+    }, 500);
 }
 
-// 22. Switch to Manual Input
-function switchToManualInput() {
-    // Switch to manual input tab
-    document.querySelector('.method-tab[data-method="manual"]').click();
-    showNotification('Please enter your data manually for accurate predictions.', 'info');
-}
-
-// 23. Import from API
-function importFromAPI() {
-    const playerIds = document.getElementById('playerIds')?.value;
-    if (!playerIds || playerIds.trim() === '') {
-        showNotification('Please enter player IDs or match codes', 'error');
-        return;
-    }
-    
-    showNotification('API import would fetch real data here. Enter data manually for now.', 'info');
-}
-
-// 24. Process Data
-function processData() {
-    console.log('Processing data...');
-    
-    // Validate inputs
-    if (!validateInputs()) {
-        return;
-    }
-    
-    // Show processing section
-    const processingSection = document.getElementById('processingSection');
-    if (processingSection) {
-        processingSection.classList.remove('hidden');
-        
-        // Hide other sections
-        document.getElementById('resultsSection')?.classList.add('hidden');
-        document.getElementById('errorSection')?.classList.add('hidden');
-        document.getElementById('newPredictionSection')?.classList.add('hidden');
-        
-        // Start processing animation
-        startProcessingAnimation();
-    }
-}
-
-// 25. Validate Inputs - IMPROVED
+// ============= VALIDATE INPUTS (FIXED) =============
 function validateInputs() {
     const matchType = document.querySelector('input[name="matchType"]:checked').value;
     let hasErrors = false;
     
     if (matchType === 'solo') {
-        // Validate solo players
         const playerInputs = document.querySelectorAll('.player-input-section');
         
         if (playerInputs.length < 2) {
@@ -3530,23 +3260,22 @@ function validateInputs() {
         
         playerInputs.forEach((input, index) => {
             const name = input.querySelector('.player-name')?.value.trim();
-            const kills = input.querySelector('.player-kills')?.value;
-            const damage = input.querySelector('.player-damage')?.value;
-            const survivalMin = input.querySelector('.player-survival-min')?.value;
-            const survivalSec = input.querySelector('.player-survival-sec')?.value;
+            const kd = input.querySelector('.player-kd')?.value;
+            const winrate = input.querySelector('.player-winrate')?.value;
+            const top10 = input.querySelector('.player-top10')?.value;
+            const avgdamage = input.querySelector('.player-avgdamage')?.value;
             
             if (!name) {
                 showNotification(`Please enter name for Player ${index + 1}`, 'error');
                 hasErrors = true;
             }
             
-            if (kills === '' || damage === '' || survivalMin === '' || survivalSec === '') {
-                showNotification(`Please fill all required fields for Player ${index + 1}`, 'error');
+            if (kd === '' || winrate === '' || top10 === '' || avgdamage === '') {
+                showNotification(`Please fill all required career stats for ${name || 'Player ' + (index + 1)}`, 'error');
                 hasErrors = true;
             }
         });
     } else {
-        // Validate teams
         const teamSections = document.querySelectorAll('.team-section');
         
         if (teamSections.length < 2) {
@@ -3555,406 +3284,439 @@ function validateInputs() {
         }
         
         teamSections.forEach((team, teamIndex) => {
-            const teamNameInput = team.querySelector('.team-name-input');
-            const teamName = teamNameInput?.value.trim();
-            
+            const teamName = team.querySelector('.team-name-input')?.value.trim();
             if (!teamName) {
                 showNotification(`Please enter a name for Team ${teamIndex + 1}`, 'error');
                 hasErrors = true;
             }
-            
-            const playerInputs = team.querySelectorAll('.team-player-input');
-            
-            playerInputs.forEach((input, playerIndex) => {
-                const name = input.querySelector('.team-player-name')?.value.trim();
-                const kills = input.querySelector('.team-player-kills')?.value;
-                
-                if (!name) {
-                    showNotification(`Please enter name for Player ${playerIndex + 1} in ${teamName || 'Team ' + (teamIndex + 1)}`, 'error');
-                    hasErrors = true;
-                }
-                
-                if (kills === '') {
-                    showNotification(`Please enter kills for Player ${playerIndex + 1} in ${teamName || 'Team ' + (teamIndex + 1)}`, 'error');
-                    hasErrors = true;
-                }
-            });
         });
     }
     
     return !hasErrors;
 }
 
-// 26. Start Processing Animation
+// ============= COLLECT PLAYER DATA (FIXED) =============
+function collectPlayerData(matchType) {
+    if (matchType === 'solo') {
+        const playerInputs = document.querySelectorAll('.player-input-section');
+        const players = [];
+        
+        playerInputs.forEach((input, index) => {
+            const name = input.querySelector('.player-name')?.value.trim() || `Player ${index + 1}`;
+            const kd = parseFloat(input.querySelector('.player-kd')?.value) || 2.0;
+            const winrate = parseFloat(input.querySelector('.player-winrate')?.value) || 15;
+            const top10 = parseFloat(input.querySelector('.player-top10')?.value) || 40;
+            const avgdamage = parseFloat(input.querySelector('.player-avgdamage')?.value) || 350;
+            const headshot = parseFloat(input.querySelector('.player-headshot')?.value) || 25;
+            const accuracy = parseFloat(input.querySelector('.player-accuracy')?.value) || 20;
+            
+            // Calculate InfiKnight scores
+            const skillScore = calculateSkillScore({
+                kd_ratio: kd,
+                win_rate: winrate,
+                top10_rate: top10,
+                headshot_rate: headshot
+            });
+            
+            const damageScore = calculateDamageScore({ avg_damage: avgdamage });
+            const survivalScore = calculateSurvivalScore({
+                win_rate: winrate,
+                top10_rate: top10
+            });
+            
+            const overallRating = calculateOverallRating(skillScore, damageScore, survivalScore);
+            
+            players.push({
+                name,
+                kd,
+                winrate,
+                top10,
+                avgdamage,
+                headshot,
+                accuracy,
+                skill: skillScore,
+                damage: damageScore,
+                survival: survivalScore,
+                rating: parseFloat(overallRating)
+            });
+        });
+        
+        return { matchType, players };
+    } else {
+        const teamSections = document.querySelectorAll('.team-section');
+        const teams = [];
+        
+        teamSections.forEach((team, teamIndex) => {
+            const teamName = team.querySelector('.team-name-input')?.value.trim() || `Team ${teamIndex + 1}`;
+            const playerInputs = team.querySelectorAll('.team-player-input');
+            const players = [];
+            
+            playerInputs.forEach((input, playerIndex) => {
+                const name = input.querySelector('.team-player-name')?.value.trim() || `Player ${playerIndex + 1}`;
+                const kd = parseFloat(input.querySelector('.team-player-kd')?.value) || 2.0;
+                const winrate = parseFloat(input.querySelector('.team-player-winrate')?.value) || 15;
+                const top10 = parseFloat(input.querySelector('.team-player-top10')?.value) || 40;
+                const avgdamage = parseFloat(input.querySelector('.team-player-avgdamage')?.value) || 350;
+                const headshot = parseFloat(input.querySelector('.team-player-headshot')?.value) || 25;
+                const accuracy = parseFloat(input.querySelector('.team-player-accuracy')?.value) || 20;
+                
+                const skillScore = calculateSkillScore({ kd_ratio: kd, win_rate: winrate, top10_rate: top10, headshot_rate: headshot });
+                const damageScore = calculateDamageScore({ avg_damage: avgdamage });
+                const survivalScore = calculateSurvivalScore({ win_rate: winrate, top10_rate: top10 });
+                const overallRating = calculateOverallRating(skillScore, damageScore, survivalScore);
+                
+                players.push({
+                    name,
+                    kd,
+                    winrate,
+                    top10,
+                    avgdamage,
+                    headshot,
+                    accuracy,
+                    skill: skillScore,
+                    damage: damageScore,
+                    survival: survivalScore,
+                    rating: parseFloat(overallRating)
+                });
+            });
+            
+            // Calculate team averages
+            const teamSkill = Math.round(players.reduce((sum, p) => sum + p.skill, 0) / players.length);
+            const teamDamage = Math.round(players.reduce((sum, p) => sum + p.damage, 0) / players.length);
+            const teamSurvival = Math.round(players.reduce((sum, p) => sum + p.survival, 0) / players.length);
+            const teamRating = calculateOverallRating(teamSkill, teamDamage, teamSurvival);
+            
+            teams.push({
+                name: teamName,
+                players,
+                skill: teamSkill,
+                damage: teamDamage,
+                survival: teamSurvival,
+                rating: parseFloat(teamRating)
+            });
+        });
+        
+        return { matchType, teams };
+    }
+}
+
+// ============= PROCESS DATA (FIXED) =============
+function processData() {
+    if (!validateInputs()) return;
+    
+    const processingSection = document.getElementById('processingSection');
+    if (processingSection) {
+        processingSection.classList.remove('hidden');
+        document.getElementById('resultsSection')?.classList.add('hidden');
+        document.getElementById('errorSection')?.classList.add('hidden');
+        document.getElementById('newPredictionSection')?.classList.add('hidden');
+        
+        startProcessingAnimation();
+        
+        const matchType = document.querySelector('input[name="matchType"]:checked').value;
+        const data = collectPlayerData(matchType);
+        
+        // Generate prediction
+        const prediction = generateInfiKnightPrediction(data);
+        
+        // Store results
+        window.currentPrediction = prediction;
+        window.currentMatchType = matchType;
+        window.currentData = data;
+        
+        // Show results after animation
+        setTimeout(() => {
+            showResults();
+        }, 3500);
+    }
+}
+
+// ============= GENERATE INFIKNIGHT PREDICTION (FIXED) =============
+function generateInfiKnightPrediction(data) {
+    const prediction = {
+        confidence: 0,
+        winner: 0,
+        teams: {},
+        players: [],
+        algorithm: 'InfiKnight v3.0'
+    };
+    
+    if (data.matchType === 'solo') {
+        const players = data.players;
+        
+        // Sort by rating
+        const sorted = [...players].sort((a, b) => b.rating - a.rating);
+        
+        prediction.players = sorted;
+        prediction.winner = players.indexOf(sorted[0]);
+        
+        // Calculate confidence based on rating difference
+        if (players.length >= 2) {
+            const diff = sorted[0].rating - sorted[1].rating;
+            prediction.confidence = Math.min(97, Math.round(75 + (diff * 3)));
+        } else {
+            prediction.confidence = 85;
+        }
+        
+        // Create score mapping
+        players.forEach((player, index) => {
+            prediction.teams[index] = player.rating;
+        });
+    } else {
+        const teams = data.teams;
+        
+        // Sort teams by rating
+        const sorted = [...teams].sort((a, b) => b.rating - a.rating);
+        
+        prediction.teams = {};
+        teams.forEach((team, index) => {
+            prediction.teams[index] = team.rating;
+        });
+        
+        prediction.winner = teams.indexOf(sorted[0]);
+        prediction.teamNames = {};
+        teams.forEach((team, index) => {
+            prediction.teamNames[index] = team.name;
+        });
+        
+        // Calculate confidence
+        if (teams.length >= 2) {
+            const diff = sorted[0].rating - sorted[1].rating;
+            prediction.confidence = Math.min(95, Math.round(70 + (diff * 2.5)));
+        } else {
+            prediction.confidence = 80;
+        }
+    }
+    
+    return prediction;
+}
+
+// ============= START PROCESSING ANIMATION =============
 function startProcessingAnimation() {
     let step = 1;
     const totalSteps = 4;
     
     const interval = setInterval(() => {
-        // Update current step
         const currentStep = document.querySelector(`.step[data-step="${step}"]`);
         if (currentStep) {
             currentStep.classList.add('active');
             const status = currentStep.querySelector('.step-status');
-            if (status) {
-                status.innerHTML = '<i class="fas fa-check"></i>';
-            }
+            if (status) status.innerHTML = '<i class="fas fa-check"></i>';
         }
         
-        // Update progress bar
         const progress = (step / totalSteps) * 100;
         const progressBar = document.getElementById('progressBar');
-        if (progressBar) {
-            progressBar.style.width = `${progress}%`;
-        }
+        if (progressBar) progressBar.style.width = `${progress}%`;
         
         step++;
         
         if (step > totalSteps) {
             clearInterval(interval);
-            setTimeout(() => {
-                showResults();
-            }, 500);
         }
-    }, 1000);
+    }, 800);
     
-    // Start timer
     const startTime = Date.now();
     const timeElement = document.getElementById('processingTime');
     const timerInterval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        if (timeElement) {
-            timeElement.textContent = `${elapsed}s`;
-        }
+        if (timeElement) timeElement.textContent = `${elapsed}s`;
     }, 1000);
     
-    // Store interval IDs for cleanup
     window.processingInterval = interval;
     window.timerInterval = timerInterval;
 }
 
-// 27. Show Results
+// ============= SHOW RESULTS (FIXED) =============
 function showResults() {
-    // Clear intervals
     if (window.processingInterval) clearInterval(window.processingInterval);
     if (window.timerInterval) clearInterval(window.timerInterval);
     
-    // Hide processing section
-    const processingSection = document.getElementById('processingSection');
-    if (processingSection) {
-        processingSection.classList.add('hidden');
-    }
+    document.getElementById('processingSection')?.classList.add('hidden');
     
-    // Show results section
     const resultsSection = document.getElementById('resultsSection');
     const newPredictionSection = document.getElementById('newPredictionSection');
+    
     if (resultsSection) {
         resultsSection.classList.remove('hidden');
-        
-        // Update with actual data
         updateResults();
         
-        // Show new prediction button
         if (newPredictionSection) {
             setTimeout(() => {
                 newPredictionSection.classList.remove('hidden');
             }, 1000);
         }
         
-        // Scroll to results smoothly
         setTimeout(() => {
             resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 300);
     }
 }
 
-// 28. Update Results - IMPROVED for all modes
+// ============= UPDATE RESULTS (FIXED) =============
 function updateResults() {
-    // Get match type
-    const matchType = document.querySelector('input[name="matchType"]:checked').value;
+    const prediction = window.currentPrediction;
+    const matchType = window.currentMatchType;
+    const data = window.currentData;
+    
+    if (!prediction) {
+        console.error('No prediction data');
+        return;
+    }
+    
+    // Update confidence
+    const confidence = prediction.confidence || 85;
+    document.getElementById('confidenceValueMain').textContent = `${confidence}%`;
+    document.getElementById('predictionAccuracy').textContent = `${confidence}%`;
+    
+    // Update date
+    document.getElementById('resultDate').textContent = new Date().toLocaleString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
     
     if (matchType === 'solo') {
-        updateSoloResults();
+        updateSoloResults(data?.players || [], prediction);
     } else {
-        updateTeamResults();
-    }
-    
-    // Update result date
-    const resultDate = document.getElementById('resultDate');
-    if (resultDate) {
-        resultDate.textContent = new Date().toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        updateTeamResults(data?.teams || [], prediction);
     }
 }
 
-// 29. Update Solo Results
-function updateSoloResults() {
-    const playerInputs = document.querySelectorAll('.player-input-section');
-    const players = [];
+// ============= UPDATE SOLO RESULTS (FIXED) =============
+function updateSoloResults(players, prediction) {
+    if (!players || players.length === 0) return;
     
-    // Collect player data
-    playerInputs.forEach((input, index) => {
-        const name = input.querySelector('.player-name')?.value.trim() || `Player ${index + 1}`;
-        const kills = parseInt(input.querySelector('.player-kills')?.value) || 0;
-        const damage = parseInt(input.querySelector('.player-damage')?.value) || 0;
-        const survivalMin = parseInt(input.querySelector('.player-survival-min')?.value) || 0;
-        const survivalSec = parseInt(input.querySelector('.player-survival-sec')?.value) || 0;
-        const survival = (survivalMin * 60) + survivalSec;
-        const headshots = parseInt(input.querySelector('.player-headshots')?.value) || 0;
-        const assists = parseInt(input.querySelector('.player-assists')?.value) || 0;
-        
-        const rating = calculatePlayerRating(kills, damage, survival, headshots, assists);
-        const kd = kills > 0 ? (kills / Math.max(1, deathEstimate(kills, damage))) : 0;
-        
-        players.push({
-            name: name,
-            kills: kills,
-            damage: damage,
-            survival: survival,
-            headshots: headshots,
-            assists: assists,
-            rating: rating,
-            kd: kd
-        });
-    });
-    
-    // Sort by rating (highest first)
-    players.sort((a, b) => b.rating - a.rating);
+    const sorted = [...players].sort((a, b) => b.rating - a.rating);
+    const winner = sorted[0];
+    const runnerUp = sorted[1] || sorted[0];
+    const weakLink = sorted[sorted.length - 1];
     
     // Update winner info
-    if (players.length > 0) {
-        const winner = players[0];
-        document.getElementById('winnerName').textContent = winner.name;
-        document.getElementById('winnerKills').textContent = winner.kills;
-        document.getElementById('winnerDamage').textContent = winner.damage;
-        document.getElementById('winnerSurvival').textContent = `${Math.floor(winner.survival / 60)}:${(winner.survival % 60).toString().padStart(2, '0')}`;
-        document.getElementById('winnerRating').textContent = winner.rating.toFixed(1);
-
-        const winnerCard = document.querySelector('.winner-card');
-        if (winnerCard) {
-            winnerCard.classList.remove('medal-gold', 'medal-silver', 'medal-bronze');
-            winnerCard.classList.add('medal-gold');
-        }
-        
-        // Calculate confidence
-        const confidence = calculateConfidence(players);
-        document.getElementById('confidenceValueMain').textContent = `${confidence}%`;
-        document.getElementById('predictionAccuracy').textContent = `${confidence}%`;
-        
-        // Update performance cards
-        document.getElementById('topPerformerName').textContent = winner.name;
-        document.getElementById('topPerformerKD').textContent = winner.kd.toFixed(2);
-        document.getElementById('topPerformerDMG').textContent = winner.damage;
-        document.getElementById('topPerformerRating').textContent = winner.rating.toFixed(1);
-        
-        if (players.length > 1) {
-            const weakLink = players[players.length - 1];
-            document.getElementById('weakLinkName').textContent = weakLink.name;
-            document.getElementById('weakLinkKD').textContent = weakLink.kd.toFixed(2);
-            document.getElementById('weakLinkDMG').textContent = weakLink.damage;
-            document.getElementById('weakLinkRating').textContent = weakLink.rating.toFixed(1);
-        }
-        
-        // Hide team members section
-        document.getElementById('teamMembers')?.classList.add('hidden');
+    document.getElementById('winnerName').textContent = winner.name;
+    document.getElementById('winnerSkill').textContent = winner.skill || '85';
+    document.getElementById('winnerDamage').textContent = winner.damage || '75';
+    document.getElementById('winnerSurvival').textContent = winner.survival || '70';
+    document.getElementById('winnerRating').textContent = winner.rating.toFixed(1);
+    
+    const winnerCard = document.querySelector('.winner-card');
+    if (winnerCard) {
+        winnerCard.classList.remove('medal-gold', 'medal-silver', 'medal-bronze');
+        winnerCard.classList.add('medal-gold');
     }
+    
+    // Update top performer
+    document.getElementById('topPerformerName').textContent = winner.name;
+    document.getElementById('topPerformerSkill').textContent = winner.skill || '85';
+    document.getElementById('topPerformerDamage').textContent = winner.damage || '75';
+    document.getElementById('topPerformerSurvival').textContent = winner.survival || '70';
+    
+    // Update weak link
+    document.getElementById('weakLinkName').textContent = weakLink.name;
+    document.getElementById('weakLinkSkill').textContent = weakLink.skill || '45';
+    document.getElementById('weakLinkDamage').textContent = weakLink.damage || '40';
+    document.getElementById('weakLinkSurvival').textContent = weakLink.survival || '35';
+    
+    // Update improvement tip
+    let tip = '';
+    if (weakLink.skill < 50) tip = 'Focus on aim training and positioning';
+    else if (weakLink.damage < 50) tip = 'Work on dealing more damage per match';
+    else if (weakLink.survival < 50) tip = 'Improve survival time and game sense';
+    else tip = 'Consistent performance needed';
+    document.getElementById('improvementTip').textContent = tip;
+    
+    // Update synergy (for solo, just average rating)
+    const avgRating = players.reduce((sum, p) => sum + p.rating, 0) / players.length;
+    document.getElementById('synergyScore').textContent = (avgRating / 10).toFixed(1);
+    document.getElementById('synergyMeter').style.width = `${avgRating * 10}%`;
+    document.getElementById('synergyDesc').textContent = players.length > 2 ? 'Solo lobby competition' : 'Direct matchup';
+    
+    // Hide team members
+    document.getElementById('teamMembers')?.classList.add('hidden');
 }
 
-// 30. Update Team Results - NEW IMPLEMENTATION
-function updateTeamResults() {
-    const teamSections = document.querySelectorAll('.team-section');
-    const matchType = document.querySelector('input[name="matchType"]:checked').value;
-    const teams = [];
+// ============= UPDATE TEAM RESULTS (FIXED) =============
+function updateTeamResults(teams, prediction) {
+    if (!teams || teams.length === 0) return;
     
-    // Collect team data
-    teamSections.forEach((teamSection, teamIndex) => {
-        // Get team name from input
-        const teamNameInput = teamSection.querySelector('.team-name-input');
-        const teamName = teamNameInput?.value.trim() || `Team ${teamIndex + 1}`;
-        
-        const playerInputs = teamSection.querySelectorAll('.team-player-input');
-        const teamPlayers = [];
-        let teamTotalKills = 0;
-        let teamTotalDamage = 0;
-        let teamTotalSurvival = 0;
-        let teamTotalHeadshots = 0;
-        let teamTotalAssists = 0;
-        
-        playerInputs.forEach((input, playerIndex) => {
-            const name = input.querySelector('.team-player-name')?.value.trim() || `${teamName} Player ${playerIndex + 1}`;
-            const kills = parseInt(input.querySelector('.team-player-kills')?.value) || 0;
-            const damage = parseInt(input.querySelector('.team-player-damage')?.value) || 0;
-            const survivalMin = parseInt(input.querySelector('.team-player-survival-min')?.value) || 0;
-            const survivalSec = parseInt(input.querySelector('.team-player-survival-sec')?.value) || 0;
-            const survival = (survivalMin * 60) + survivalSec;
-            const headshots = parseInt(input.querySelector('.team-player-headshots')?.value) || 0;
-            const assists = parseInt(input.querySelector('.team-player-assists')?.value) || 0;
-            
-            const rating = calculatePlayerRating(kills, damage, survival, headshots, assists);
-            
-            teamPlayers.push({
-                name: name,
-                kills: kills,
-                damage: damage,
-                survival: survival,
-                headshots: headshots,
-                assists: assists,
-                rating: rating
-            });
-            
-            teamTotalKills += kills;
-            teamTotalDamage += damage;
-            teamTotalSurvival += survival;
-            teamTotalHeadshots += headshots;
-            teamTotalAssists += assists;
-        });
-        
-        // Calculate team rating (average of players + team bonuses)
-        const avgPlayerRating = teamPlayers.reduce((sum, player) => sum + player.rating, 0) / teamPlayers.length;
-        const teamRating = calculateTeamRating(avgPlayerRating, teamTotalKills, teamTotalDamage, teamTotalSurvival);
-        
-        teams.push({
-            name: teamName,
-            players: teamPlayers,
-            totalKills: teamTotalKills,
-            totalDamage: teamTotalDamage,
-            avgSurvival: Math.floor(teamTotalSurvival / teamPlayers.length),
-            teamRating: teamRating,
-            synergy: calculateTeamSynergy(teamPlayers)
-        });
-    });
-    
-    // Sort teams by team rating
-    teams.sort((a, b) => b.teamRating - a.teamRating);
+    const sorted = [...teams].sort((a, b) => b.rating - a.rating);
+    const winner = sorted[0];
     
     // Update winner info
-    if (teams.length > 0) {
-        const winner = teams[0];
-        document.getElementById('winnerName').textContent = winner.name;
-        document.getElementById('winnerKills').textContent = winner.totalKills;
-        document.getElementById('winnerDamage').textContent = winner.totalDamage;
-        document.getElementById('winnerSurvival').textContent = `${Math.floor(winner.avgSurvival / 60)}:${(winner.avgSurvival % 60).toString().padStart(2, '0')}`;
-        document.getElementById('winnerRating').textContent = winner.teamRating.toFixed(1);
-
-        const winnerCard = document.querySelector('.winner-card');
-        if (winnerCard) {
-            winnerCard.classList.remove('medal-gold', 'medal-silver', 'medal-bronze');
-            winnerCard.classList.add('medal-gold');
-        }
+    document.getElementById('winnerName').textContent = winner.name;
+    document.getElementById('winnerSkill').textContent = winner.skill || '85';
+    document.getElementById('winnerDamage').textContent = winner.damage || '75';
+    document.getElementById('winnerSurvival').textContent = winner.survival || '70';
+    document.getElementById('winnerRating').textContent = winner.rating.toFixed(1);
+    
+    const winnerCard = document.querySelector('.winner-card');
+    if (winnerCard) {
+        winnerCard.classList.remove('medal-gold', 'medal-silver', 'medal-bronze');
+        winnerCard.classList.add('medal-gold');
+    }
+    
+    // Find top performer (best player on winning team)
+    if (winner.players && winner.players.length > 0) {
+        const topPlayer = winner.players.sort((a, b) => b.rating - a.rating)[0];
+        document.getElementById('topPerformerName').textContent = topPlayer.name;
+        document.getElementById('topPerformerSkill').textContent = topPlayer.skill || '85';
+        document.getElementById('topPerformerDamage').textContent = topPlayer.damage || '75';
+        document.getElementById('topPerformerSurvival').textContent = topPlayer.survival || '70';
+    }
+    
+    // Find weakest player overall
+    const allPlayers = teams.flatMap(t => t.players || []);
+    if (allPlayers.length > 0) {
+        const weakest = allPlayers.sort((a, b) => a.rating - b.rating)[0];
+        document.getElementById('weakLinkName').textContent = weakest.name;
+        document.getElementById('weakLinkSkill').textContent = weakest.skill || '45';
+        document.getElementById('weakLinkDamage').textContent = weakest.damage || '40';
+        document.getElementById('weakLinkSurvival').textContent = weakest.survival || '35';
+    }
+    
+    // Update synergy
+    const synergy = calculateTeamSynergyScore(winner.players || []);
+    document.getElementById('synergyScore').textContent = synergy.toFixed(1);
+    document.getElementById('synergyMeter').style.width = `${synergy * 10}%`;
+    document.getElementById('synergyDesc').textContent = getSynergyDescription(synergy);
+    
+    // Update team performance grid
+    document.getElementById('teamMembers')?.classList.remove('hidden');
+    const performanceGrid = document.getElementById('teamPerformanceGrid');
+    if (performanceGrid) {
+        performanceGrid.innerHTML = '';
         
-        // Calculate confidence
-        const confidence = calculateTeamConfidence(teams);
-        document.getElementById('confidenceValueMain').textContent = `${confidence}%`;
-        document.getElementById('predictionAccuracy').textContent = `${confidence}%`;
-        
-        // Update performance cards
-        document.getElementById('topPerformerName').textContent = winner.players[0].name;
-        document.getElementById('topPerformerKD').textContent = (winner.players[0].kills / Math.max(1, 3)).toFixed(2);
-        document.getElementById('topPerformerDMG').textContent = winner.players[0].damage;
-        document.getElementById('topPerformerRating').textContent = winner.players[0].rating.toFixed(1);
-        
-        // Find weakest player across all teams
-        const allPlayers = teams.flatMap(team => team.players);
-        allPlayers.sort((a, b) => a.rating - b.rating);
-        
-        if (allPlayers.length > 0) {
-            const weakLink = allPlayers[0];
-            document.getElementById('weakLinkName').textContent = weakLink.name;
-            document.getElementById('weakLinkKD').textContent = (weakLink.kills / Math.max(1, 5)).toFixed(2);
-            document.getElementById('weakLinkDMG').textContent = weakLink.damage;
-            document.getElementById('weakLinkRating').textContent = weakLink.rating.toFixed(1);
-        }
-        
-        // Update synergy
-        document.getElementById('synergyScore').textContent = winner.synergy.toFixed(1);
-        document.getElementById('synergyMeter').style.width = `${winner.synergy * 10}%`;
-        document.getElementById('synergyDesc').textContent = getSynergyDescription(winner.synergy);
-        
-        // Show team members section
-        const teamMembers = document.getElementById('teamMembers');
-        if (teamMembers) {
-            teamMembers.classList.remove('hidden');
-            
-            // Update team performance grid
-            const performanceGrid = document.getElementById('teamPerformanceGrid');
-            if (performanceGrid) {
-                performanceGrid.innerHTML = '';
-                
-                teams.slice(0, 3).forEach((team, index) => {
-                    const teamCard = document.createElement('div');
-                    const medalClass = index === 0 ? 'medal-gold' : index === 1 ? 'medal-silver' : 'medal-bronze';
-                    teamCard.className = `team-performance-card ${medalClass}`;
-                    teamCard.innerHTML = `
-                        <div class="team-rank">${index + 1}</div>
-                        <div class="team-name">${team.name}</div>
-                        <div class="team-stats">
-                            <span class="stat">Kills: ${team.totalKills}</span>
-                            <span class="stat">DMG: ${team.totalDamage}</span>
-                            <span class="stat">Rating: ${team.teamRating.toFixed(1)}</span>
-                        </div>
-                    `;
-                    performanceGrid.appendChild(teamCard);
-                });
-            }
-        }
+        sorted.slice(0, 3).forEach((team, index) => {
+            const medalClass = index === 0 ? 'medal-gold' : index === 1 ? 'medal-silver' : 'medal-bronze';
+            const teamCard = document.createElement('div');
+            teamCard.className = `team-performance-card ${medalClass}`;
+            teamCard.innerHTML = `
+                <div class="team-rank">#${index + 1}</div>
+                <div class="team-name">${team.name}</div>
+                <div class="team-stats">
+                    <span class="stat">Skill: ${team.skill || '85'}</span>
+                    <span class="stat">Damage: ${team.damage || '75'}</span>
+                    <span class="stat">Survival: ${team.survival || '70'}</span>
+                    <span class="stat">Rating: ${team.rating.toFixed(1)}</span>
+                </div>
+            `;
+            performanceGrid.appendChild(teamCard);
+        });
     }
 }
 
-// 31. Calculate Player Rating
-function calculatePlayerRating(kills, damage, survival, headshots, assists) {
-    const killScore = Math.min(10, kills * 0.8);
-    const damageScore = Math.min(10, damage / 100);
-    const survivalScore = Math.min(10, survival / 180);
-    const headshotScore = Math.min(5, headshots * 0.8);
-    const assistScore = Math.min(5, assists * 0.6);
+// ============= CALCULATE TEAM SYNERGY SCORE =============
+function calculateTeamSynergyScore(players) {
+    if (!players || players.length < 2) return 5.0;
     
-    const rating = (
-        killScore * 0.30 + 
-        damageScore * 0.25 + 
-        survivalScore * 0.25 + 
-        headshotScore * 0.10 +
-        assistScore * 0.10
-    );
-    
-    return Math.min(10, Math.max(0, rating));
-}
-
-// 32. Calculate Team Rating
-function calculateTeamRating(avgPlayerRating, totalKills, totalDamage, totalSurvival) {
-    const killScore = Math.min(10, totalKills * 0.4);
-    const damageScore = Math.min(10, totalDamage / 300);
-    const survivalScore = Math.min(10, totalSurvival / 720);
-    
-    const teamRating = (
-        avgPlayerRating * 0.50 + 
-        killScore * 0.20 + 
-        damageScore * 0.20 + 
-        survivalScore * 0.10
-    );
-    
-    return Math.min(10, Math.max(0, teamRating));
-}
-
-// 33. Calculate Team Synergy
-function calculateTeamSynergy(players) {
-    if (players.length < 2) return 5.0;
-    
-    const avgRating = players.reduce((sum, player) => sum + player.rating, 0) / players.length;
-    const ratingStdDev = Math.sqrt(
-        players.reduce((sum, player) => sum + Math.pow(player.rating - avgRating, 2), 0) / players.length
-    );
+    const ratings = players.map(p => p.rating);
+    const avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+    const variance = ratings.reduce((sum, r) => sum + Math.pow(r - avg, 2), 0) / ratings.length;
+    const stdDev = Math.sqrt(variance);
     
     // Lower std deviation = better synergy
-    const synergy = Math.max(0, 10 - (ratingStdDev * 3));
-    return Math.min(10, synergy);
+    const synergy = Math.max(0, 10 - (stdDev * 1.5));
+    return Math.min(10, parseFloat(synergy.toFixed(1)));
 }
 
-// 34. Get Synergy Description
+// ============= GET SYNERGY DESCRIPTION =============
 function getSynergyDescription(synergy) {
     if (synergy >= 8) return 'Excellent team coordination';
     if (synergy >= 6) return 'Good team synergy';
@@ -3962,109 +3724,61 @@ function getSynergyDescription(synergy) {
     return 'Needs better teamwork';
 }
 
-// 35. Calculate Death Estimate (for K/D calculation)
-function deathEstimate(kills, damage) {
-    // Simple estimation based on average damage per kill
-    const avgDamagePerKill = 150;
-    return Math.max(1, Math.floor(damage / avgDamagePerKill));
-}
-
-// 36. Calculate Confidence
-function calculateConfidence(players) {
-    if (players.length < 2) return 85;
-    
-    const winnerRating = players[0].rating;
-    const runnerUpRating = players[1].rating;
-    const ratingDiff = winnerRating - runnerUpRating;
-    
-    let confidence = 75 + (ratingDiff * 15);
-    confidence = Math.min(98, Math.max(60, confidence));
-    
-    return Math.round(confidence);
-}
-
-// 37. Calculate Team Confidence
-function calculateTeamConfidence(teams) {
-    if (teams.length < 2) return 85;
-    
-    const winnerRating = teams[0].teamRating;
-    const runnerUpRating = teams[1].teamRating;
-    const ratingDiff = winnerRating - runnerUpRating;
-    
-    let confidence = 70 + (ratingDiff * 20);
-    confidence = Math.min(97, Math.max(55, confidence));
-    
-    return Math.round(confidence);
-}
-
-// 38. Reset Form
+// ============= RESET FORM =============
 function resetForm() {
-    console.log('Resetting form...');
-    
-    // Hide results and error sections
     document.getElementById('resultsSection')?.classList.add('hidden');
     document.getElementById('errorSection')?.classList.add('hidden');
     document.getElementById('ocrPreview')?.classList.add('hidden');
     document.getElementById('newPredictionSection')?.classList.add('hidden');
     
-    // Reset file input
     const statsFile = document.getElementById('statsFile');
     if (statsFile) statsFile.value = '';
     
-    // Show upload zone again
     const uploadZone = document.getElementById('uploadZone');
-    if (uploadZone) {
-        uploadZone.style.display = 'block';
-    }
+    if (uploadZone) uploadZone.style.display = 'block';
     
-    // Switch to upload tab
     document.querySelector('.method-tab[data-method="upload"]').click();
     
-    // Reset match type to solo
     document.querySelector('input[name="matchType"][value="solo"]').checked = true;
     updateInputMode();
     
-    // Reset player inputs - keep only one empty player
     const playerInputs = document.getElementById('playerInputs');
     if (playerInputs) {
         playerInputs.innerHTML = `
+            <div class="career-stats-info">
+                <i class="fas fa-info-circle"></i> 
+                Enter career statistics - InfiKnight will calculate skill, damage & survival scores
+            </div>
             <div class="player-input-section">
                 <h4><i class="fas fa-user-circle"></i> Player 1</h4>
                 <div class="input-grid">
                     <div class="input-group">
                         <label>Player Name</label>
-                        <input type="text" class="player-name" 
-                               placeholder="Enter name" value="Player 1">
+                        <input type="text" class="player-name" value="Player 1">
                     </div>
                     <div class="input-group">
-                        <label>Kills</label>
-                        <input type="number" class="player-kills" 
-                               min="0" max="50" placeholder="0" value="5">
+                        <label>K/D Ratio</label>
+                        <input type="number" class="player-kd" step="0.1" min="0.1" max="15" value="2.5">
                     </div>
                     <div class="input-group">
-                        <label>Damage</label>
-                        <input type="number" class="player-damage" 
-                               min="0" max="5000" placeholder="0" value="250">
+                        <label>Win Rate %</label>
+                        <input type="number" class="player-winrate" step="0.1" min="0" max="100" value="15">
                     </div>
                     <div class="input-group">
-                        <label>Survival Time</label>
-                        <div class="survival-time-wrapper">
-                            <input type="number" class="player-survival-min" 
-                                   min="0" max="30" placeholder="MM" value="7" title="Minutes">
-                            <span>:</span>
-                            <input type="number" class="player-survival-sec" 
-                                   min="0" max="59" placeholder="SS" value="30" title="Seconds">
-                        </div>
+                        <label>Top 10 Rate %</label>
+                        <input type="number" class="player-top10" step="0.1" min="0" max="100" value="40">
                     </div>
                     <div class="input-group">
-                        <label>Headshots</label>
-                        <input type="number" class="player-headshots" 
-                               min="0" max="50" placeholder="0" value="2">
+                        <label>Avg Damage</label>
+                        <input type="number" class="player-avgdamage" step="10" min="0" max="2000" value="350">
                     </div>
                     <div class="input-group">
-                        <label>Assists</label>
-                        <input type="number" class="player-assists" 
-                               min="0" max="20" placeholder="0" value="0">
+                        <label>Headshot Rate %</label>
+                        <input type="number" class="player-headshot" step="0.1" min="0" max="100" value="25">
+                    </div>
+                    <div class="input-group">
+                        <label>Accuracy %</label>
+                        <input type="number" class="player-accuracy" step="0.1" min="0" max="100" value="20">
                     </div>
                 </div>
                 <button class="btn btn-danger btn-sm remove-player" style="display: none;" 
@@ -4075,72 +3789,61 @@ function resetForm() {
         `;
     }
     
-    // Clear team inputs
     const teamInputs = document.getElementById('teamInputs');
-    if (teamInputs) {
-        teamInputs.innerHTML = '';
-    }
-    
-    // Scroll to upload section
-    setTimeout(() => {
-        const uploadSection = document.querySelector('.sidebar-card');
-        if (uploadSection) {
-            uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }, 300);
+    if (teamInputs) teamInputs.innerHTML = '';
     
     showNotification('Form reset successfully!', 'info');
 }
 
-// 39. Retry Processing
+// ============= RETRY PROCESSING =============
 function retryProcessing() {
     document.getElementById('errorSection')?.classList.add('hidden');
     processData();
 }
 
-// 40. Show Notification
+// ============= SWITCH TO MANUAL INPUT =============
+function switchToManualInput() {
+    document.querySelector('.method-tab[data-method="manual"]').click();
+    showNotification('Please enter your data manually for accurate predictions.', 'info');
+}
+
+// ============= IMPORT FROM API =============
+function importFromAPI() {
+    const playerIds = document.getElementById('playerIds')?.value;
+    if (!playerIds || playerIds.trim() === '') {
+        showNotification('Please enter player IDs or match codes', 'error');
+        return;
+    }
+    showNotification('API import would fetch real data here. Enter data manually for now.', 'info');
+}
+
+// ============= SHOW NOTIFICATION =============
 function showNotification(message, type = 'info') {
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
+    
+    let icon = 'info-circle';
+    if (type === 'success') icon = 'check-circle';
+    if (type === 'error') icon = 'exclamation-circle';
+    
     notification.innerHTML = `
         <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <i class="fas fa-${icon}"></i>
             <span>${message}</span>
         </div>
     `;
     
-    // Add to page
     document.body.appendChild(notification);
     
-    // Animate in
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 10);
-    
-    // Remove after 3 seconds
+    setTimeout(() => notification.classList.add('show'), 10);
     setTimeout(() => {
         notification.classList.remove('show');
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
+        setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
 
-// Initialize remove buttons on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateRemoveButtons();
-});
-
-// Auto-resize textareas if you have them
-document.addEventListener('input', function(e) {
-    if (e.target.tagName === 'TEXTAREA') {
-        e.target.style.height = 'auto';
-        e.target.style.height = (e.target.scrollHeight) + 'px';
-    }
-});
+// Format number helper
+window.formatNumber = formatNumber;
     </script>
 </body>
 </html>

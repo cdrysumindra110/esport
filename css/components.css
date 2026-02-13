@@ -1,42 +1,58 @@
-/*
- * Components CSS includes Tabs, Custom forms, Tooltips, Buttons, Timelines, Modals, Accordions
-*/
-/* Tabs */
+/**
+ * ==================================================
+ * Components CSS
+ * ==================================================
+ * Includes: Tabs, Custom Forms, Tooltips, Buttons, 
+ * Timelines, Modals, Accordions
+ * ==================================================
+ */
+
+/* ==================================================
+   Tabs
+   ================================================== */
 .tab-item {
-  background: none repeat scroll 0 0 #fff;
+  background: #fff;
   display: none;
   padding: 1.25rem 0;
 }
+
 .tab-item.tab-active {
   display: block;
 }
+
 .tab-content > .tab-label {
   display: none;
 }
+
 .tab-nav > .tab-label {
-  float:left;
+  float: left;
 }
-a.tab-label, a.tab-label:link, a.tab-label:visited, a.tab-label:hover {
-  background: none repeat scroll 0 0 #262626;
+
+a.tab-label,
+a.tab-label:link,
+a.tab-label:visited,
+a.tab-label:hover {
+  background: #262626;
   color: #fff;
   margin-right: 1px;
   padding: 0.625rem 1.25rem;
-  transition: background 0.20s linear 0s;
-  -o-transition: background 0.20s linear 0s;
-  -ms-transition: background 0.20s linear 0s;
-  -moz-transition: background 0.20s linear 0s;
-  -webkit-transition: background 0.20s linear 0s;
+  transition: background 0.2s linear;
 }
-a.tab-label:hover,a.tab-label.active-btn {
-  background: none repeat scroll 0 0 #999;
+
+a.tab-label:hover,
+a.tab-label.active-btn {
+  background: #999;
 }
+
 .tab-label.active-btn {
   cursor: default;
 }
+
 .tab-content {
   text-align: left;
 }
-@media screen and (max-width:768px) {    
+
+@media screen and (max-width: 768px) {
   .tab-nav > .tab-label {
     margin: 0.5px 0;
     width: 100%;
@@ -203,23 +219,31 @@ a.tooltip-content.tooltip-bottom,.tooltip-content.tooltip-bottom {
 .grid .button {
   width: 100%;
 }
-/* Accordion */
-.accordion-title { 
-  font-size: 1.1rem;
+/* ==================================================
+   Accordion
+   ================================================== */
+.accordion-title {
+  font-size: 1.2rem;
   padding: 15px;
   cursor: pointer;
   transition: background 0.2s;
   margin: 5px 0;
   border-radius: 3px;
-  font-size: 1.2rem;
   color: #152732;
   background: #eee;
 }
+
+.accordion-title:hover {
+  background: #ddd;
+}
+
 .accordion-content {
   display: none;
   padding: 15px;
   border: 1px solid #eee;
+  border-radius: 3px;
 }
+
 .accordion-title::before {
   content: "\f005";
   font-family: "mfg";
@@ -236,30 +260,33 @@ a.tooltip-content.tooltip-bottom,.tooltip-content.tooltip-bottom {
   top: -1px;
   border: 2px solid #fff;
   transform: rotate(0deg);
-  transition:all 0.2s ease-in-out;
-  -moz-transition:all 0.2s ease-in-out;
-  -webkit-transition:all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
+
 .active-accordion-section > .accordion-title::before {
   transform: rotate(180deg);
 }
-/* Modal */
+/* ==================================================
+   Modal
+   ================================================== */
 .modal {
   display: none;
-  margin-top: -100%;    
+  margin-top: -100%;
   background: #fff;
   padding: 20px;
   height: auto;
   position: absolute;
   z-index: 2;
-  transition:all 0.3s ease-in-out;
-  -moz-transition:all 0.3s ease-in-out;
-  -webkit-transition:all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
+
 .modal.active-modal {
   margin-top: 0;
   width: 100%;
 }
+
 .modal-content {
   position: relative;
   width: 100%;
@@ -270,31 +297,38 @@ a.tooltip-content.tooltip-bottom,.tooltip-content.tooltip-bottom {
   height: 100%;
   overflow-y: auto;
 }
+
 .modal-content::after {
-  clear:both;
+  clear: both;
   content: ".";
-  display:block;
-  height:0;
-  line-height:0;
-  overflow:hidden;
-  visibility:hidden;
+  display: block;
+  height: 0;
+  line-height: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
+
 .modal-wrap {
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px;  
+  padding: 20px;
   z-index: 1000;
+  backdrop-filter: blur(2px);
 }
+
 body.modal-active {
   overflow: hidden !important;
 }
-.modal-close-button, .modal-button  {
+
+.modal-close-button,
+.modal-button {
   cursor: pointer;
 }
+
 .modal-close {
   position: fixed;
   cursor: pointer;
@@ -304,23 +338,33 @@ body.modal-active {
   right: 0;
   z-index: 1;
 }
+
 .modal-close-icon i {
   color: #ccc;
   font-size: 17px;
+  transition: color 0.2s;
 }
+
+.modal-close-icon i:hover {
+  color: #999;
+}
+
 .modal-close-icon {
   position: absolute;
   right: 10px;
   top: 6px;
   cursor: pointer;
 }
-/* Timeline */
+/* ==================================================
+   Timeline
+   ================================================== */
 .timeline-container {
   width: 100%;
   margin: 0 auto;
   position: relative;
   padding: 20px 0;
 }
+
 .timeline-container::before {
   content: '';
   position: absolute;
@@ -330,45 +374,54 @@ body.modal-active {
   width: 4px;
   background: #eeeeee;
 }
+
 @media only screen and (min-width: 1170px) {
   .timeline-container::before {
     left: 50%;
     margin-left: -2px;
   }
 }
+
 .timeline-block {
   position: relative;
   margin: 2rem 0;
   clear: both;
 }
-.timeline-block:after {
-  clear:both;
+
+.timeline-block::after {
+  clear: both;
   content: ".";
-  display:block;
-  height:0;
-  line-height:0;
-  overflow:hidden;
-  visibility:hidden;
+  display: block;
+  height: 0;
+  line-height: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
+
 .timeline-block:first-child {
   margin-top: 0;
 }
+
 .timeline-block:last-child {
   margin-bottom: 0;
 }
+
 @media only screen and (min-width: 1170px) {
   .timeline-block {
     margin: 4em 0;
   }
+
   .timeline-block:first-child {
     margin-top: 0;
   }
+
   .timeline-block:last-child {
     margin-bottom: 0;
   }
 }
+
 .timeline-icon {
-  background: #B4BF04;	
+  background: #b4bf04;
   position: absolute;
   top: 0;
   left: 0;
@@ -377,11 +430,21 @@ body.modal-active {
   border-radius: 50%;
   line-height: 40px;
   text-align: center;
+  overflow: hidden;
 }
+
 .timeline-icon i {
   color: #fff;
   font-size: 1rem;
 }
+
+.timeline-icon img {
+  top: 0;
+  min-height: 100%;
+  min-width: 100%;
+  width: auto;
+}
+
 @media only screen and (min-width: 1141px) {
   .timeline-icon {
     width: 60px;
@@ -390,10 +453,12 @@ body.modal-active {
     margin-left: -30px;
     line-height: 60px;
   }
+
   .timeline-icon i {
     font-size: 2rem;
   }
 }
+
 .timeline-content {
   position: relative;
   margin-left: 60px;
@@ -402,17 +467,21 @@ body.modal-active {
   padding: 1em;
   text-align: left;
 }
-.timeline-content:after {
+
+.timeline-content::after {
   content: "";
   display: table;
   clear: both;
 }
+
 .timeline-content .timeline-date {
   display: inline-block;
   float: left;
   font-size: 1.5rem;
   color: #333;
+  font-weight: 600;
 }
+
 .timeline-content::before {
   content: '';
   position: absolute;
@@ -423,15 +492,7 @@ body.modal-active {
   border: 11px solid transparent;
   border-right: 11px solid #f5f5f5;
 }
-.timeline-icon img {
-  top: 0px;
-  min-height: 100%;
-  min-width: 100%;
-  width: auto;
-}
-.timeline-icon {
-  overflow: hidden;
-}
+
 @media only screen and (min-width: 1141px) {
   .timeline-content {
     margin-left: 0;
@@ -439,6 +500,7 @@ body.modal-active {
     width: 45%;
     text-align: right;
   }
+
   .timeline-content .timeline-date {
     position: absolute;
     width: 100%;
@@ -446,25 +508,29 @@ body.modal-active {
     top: 0;
     text-align: left;
   }
+
   .timeline-content::before {
     left: 100%;
     border-left: 11px solid #f5f5f5;
     border-right: 0;
   }
+
   .timeline-block:nth-child(even) .timeline-content {
     float: right;
     text-align: left;
   }
+
   .timeline-block:nth-child(even) .timeline-content::before {
     top: 24px;
     left: auto;
     right: 100%;
-    border-color: transparent;   
+    border-color: transparent;
     border-right: 11px solid #f5f5f5;
   }
+
   .timeline-block:nth-child(even) .timeline-content .timeline-date {
     left: auto;
     right: 121%;
     text-align: right;
-  } 
+  }
 }

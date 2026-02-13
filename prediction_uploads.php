@@ -393,15 +393,37 @@ function processManualInput($data, $matchType) {
             throw new Exception('Invalid player data structure for solo mode');
         }
         
-        // Add missing fields with defaults
+        // Validate data format - check if career stats or match stats
+        $isCareerStats = false;
+        if (!empty($data['players'])) {
+            $firstPlayer = $data['players'][0];
+            $isCareerStats = isset($firstPlayer['kd']) || isset($firstPlayer['win_ratio']);
+        }
+        
+        // Add missing fields with defaults based on format
         foreach ($data['players'] as &$player) {
-            $player = array_merge([
-                'headshots' => 0,
-                'assists' => 0,
-                'survival' => 0,
-                'damage' => 0,
-                'kills' => 0
-            ], $player);
+            if ($isCareerStats) {
+                // Career stats format - ensure all fields exist
+                $player = array_merge([
+                    'kd' => 2.0,
+                    'win_ratio' => 0.15,
+                    'top10_rate' => 0.40,
+                    'avg_damage' => 350,
+                    'headshot_rate' => 0.25,
+                    'accuracy' => 0.20,
+                    'name' => 'Player'
+                ], $player);
+            } else {
+                // Legacy match stats format
+                $player = array_merge([
+                    'headshots' => 0,
+                    'assists' => 0,
+                    'survival' => 0,
+                    'damage' => 0,
+                    'kills' => 0,
+                    'name' => 'Player'
+                ], $player);
+            }
         }
         
         return [
@@ -413,6 +435,43 @@ function processManualInput($data, $matchType) {
     } else {
         if (!isset($data['teams']) || !is_array($data['teams'])) {
             throw new Exception('Invalid team data structure for team mode');
+        }
+        
+        // Check first team's first player for format
+        $isCareerStats = false;
+        if (!empty($data['teams']) && !empty($data['teams'][0]['players'])) {
+            $firstPlayer = $data['teams'][0]['players'][0];
+            $isCareerStats = isset($firstPlayer['kd']) || isset($firstPlayer['win_ratio']);
+        }
+        
+        // Validate and add defaults for each team's players
+        foreach ($data['teams'] as &$team) {
+            if (!isset($team['players']) || !is_array($team['players'])) {
+                $team['players'] = [];
+            }
+            
+            foreach ($team['players'] as &$player) {
+                if ($isCareerStats) {
+                    $player = array_merge([
+                        'kd' => 2.0,
+                        'win_ratio' => 0.15,
+                        'top10_rate' => 0.40,
+                        'avg_damage' => 350,
+                        'headshot_rate' => 0.25,
+                        'accuracy' => 0.20,
+                        'name' => 'Player'
+                    ], $player);
+                } else {
+                    $player = array_merge([
+                        'headshots' => 0,
+                        'assists' => 0,
+                        'survival' => 0,
+                        'damage' => 0,
+                        'kills' => 0,
+                        'name' => 'Player'
+                    ], $player);
+                }
+            }
         }
         
         return [
@@ -427,10 +486,61 @@ function processManualInput($data, $matchType) {
 function generatePrediction($extractedData, $matchType) {
     global $predictor;
     
+    // Check if data is already in career stats format (has 'kd' field) or match stats (has 'kills' field)
+    $isCareerStats = false;
+    if ($matchType === 'solo' && isset($extractedData['players'][0])) {
+        $isCareerStats = isset($extractedData['players'][0]['kd']) || isset($extractedData['players'][0]['win_ratio']);
+    } elseif (isset($extractedData['teams'][0]['players'][0])) {
+        $isCareerStats = isset($extractedData['teams'][0]['players'][0]['kd']) || isset($extractedData['teams'][0]['players'][0]['win_ratio']);
+    }
+    
     if ($matchType === 'solo') {
-        return $predictor->predictSoloWinner($extractedData['players']);
+        // Convert to career stats if needed
+        if ($isCareerStats) {
+            $players = $extractedData['players'];
+        } else {
+            $players = convertPlayersToCareerStats($extractedData['players']);
+        }
+        
+        // Convert player stats to teams format for predictWinner
+        $teams = [];
+        foreach ($players as $player) {
+            $teams[] = [$player]; // Each player is a solo team
+        }
+        
+        $result = $predictor->predictWinner($teams, 'solo');
+        
+        // Add player names to result
+        $result['players'] = [];
+        foreach ($players as $index => $player) {
+            $result['players'][$index] = [
+                'name' => $player['name'],
+                'score' => $result['teams'][$index] ?? 0
+            ];
+        }
+        
+        return $result;
     } else {
-        return $predictor->predictTeamWinner($extractedData['teams'], $matchType);
+        // For team modes, convert each team's players
+        $teams = [];
+        foreach ($extractedData['teams'] as $teamData) {
+            if ($isCareerStats) {
+                $teamPlayers = $teamData['players'];
+            } else {
+                $teamPlayers = convertPlayersToCareerStats($teamData['players']);
+            }
+            $teams[] = $teamPlayers;
+        }
+        
+        $result = $predictor->predictWinner($teams, $matchType);
+        
+        // Add team names to result
+        $result['teamNames'] = [];
+        foreach ($extractedData['teams'] as $index => $teamData) {
+            $result['teamNames'][$index] = $teamData['name'] ?? "Team " . ($index + 1);
+        }
+        
+        return $result;
     }
 }
 
