@@ -1499,8 +1499,8 @@ $conn->close();
     }
     
     function predictWinner(tournamentId) {
-        // Redirect to organizer prediction endpoint
-        window.location.href = 'predict_winner.php?tournament_id=' + tournamentId;
+        // Redirect to prediction endpoint
+        window.location.href = 'prediction.php?tournament_id=' + tournamentId;
     }
     </script>
 </body>
