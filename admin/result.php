@@ -1,6 +1,8 @@
 <?php
 include('../config.php');
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Redirect if not logged in
 if (!isset($_SESSION['isLogin']) || $_SESSION['isLogin'] !== true) {
@@ -14,8 +16,27 @@ if (!$tournament_id) {
     die("Error: Missing tournament ID.");
 }
 
+// Detect leaderboard schema (legacy: rank/name/prize, modern: placement/total_score)
+$has_legacy_columns = false;
+$schema_check = $conn->query("SHOW COLUMNS FROM leaderboard LIKE 'rank'");
+if ($schema_check && $schema_check->num_rows > 0) {
+  $has_legacy_columns = true;
+}
+
 // Fetch leaderboard data for the given tournament
-$sql = "SELECT rank, name, prize FROM leaderboard WHERE tournament_id = ? ORDER BY rank ASC LIMIT 5";
+$sql = $has_legacy_columns
+  ? "SELECT id AS entry_id, rank AS rank, name, prize FROM leaderboard WHERE tournament_id = ? ORDER BY rank ASC LIMIT 5"
+  : "SELECT l.id AS entry_id,
+        l.placement AS rank,
+      COALESCE(u.full_name, u.uname, dp.name, sp.name, CONCAT('Team #', l.team_id), CONCAT('Player #', l.player_id), 'Unknown') AS name,
+        l.total_score AS prize
+     FROM leaderboard l
+     LEFT JOIN users u ON l.player_id = u.id
+     LEFT JOIN duo_players dp ON l.player_id = dp.id
+     LEFT JOIN squad_players sp ON l.player_id = sp.id
+     WHERE l.tournament_id = ?
+     ORDER BY l.placement ASC
+     LIMIT 5";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
@@ -38,6 +59,12 @@ if ($result->num_rows > 0) {
 
 // Handle form submission for leaderboard insertion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (!$has_legacy_columns) {
+      $_SESSION['error_message'] = "This database schema uses auto-calculated leaderboard entries. Manual rank/name/prize insertion is disabled.";
+      header('Location: ../admin/result.php?tournament_id=' . intval($_POST['tournament_id'] ?? 0));
+      exit();
+  }
+
   $rank = $_POST['rank'];
   $name = $_POST['name'];
   $prize = $_POST['prize'];
@@ -73,14 +100,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Handle deletion
-if (isset($_GET['delete_rank'])) {
-    $rank = intval($_GET['delete_rank']); 
+if (isset($_GET['delete_id'])) {
+  $entry_id = intval($_GET['delete_id']);
 
-    $delete_query = "DELETE FROM leaderboard WHERE rank = ?";
+  $delete_query = "DELETE FROM leaderboard WHERE id = ? AND tournament_id = ?";
     $stmt = $conn->prepare($delete_query);
 
     if ($stmt) {
-        $stmt->bind_param("i", $rank);
+    $stmt->bind_param("ii", $entry_id, $tournament_id);
 
         if ($stmt->execute()) {
             $_SESSION['message'] = "User deleted successfully.";
@@ -106,14 +133,13 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="./css/admin.css?ver=1.0">  
+    <link rel="stylesheet" href="./css/admin.css?ver=2.2">  
     <link rel="stylesheet" href="./css/leaderboard.css?ver=1.0">  
+    <link rel="stylesheet" href="./css/result-modern.css?ver=2.1">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<div id="preloader" style="background: #1E1E2F url(../img/loader.gif) no-repeat center center; 
-    background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-</div>
+<div id="preloader"></div>
 <div class="popup-message" id="popup-message"></div>
       <header class="page-header">
         <nav>
@@ -232,75 +258,81 @@ $conn->close();
           </section>
           <!-- Result Management Section -->
           <section id="result">
-            <div class="main-content">
-              <h1>Result Management</h1>
-            </div>
+            <div class="result-main-content">
+              <div class="main-content result-header">
+                <h1>Result Management</h1>
+                <p>Publish and maintain top tournament leaderboard placements.</p>
+              </div>
 
-            <!-- Form to Update Leaderboard -->
-            <div id="update-form" class="tab active" data-tab="add-news" style="width: 100%; background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); max-width: 450px; margin: 20px 0;">
-                <h2>Publish Leaderboard</h2>
-                <form action="../admin/result.php?tournament_id=<?php echo htmlspecialchars($_GET['tournament_id'] ?? ''); ?>" method="POST">
+              <div class="result-grid">
+                <div id="update-form" class="tab active result-form-card" data-tab="add-news">
+                  <h2>Publish Leaderboard</h2>
+                  <?php if (!$has_legacy_columns): ?>
+                    <p class="result-empty-state">Manual entry is disabled for this database schema. Results are read from computed leaderboard records.</p>
+                  <?php endif; ?>
+                  <form action="../admin/result.php?tournament_id=<?php echo htmlspecialchars($_GET['tournament_id'] ?? ''); ?>" method="POST">
                     <input type="hidden" name="tournament_id" value="<?php echo htmlspecialchars($_GET['tournament_id'] ?? ''); ?>">
 
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label for="rank" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Rank:</label>
-                        <input type="number" name="rank" id="rank" min="1" max="5" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;">
-                    </div> 
-
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label for="name" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Name:</label>
-                        <input type="text" name="name" id="name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;">
-                    </div>     
-
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label for="prize" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Prize:</label>
-                        <input type="number" name="prize" id="prize" step="0.001" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;">
+                    <div class="form-group">
+                      <label for="rank">Rank:</label>
+                      <input type="number" name="rank" id="rank" min="1" max="5" required <?php echo !$has_legacy_columns ? 'disabled' : ''; ?>>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="background-color: #007bff; color: white; padding: 12px 20px; font-size: 1.1em; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease;">Save</button>
-                </form>
-            </div>
+                    <div class="form-group">
+                      <label for="name">Name:</label>
+                      <input type="text" name="name" id="name" required <?php echo !$has_legacy_columns ? 'disabled' : ''; ?>>
+                    </div>
 
+                    <div class="form-group">
+                      <label for="prize">Prize:</label>
+                      <input type="number" name="prize" id="prize" step="0.001" required <?php echo !$has_legacy_columns ? 'disabled' : ''; ?>>
+                    </div>
 
-            <main class="app-container">
-                <div class="app-header">
-                    <h1>
-                        <i class="fa fa-trophy fa-3x" style="color:#ff9633"></i> Placement
-                    </h1>
+                    <button type="submit" class="btn btn-primary" <?php echo !$has_legacy_columns ? 'disabled' : ''; ?>>Save</button>
+                  </form>
                 </div>
-                <div class="app-leaderboard">
+
+                <main class="app-container result-board-card">
+                  <div class="app-header">
+                    <h1>
+                      <i class="fa fa-trophy fa-3x"></i> Placement
+                    </h1>
+                  </div>
+                  <div class="app-leaderboard">
                     <div class="app-ribbon"></div>
                     <table>
-                        <?php if (!empty($leaderboard)): ?>
-                            <?php foreach ($leaderboard as $row): ?>
-                                <tr>
-                                    <td class="rank"><?php echo $row['rank']; ?></td>
-                                    <td class="participant-name"><?php echo htmlspecialchars($row['name']); ?></td>
-                                    <td class="score" style="padding-right: 1px;">
-                                        $<?php echo number_format($row['prize']); ?>
-                                        <?php if ($row['rank'] == 1): ?>
-                                            <img class="award-icon" src="https://github.com/malunaridev/Challenges-iCodeThis/blob/master/4-leaderboard/assets/gold-medal.png?raw=true" alt="gold medal" />
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <a href="?tournament_id=<?php echo $tournament_id; ?>&delete_rank=<?php echo $row['rank']; ?>" 
-                                          class="delete-btn" style="padding-left : 1px;" 
-                                          onclick="confirm('Are you sure you want to delete this entry?');">
-                                          Delete
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="3" style="text-align: center; color: red;">
-                                    <?php echo isset($error_message) ? htmlspecialchars($error_message) : "No leaderboard data available."; ?>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
+                      <?php if (!empty($leaderboard)): ?>
+                        <?php foreach ($leaderboard as $row): ?>
+                          <tr>
+                            <td class="rank"><?php echo $row['rank']; ?></td>
+                            <td class="participant-name"><?php echo htmlspecialchars($row['name']); ?></td>
+                            <td class="score">
+                              $<?php echo number_format($row['prize']); ?>
+                              <?php if ($row['rank'] == 1): ?>
+                                <img class="award-icon" src="https://github.com/malunaridev/Challenges-iCodeThis/blob/master/4-leaderboard/assets/gold-medal.png?raw=true" alt="gold medal" />
+                              <?php endif; ?>
+                            </td>
+                            <td>
+                              <a href="?tournament_id=<?php echo $tournament_id; ?>&delete_id=<?php echo intval($row['entry_id']); ?>"
+                                class="delete-btn"
+                                onclick="return confirm('Are you sure you want to delete this entry?');">
+                                Delete
+                              </a>
+                            </td>
+                          </tr>
+                        <?php endforeach; ?>
+                      <?php else: ?>
+                        <tr>
+                          <td colspan="4" class="result-empty-state">
+                            <?php echo isset($error_message) ? htmlspecialchars($error_message) : "No leaderboard data available."; ?>
+                          </td>
+                        </tr>
+                      <?php endif; ?>
                     </table>
-                </div>
-            </main>
+                  </div>
+                </main>
+              </div>
+            </div>
           </section>
         </section>
   
@@ -800,7 +832,9 @@ $conn->close();
       <script>
     var loader = document.getElementById("preloader");
     window.addEventListener("load", function () {
-        loader.style.display = "none";
+            if (loader) {
+                loader.style.display = "none";
+            }
     });
   </script>
 <script>
@@ -823,18 +857,6 @@ $conn->close();
             }, 5000);
         }
 	</script>
-  <script>
-  // Handle Delete button click
-  document.querySelectorAll('.delete-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      let rank = this.getAttribute('data-rank');
-      if (confirm("Are you sure you want to delete this rank?")) {
-        // Send delete request to PHP
-        window.location.href = 'result.php?delete_rank=' + rank;
-      }
-    });
-  });
-</script>
 </body>
 </html>
 

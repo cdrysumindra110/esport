@@ -1,10 +1,16 @@
 <?php
 include('../config.php');
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Initialize messages
 $error_message = '';
 $success_message = '';
+$article_id = '';
+$article_title = '';
+$article_description = '';
+$current_image = '';
 
 // Check if the user is logged in
 if (!isset($_SESSION['isLogin']) || $_SESSION['isLogin'] !== true) {
@@ -18,9 +24,10 @@ if (!is_dir($target_dir)) {
     mkdir($target_dir, 0777, true); // Create the directory if it doesn't exist
 }
 
-// Check if the 'edit' parameter is set to load the existing article
-if (isset($_GET['id'])) {
-    $article_id = mysqli_real_escape_string($conn, $_GET['id']);
+// Resolve article id from GET (initial load) or POST (form submit)
+if (isset($_GET['id']) || isset($_POST['article_id'])) {
+  $article_id_input = isset($_GET['id']) ? $_GET['id'] : $_POST['article_id'];
+  $article_id = mysqli_real_escape_string($conn, $article_id_input);
 
     // Fetch the existing article details
     $sql = "SELECT id, title, description, image FROM news_articles WHERE id = '$article_id'";
@@ -32,8 +39,10 @@ if (isset($_GET['id'])) {
         $article_description = $article['description'];
         $current_image = $article['image'];
     } else {
-        $error_message = 'Article not found.';
+      $error_message = 'Article not found.';
     }
+  } else {
+    $error_message = 'Invalid article request.';
 }
 
 // Handle form submission for updating the article
@@ -92,11 +101,116 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../admin/css/admin.css?ver=1.0">
+    <link rel="stylesheet" href="../admin/css/admin.css?ver=2.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+      #contents .main-content {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      #contents .editor-card {
+        width: 100%;
+        max-width: 760px;
+        margin: 20px auto;
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(27, 45, 79, 0.14);
+        border-radius: 16px;
+        box-shadow: 0 16px 32px rgba(10, 22, 46, 0.12);
+      }
+
+      #contents .editor-title {
+        margin: 0 0 20px;
+        color: #17253e;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+
+      #contents .editor-alert {
+        margin-bottom: 16px;
+      }
+
+      #contents .editor-form .form-group {
+        margin-bottom: 18px;
+      }
+
+      #contents .editor-form label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        color: #304665;
+      }
+
+      #contents .editor-form .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d6ddea;
+        border-radius: 10px;
+        background: #ffffff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      #contents .editor-form textarea.form-control {
+        min-height: 160px;
+        resize: vertical;
+      }
+
+      #contents .editor-form .form-control:focus {
+        outline: none;
+        border-color: #1e5bbf;
+        box-shadow: 0 0 0 3px rgba(30, 91, 191, 0.16);
+      }
+
+      #contents .image-panel {
+        margin-top: 10px;
+      }
+
+      #contents .image-preview {
+        width: 100%;
+        max-height: 320px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #e1e7f2;
+      }
+
+      #contents .image-caption {
+        margin: 8px 0 0;
+        color: #60718c;
+        font-size: 0.86rem;
+      }
+
+      #contents .submit-btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 11px 20px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ffffff;
+        background: linear-gradient(135deg, #1e5bbf 0%, #133d86 100%);
+        box-shadow: 0 10px 22px rgba(19, 61, 134, 0.23);
+        cursor: pointer;
+      }
+
+      #contents .submit-btn:hover {
+        filter: brightness(1.06);
+      }
+
+      @media (max-width: 768px) {
+        #contents .editor-card {
+          padding: 16px;
+          margin: 12px auto;
+        }
+
+        #contents .editor-title {
+          font-size: 1.3rem;
+        }
+      }
+    </style>
 </head>
 <body>
 
+<div id="preloader"></div>
 <div class="popup-message" id="popup-message"></div>
       <header class="page-header">
         <nav>
@@ -221,48 +335,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 
               <div class="tab-content">
                   <!-- Add News Form Tab -->
-                  <div class="tab active" data-tab="edit-news" style="width: 100%; background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 20px auto;">
-                    <h3 style="font-size: 1.6em; margin-bottom: 20px; color: #333; text-align: center;">Update News Article</h3>
+                  <div class="tab active editor-card" data-tab="edit-news">
+                    <h3 class="editor-title">Update News Article</h3>
 
                     <?php if (!empty($error_message)): ?>
-                        <div class="error-message" style="padding: 10px 20px; border-radius: 5px; margin-bottom: 20px; font-size: 1.1em; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
-                            <p><?php echo $error_message; ?></p>
+                        <div class="error-message editor-alert">
+                          <p><?php echo $error_message; ?></p>
                         </div>
                     <?php endif; ?>
 
                     <?php if (!empty($success_message)): ?>
-                        <div class="success-message" style="padding: 10px 20px; border-radius: 5px; margin-bottom: 20px; font-size: 1.1em; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;">
-                            <p><?php echo $success_message; ?></p>
+                        <div class="success-message editor-alert">
+                          <p><?php echo $success_message; ?></p>
                         </div>
                     <?php endif; ?>
 
-                    <form action="" method="POST" enctype="multipart/form-data">
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <label for="title" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Title:</label>
-                            <input type="text" name="title" id="title" class="form-control" value="<?php echo $article_title; ?>" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;">
+                    <form action="" method="POST" enctype="multipart/form-data" class="editor-form">
+                      <input type="hidden" name="article_id" value="<?php echo htmlspecialchars($article_id); ?>">
+                      <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" name="title" id="title" class="form-control" value="<?php echo htmlspecialchars($article_title); ?>" required>
                         </div>
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <label for="description" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Description:</label>
-                            <textarea name="description" id="description" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;"><?php echo $article_description; ?></textarea>
+                      <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea name="description" id="description" class="form-control" required><?php echo htmlspecialchars($article_description); ?></textarea>
                         </div>
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <label for="image" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Image:</label>
-                            <input type="file" name="image" id="image" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;" onchange="previewImage();">
+                      <div class="form-group">
+                        <label for="image">Image:</label>
+                        <input type="file" name="image" id="image" class="form-control" onchange="previewImage();">
                             
                             <!-- Display the current image if it exists -->
                             <?php if (!empty($current_image)): ?>
-                                <div id="current-image-container" style="margin-top: 10px;">
-                                    <img src="<?php echo $current_image; ?>" alt="Current Image" style="max-width: 100%; height: auto;" id="current-image">
-                                    <p style="color: #555; font-size: 0.9em;">Current Image</p>
+                              <div id="current-image-container" class="image-panel">
+                                <img src="<?php echo htmlspecialchars($current_image); ?>" alt="Current Image" class="image-preview" id="current-image">
+                                <p class="image-caption">Current Image</p>
                                 </div>
                             <?php endif; ?>
                             
                             <!-- The placeholder for the new image preview -->
-                            <div id="new-image-preview" style="margin-top: 10px; display: none;">
-                                <img id="new-image" src="" alt="New Image" style="width: 100%; height: 300px; object-fit: cover; margin-top: 10px; display: none;">
+                            <div id="new-image-preview" class="image-panel" style="display: none;">
+                              <img id="new-image" src="" alt="New Image" class="image-preview" style="display: none;">
+                              <p class="image-caption">New Image Preview</p>
                             </div>
                         </div>
-                        <button type="submit" name="submit" class="btn btn-primary" style="background-color: #007bff; color: white; padding: 12px 20px; font-size: 1.1em; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease;">Update News</button>
+                      <button type="submit" name="submit" class="btn btn-primary submit-btn">Update News</button>
                     </form>
                  </div>
                </div>
@@ -764,7 +880,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     <script>
     var loader = document.getElementById("preloader");
     window.addEventListener("load", function () {
-        loader.style.display = "none";
+        if (loader) {
+          loader.style.display = "none";
+        }
     });
   </script>
 <script>
@@ -809,6 +927,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
             // Once the file is read, update the image preview
             reader.onload = function(e) {
                 previewImage.src = e.target.result;
+              previewImage.style.display = 'block';
                 previewContainer.style.display = 'block';  // Show the new preview
             };
             reader.readAsDataURL(fileInput.files[0]);

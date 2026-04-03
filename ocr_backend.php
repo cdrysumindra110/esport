@@ -36,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(false, 'Invalid request method', null, 'Use POST method');
 }
 
+include_once('config.php');
 // Validate CSRF token if session exists
-session_start();
 if (!empty($_SESSION['csrf_token'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         jsonResponse(false, 'CSRF token validation failed', null, 'Security validation failed');

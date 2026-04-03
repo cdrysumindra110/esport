@@ -484,6 +484,47 @@ foreach ($participants as &$participant) {
     $prev_score = $participant['total_score'];
     $rank++;
 }
+unset($participant);
+
+$latestOrganizerPrediction = null;
+$predictionTableCheck = $conn->query("SHOW TABLES LIKE 'organizer_predictions'");
+if ($predictionTableCheck && $predictionTableCheck->num_rows > 0) {
+    $predictionStmt = $conn->prepare(
+        "SELECT op.predicted_team_id, op.predicted_team_name, op.confidence, op.reason, op.created_at,
+                u.uname AS organizer_name
+         FROM organizer_predictions op
+         LEFT JOIN users u ON op.created_by = u.id
+         WHERE op.tournament_id = ?
+         ORDER BY op.created_at DESC, op.id DESC
+         LIMIT 1"
+    );
+
+    if ($predictionStmt) {
+        $predictionStmt->bind_param("i", $tournament_id);
+        $predictionStmt->execute();
+        $predictionRes = $predictionStmt->get_result();
+        if ($predictionRes && $predictionRes->num_rows > 0) {
+            $latestOrganizerPrediction = $predictionRes->fetch_assoc();
+        }
+        $predictionStmt->close();
+    }
+}
+
+if ($latestOrganizerPrediction) {
+    $predictedId = (int) ($latestOrganizerPrediction['predicted_team_id'] ?? 0);
+    $predictedName = trim((string) ($latestOrganizerPrediction['predicted_team_name'] ?? ''));
+    foreach ($participants as &$participant) {
+        $participant['is_organizer_prediction'] = false;
+        $participantId = (int) ($participant['team_id'] ?? 0);
+        $participantName = trim((string) ($participant['team_name'] ?? ''));
+
+        if (($predictedId > 0 && $participantId === $predictedId) ||
+            ($predictedName !== '' && strcasecmp($participantName, $predictedName) === 0)) {
+            $participant['is_organizer_prediction'] = true;
+        }
+    }
+    unset($participant);
+}
 
 $conn->close();
 ?>
@@ -534,6 +575,26 @@ $conn->close();
     border-radius: 12px;
     margin-bottom: 20px;
     border: 1px solid #708090;
+}
+
+.organizer-prediction-card {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.22), rgba(241, 196, 15, 0.22));
+    border: 1px solid rgba(46, 204, 113, 0.65);
+    border-radius: 12px;
+    color: #ecf0f1;
+    padding: 16px;
+    margin-bottom: 18px;
+}
+
+.prediction-team-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #2ecc71;
+    color: #0b2e13;
 }
 
 /* ===== Scoreboard Table ===== */
@@ -711,6 +772,19 @@ $conn->close();
             </p>
         </div>
 
+        <?php if (isset($_GET['prediction_success'])): ?>
+        <div class="alert alert-success" role="alert">
+            <i class="bi bi-check-circle-fill"></i> Organizer prediction has been posted to this leaderboard.
+        </div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['prediction_error'])): ?>
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <?php echo htmlspecialchars(urldecode($_GET['prediction_error'])); ?>
+        </div>
+        <?php endif; ?>
+
         <!-- Scoring System Info -->
         <div class="scoring-info">
             <h5><i class="bi bi-calculator"></i> Scoring System</h5>
@@ -799,6 +873,24 @@ $conn->close();
                 </div>
             </div>
         </div>
+
+        <?php if ($latestOrganizerPrediction): ?>
+        <div class="organizer-prediction-card">
+            <h5 class="mb-2"><i class="bi bi-bullseye"></i> Organizer Prediction Result</h5>
+            <div>
+                Predicted Winner:
+                <strong><?php echo htmlspecialchars($latestOrganizerPrediction['predicted_team_name'] ?? 'Unknown'); ?></strong>
+                | Confidence: <strong><?php echo (int) ($latestOrganizerPrediction['confidence'] ?? 0); ?>%</strong>
+            </div>
+            <small class="text-light">
+                Posted by <?php echo htmlspecialchars($latestOrganizerPrediction['organizer_name'] ?? 'Organizer'); ?>
+                on <?php echo htmlspecialchars(date('M j, Y g:i A', strtotime($latestOrganizerPrediction['created_at']))); ?>
+                <?php if (!empty($latestOrganizerPrediction['reason'])): ?>
+                    | <?php echo htmlspecialchars($latestOrganizerPrediction['reason']); ?>
+                <?php endif; ?>
+            </small>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -857,6 +949,9 @@ $conn->close();
                                      onerror="this.onerror=null; this.src='img/default-logo.png';">
                                 <div>
                                     <div class="team-name"><?php echo htmlspecialchars($p['team_name']); ?></div>
+                                    <?php if (!empty($p['is_organizer_prediction'])): ?>
+                                    <span class="prediction-team-badge">Organizer Pick</span>
+                                    <?php endif; ?>
                                     <?php if (isset($p['source'])): ?>
                                     <!-- <small class="data-source-badge"><?php echo $p['source']; ?></small> -->
                                     <?php endif; ?>

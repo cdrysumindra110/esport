@@ -5,24 +5,30 @@ class InfiKnightPredictor {
         'kd' => 0.35,
         'win_ratio' => 0.25,
         'top10_rate' => 0.15,
-        'avg_damage' => 0.15,
-        'headshot_rate' => 0.05,
+        'avg_damage' => 0.12,
+        'headshot_rate' => 0.08,
         'accuracy' => 0.05
     ];
 
     private const BENCHMARKS = [
-        'kd' => ['min' => 0.5, 'max' => 10.0],
-        'win_ratio' => ['min' => 0.01, 'max' => 0.50],
-        'top10_rate' => ['min' => 0.05, 'max' => 0.80],
-        'avg_damage' => ['min' => 100, 'max' => 1000],
-        'headshot_rate' => ['min' => 0.10, 'max' => 0.70],
-        'accuracy' => ['min' => 0.10, 'max' => 0.50]
+        'kd' => ['min' => 0.5, 'max' => 3.5],
+        'win_ratio' => ['min' => 2.0, 'max' => 25.0],
+        'top10_rate' => ['min' => 30.0, 'max' => 80.0],
+        'avg_damage' => ['min' => 150.0, 'max' => 450.0],
+        'headshot_rate' => ['min' => 5.0, 'max' => 30.0],
+        'accuracy' => ['min' => 5.0, 'max' => 25.0]
     ];
 
     private const SYNERGY = [
         'solo' => 1.0,
         'duo' => 1.15,
         'squad' => 1.25
+    ];
+
+    private const TEAM_SIZE_FACTOR = [
+        'solo' => 1,
+        'duo' => 2,
+        'squad' => 4
     ];
 
     private $db;
@@ -46,14 +52,14 @@ class InfiKnightPredictor {
         
         // Win rate/ratio
         if (preg_match('/Win\s*Rate\s*[:\-]?\s*([\d.]+)%?/i', $ocrText, $matches)) {
-            $stats['win_ratio'] = floatval($matches[1]) / 100;
+            $stats['win_ratio'] = floatval($matches[1]);
         } elseif (preg_match('/Win\s*[:\-]?\s*([\d.]+)/i', $ocrText, $matches)) {
             $stats['win_ratio'] = floatval($matches[1]);
         }
         
         // Top 10 rate
         if (preg_match('/Top\s*10\s*[:\-]?\s*([\d.]+)%?/i', $ocrText, $matches)) {
-            $stats['top10_rate'] = floatval($matches[1]) / 100;
+            $stats['top10_rate'] = floatval($matches[1]);
         }
         
         // Average damage
@@ -65,12 +71,12 @@ class InfiKnightPredictor {
         
         // Headshot rate
         if (preg_match('/Headshot\s*[:\-]?\s*([\d.]+)%?/i', $ocrText, $matches)) {
-            $stats['headshot_rate'] = floatval($matches[1]) / 100;
+            $stats['headshot_rate'] = floatval($matches[1]);
         }
         
         // Accuracy
         if (preg_match('/Accuracy\s*[:\-]?\s*([\d.]+)%?/i', $ocrText, $matches)) {
-            $stats['accuracy'] = floatval($matches[1]) / 100;
+            $stats['accuracy'] = floatval($matches[1]);
         }
         
         return $stats;
@@ -98,11 +104,54 @@ class InfiKnightPredictor {
     }
 
     /**
+     * Convert legacy ratio inputs (0-1) into percentage inputs (0-100)
+     * for rate-based fields used by the reference algorithm.
+     */
+    private function normalizeInputStats(array $stats): array {
+        foreach (['win_ratio', 'top10_rate', 'headshot_rate', 'accuracy'] as $rateKey) {
+            if (isset($stats[$rateKey])) {
+                $val = floatval($stats[$rateKey]);
+                if ($val > 0 && $val <= 1) {
+                    $stats[$rateKey] = $val * 100;
+                }
+            }
+        }
+
+        return $stats;
+    }
+
+    /**
+     * Optional logistic refinement (Step 7 in reference docs).
+     * p = 1 / (1 + exp(-(beta0 + beta1 * teamScore)))
+     */
+    private function calculateLogisticProbabilities(array $teamScores, float $beta0 = -4.0, float $beta1 = 0.08): array {
+        $raw = [];
+        $sum = 0.0;
+
+        foreach ($teamScores as $index => $score) {
+            $p = 1 / (1 + exp(-($beta0 + ($beta1 * $score))));
+            $raw[$index] = $p;
+            $sum += $p;
+        }
+
+        $normalized = [];
+        if ($sum > 0) {
+            foreach ($raw as $index => $p) {
+                $normalized[$index] = round(($p / $sum) * 100, 2);
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
      * Calculate player score based on stats
      * @param array $stats Player stats
      * @return float Player score (0-100)
      */
     public function calculatePlayerScore($stats) {
+        $stats = $this->normalizeInputStats($stats);
+
         $totalScore = 0;
         $totalWeight = 0;
         
@@ -114,8 +163,15 @@ class InfiKnightPredictor {
             }
         }
         
-        // Return score out of 100
-        return $totalWeight > 0 ? ($totalScore / $totalWeight) * 100 : 0;
+        $basePlayerScore = $totalWeight > 0 ? ($totalScore / $totalWeight) * 100 : 0;
+
+        // Optional ML blend: FinalScore = 0.6*PlayerScore + 0.3*HistoricalAvg + 0.1*RecentTrend
+        $historicalAvg = isset($stats['historical_avg']) ? floatval($stats['historical_avg']) : $basePlayerScore;
+        $recentTrend = isset($stats['recent_trend']) ? floatval($stats['recent_trend']) : $basePlayerScore;
+
+        $finalScore = (0.6 * $basePlayerScore) + (0.3 * $historicalAvg) + (0.1 * $recentTrend);
+
+        return round(max(0.0, min(100.0, $finalScore)), 2);
     }
 
     /**
@@ -125,23 +181,20 @@ class InfiKnightPredictor {
      * @return float Team score
      */
     public function calculateTeamScore($team, $matchType) {
-        $teamScore = 0;
-        $playerCount = count($team);
+        $rawTeamScore = 0.0;
         
         foreach ($team as $player) {
-            $teamScore += $this->calculatePlayerScore($player);
+            $rawTeamScore += $this->calculatePlayerScore($player);
         }
-        
-        // Divide by player count for average
-        if ($playerCount > 0) {
-            $teamScore /= $playerCount;
-        }
-        
-        // Apply synergy bonus
+
         $synergy = self::SYNERGY[$matchType] ?? 1.0;
-        $teamScore *= $synergy;
+        $sizeFactor = self::TEAM_SIZE_FACTOR[$matchType] ?? 1;
+
+        // Reference formula:
+        // AdjustedTeamScore = (sum(PlayerScores) * SynergyBonus) / TeamSizeFactor
+        $teamScore = ($rawTeamScore * $synergy) / max(1, $sizeFactor);
         
-        return $teamScore;
+        return round($teamScore, 2);
     }
 
     /**
@@ -152,8 +205,9 @@ class InfiKnightPredictor {
      */
     public function predictWinner($teams, $matchType = 'solo') {
         $teamScores = [];
+        $winProbabilities = [];
         $winnerIndex = 0;
-        $maxScore = 0;
+        $maxScore = 0.0;
         
         foreach ($teams as $index => $team) {
             $score = $this->calculateTeamScore($team, $matchType);
@@ -164,18 +218,35 @@ class InfiKnightPredictor {
                 $winnerIndex = $index;
             }
         }
+
+        $totalScore = array_sum($teamScores);
+        if ($totalScore > 0) {
+            foreach ($teamScores as $index => $score) {
+                $winProbabilities[$index] = round(($score / $totalScore) * 100, 2);
+            }
+        } else {
+            $equal = count($teamScores) > 0 ? round(100 / count($teamScores), 2) : 0;
+            foreach ($teamScores as $index => $score) {
+                $winProbabilities[$index] = $equal;
+            }
+        }
+
+        $logisticWinProbabilities = $this->calculateLogisticProbabilities($teamScores);
         
-        // Calculate confidence based on score difference
+        // Confidence = min(99, 70 + ((TopScore - SecondScore) / max(1, TopScore)) * 30)
         $scores = array_values($teamScores);
         sort($scores, SORT_NUMERIC);
         $secondHighest = count($scores) > 1 ? $scores[count($scores) - 2] : 0;
-        
-        $scoreDiff = $maxScore - $secondHighest;
-        $confidence = min(100, 50 + ($scoreDiff * 2)); // 50-100% range
+
+        $confidence = min(99, 70 + (($maxScore - $secondHighest) / max(1, $maxScore)) * 30);
         
         return [
             'winner' => $winnerIndex,
             'teams' => $teamScores,
+            'win_probabilities' => $winProbabilities,
+            'logistic_win_probabilities' => $logisticWinProbabilities,
+            'top_score' => round($maxScore, 2),
+            'second_score' => round($secondHighest, 2),
             'confidence' => round($confidence, 2),
             'match_type' => $matchType
         ];

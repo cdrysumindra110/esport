@@ -43,19 +43,27 @@ if ($result->num_rows > 0) {
     // Store fetched articles in an array
     $articles = [];
     while ($row = $result->fetch_assoc()) {
-      if (!empty($row['image'])) {
-        $image_path = 'uploads/' . $row['image'];
-    
-        // Check if the image file exists
-        if (file_exists($image_path) && is_readable($image_path)) {
-            $row['image'] = $image_path;
-        } else {
-            // If file does not exist, use default image
-            $row['image'] = 'img/dash-logo.png';
-        }
+    if (!empty($row['image'])) {
+    $stored_image = ltrim(str_replace('\\', '/', $row['image']), '/');
+    $candidate_paths = [
+      $stored_image,
+      'admin/' . $stored_image,
+      'uploads/' . $stored_image,
+      'admin/uploads/' . basename($stored_image)
+    ];
+
+    $resolved_image = 'img/dash-logo.png';
+    foreach (array_unique($candidate_paths) as $candidate) {
+      if (file_exists($candidate) && is_readable($candidate)) {
+        $resolved_image = $candidate;
+        break;
+      }
+    }
+
+    $row['image'] = $resolved_image;
     } else {
-        // If no image provided, use default
-        $row['image'] = 'img/dash-logo.png';
+    // If no image provided, use default
+    $row['image'] = 'img/dash-logo.png';
     }
     
         

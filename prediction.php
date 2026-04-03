@@ -11,7 +11,7 @@ $_SESSION['csrf_token'] = $csrfToken;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InfiKnight AI Prediction System v3.0 - Career Stats Algorithm</title>
+    <title>InfiKnight v3.0 - Career Stats Algorithm</title>
     
     <!-- External CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -1867,6 +1867,7 @@ $_SESSION['csrf_token'] = $csrfToken;
         </header>
       </article>  
     </main>
+    
     <!-- Theme Toggle -->
     <!-- <div class="theme-toggle">
         <button class="toggle-btn" id="themeToggle">
@@ -1879,7 +1880,7 @@ $_SESSION['csrf_token'] = $csrfToken;
         <header class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    <i class="fas fa-robot"></i> InfiKnight AI v3.0
+                    <i class="fas fa-robot"></i> InfiKnight Prediction v3.0
                 </h1>
                 <p class="hero-subtitle">Career Stats Prediction with PUBG Elite Benchmarks & Scientific Weights</p>
                 <div class="version-badge">v3.0</div>
@@ -1887,7 +1888,6 @@ $_SESSION['csrf_token'] = $csrfToken;
                     <span class="badge bg-pubg">PUBG</span>
                     <span class="badge bg-freefire">Free Fire</span>
                     <span class="badge bg-cod">Call of Duty</span>
-                    <span class="badge bg-apex">Apex Legends</span>
                 </div>
             </div>
         </header>
@@ -1927,7 +1927,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 </button>
                                 <input type="file" id="statsFile" accept=".png,.jpg,.jpeg" style="display: none;">
                                 <p class="ocr-notice">
-                                    <i class="fas fa-robot"></i> AI OCR will extract statistics automatically
+                                    <i class="fas fa-robot"></i> Prediction OCR will extract statistics automatically
                                 </p>
                             </div>
                             
@@ -2092,7 +2092,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                     <!-- Process Button -->
                     <div class="process-actions">
                         <button class="btn btn-primary btn-lg btn-process" id="processBtn">
-                            <i class="fas fa-bolt"></i> Generate AI Prediction
+                            <i class="fas fa-bolt"></i> Generate Prediction
                         </button>
                         <input type="hidden" id="csrfToken" value="<?php echo htmlspecialchars($csrfToken); ?>">
                     </div>
@@ -2104,7 +2104,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                 <!-- Processing Status -->
                 <div class="processing-section card hidden" id="processingSection">
                     <div class="processing-header">
-                        <h2><i class="fas fa-cogs"></i> AI Processing</h2>
+                        <h2><i class="fas fa-cogs"></i> Career Prediction Processing</h2>
                         <div class="processing-time" id="processingTime">0s</div>
                     </div>
                     
@@ -2138,7 +2138,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 <i class="fas fa-brain"></i>
                             </div>
                             <div class="step-content">
-                                <h4>AI Analysis</h4>
+                                <h4>Career Prediction Analysis</h4>
                                 <p>Running InfiKnight algorithm...</p>
                             </div>
                             <div class="step-status"></div>
@@ -2182,7 +2182,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 </span>
                                 <span class="meta-item">
                                     <i class="fas fa-robot"></i>
-                                    <span id="mlStatus">Career Stats AI</span>
+                                    <span id="mlStatus">Career Stats Prediction</span>
                                 </span>
                             </div>
                         </div>
@@ -2194,7 +2194,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                         </div>
                     </div>
                     
-                    <!-- Winner Card - FIXED: Shows all three scores -->
+                    <!-- Winner Card - Shows all six normalized components -->
                     <div class="winner-section card">
                         <div class="winner-header">
                             <h3><i class="fas fa-crown"></i> Predicted Winner</h3>
@@ -2208,20 +2208,32 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 <h4 id="winnerName">Loading...</h4>
                                 <div class="winner-stats">
                                     <div class="stat">
-                                        <i class="fas fa-skull"></i>
-                                        <span>Skill: <strong id="winnerSkill">0</strong></span>
+                                        <i class="fas fa-crosshairs"></i>
+                                        <span>K/D N: <strong id="winnerKD">0</strong>%</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-trophy"></i>
+                                        <span>Win N: <strong id="winnerWin">0</strong>%</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-medal"></i>
+                                        <span>Top10 N: <strong id="winnerTop10">0</strong>%</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-fire"></i>
+                                        <span>AvgDmg N: <strong id="winnerAvgDamage">0</strong>%</span>
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-bullseye"></i>
-                                        <span>Damage: <strong id="winnerDamage">0</strong></span>
+                                        <span>HS N: <strong id="winnerHeadshot">0</strong>%</span>
                                     </div>
                                     <div class="stat">
-                                        <i class="fas fa-clock"></i>
-                                        <span>Survival: <strong id="winnerSurvival">0</strong></span>
+                                        <i class="fas fa-percent"></i>
+                                        <span>Acc N: <strong id="winnerAccuracy">0</strong>%</span>
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-star"></i>
-                                        <span>Rating: <strong id="winnerRating">0.0</strong>/10</span>
+                                        <span>Rating: <strong id="winnerRating">0.0</strong>/100</span>
                                     </div>
                                 </div>
                             </div>
@@ -2246,9 +2258,12 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 <div class="card-body">
                                     <div class="performer-name" id="topPerformerName">Loading...</div>
                                     <div class="performer-stats">
-                                        <span class="stat">Skill: <strong id="topPerformerSkill">0.0</strong></span>
-                                        <span class="stat">Damage: <strong id="topPerformerDamage">0</strong></span>
-                                        <span class="stat">Survival: <strong id="topPerformerSurvival">0</strong></span>
+                                        <span class="stat">K/D N: <strong id="topPerformerKD">0</strong>%</span>
+                                        <span class="stat">Win N: <strong id="topPerformerWin">0</strong>%</span>
+                                        <span class="stat">Top10 N: <strong id="topPerformerTop10">0</strong>%</span>
+                                        <span class="stat">AvgDmg N: <strong id="topPerformerAvgDamage">0</strong>%</span>
+                                        <span class="stat">HS N: <strong id="topPerformerHeadshot">0</strong>%</span>
+                                        <span class="stat">Acc N: <strong id="topPerformerAccuracy">0</strong>%</span>
                                     </div>
                                 </div>
                             </div>
@@ -2261,9 +2276,12 @@ $_SESSION['csrf_token'] = $csrfToken;
                                 <div class="card-body">
                                     <div class="performer-name" id="weakLinkName">Loading...</div>
                                     <div class="performer-stats">
-                                        <span class="stat">Skill: <strong id="weakLinkSkill">0.0</strong></span>
-                                        <span class="stat">Damage: <strong id="weakLinkDamage">0</strong></span>
-                                        <span class="stat">Survival: <strong id="weakLinkSurvival">0</strong></span>
+                                        <span class="stat">K/D N: <strong id="weakLinkKD">0</strong>%</span>
+                                        <span class="stat">Win N: <strong id="weakLinkWin">0</strong>%</span>
+                                        <span class="stat">Top10 N: <strong id="weakLinkTop10">0</strong>%</span>
+                                        <span class="stat">AvgDmg N: <strong id="weakLinkAvgDamage">0</strong>%</span>
+                                        <span class="stat">HS N: <strong id="weakLinkHeadshot">0</strong>%</span>
+                                        <span class="stat">Acc N: <strong id="weakLinkAccuracy">0</strong>%</span>
                                     </div>
                                     <div class="improvement-tip" id="improvementTip">
                                         Focus on positioning and aim training
@@ -2293,7 +2311,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                             <div class="performance-card prediction">
                                 <div class="card-header">
                                     <i class="fas fa-robot"></i>
-                                    <h4>AI Prediction</h4>
+                                    <h4>Career Prediction</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="prediction-accuracy">
@@ -2305,7 +2323,7 @@ $_SESSION['csrf_token'] = $csrfToken;
                                     </div>
                                     <div class="algorithm-info">
                                         <span class="info-tag" id="algorithmTag">v3.0</span>
-                                        <span class="info-tag" id="mlTag">Career AI</span>
+                                        <span class="info-tag" id="mlTag">Career Prediction</span>
                                     </div>
                                 </div>
                             </div>
@@ -2348,11 +2366,11 @@ $_SESSION['csrf_token'] = $csrfToken;
     <!-- JavaScript Files - FIXED: Complete rewrite of critical functions -->
     <script>
 // =============================================
-// INFIKNIGHT AI PREDICTION SYSTEM v3.0 - FIXED
+// INFIKNIGHT PREDICTION SYSTEM v3.0 - FIXED
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('InfiKnight AI v3.0 - Initializing...');
+    console.log('InfiKnight Prediction v3.0 - Initializing...');
     initializeApp();
 });
 
@@ -2362,8 +2380,47 @@ function initializeApp() {
     initializeTabs();
     addDragAndDrop();
     initializeEventListeners();
+    initializeRealtimeCalculation();
     updateInputMode();
-    console.log('InfiKnight AI initialized successfully');
+    console.log('InfiKnight Prediction v3.0 - initialized successfully');
+}
+
+function initializeRealtimeCalculation() {
+    document.addEventListener('input', function(e) {
+        if (!e.target || !(e.target instanceof HTMLElement)) return;
+
+        if (!e.target.matches('.player-input-section input, .team-player-input input, .team-name-input, #teamCount, input[name="matchType"]')) {
+            return;
+        }
+
+        scheduleRealtimePrediction();
+    });
+
+    document.addEventListener('change', function(e) {
+        if (!e.target || !(e.target instanceof HTMLElement)) return;
+        if (e.target.matches('#teamCount, input[name="matchType"]')) {
+            scheduleRealtimePrediction();
+        }
+    });
+}
+
+function scheduleRealtimePrediction() {
+    if (!window.currentPrediction) return;
+
+    clearTimeout(window.realtimePredictTimer);
+    window.realtimePredictTimer = setTimeout(() => {
+        const matchType = document.querySelector('input[name="matchType"]:checked')?.value || 'solo';
+        const data = collectPlayerData(matchType);
+
+        if (!data) return;
+        if (matchType === 'solo' && (!data.players || data.players.length < 2)) return;
+        if (matchType !== 'solo' && (!data.teams || data.teams.length < 2)) return;
+
+        window.currentPrediction = generateInfiKnightPrediction(data);
+        window.currentMatchType = matchType;
+        window.currentData = data;
+        updateResults();
+    }, 300);
 }
 
 // ============= THEME =============
@@ -2961,6 +3018,20 @@ function displayCareerStats(data) {
     });
     
     html += `</div>`;
+
+    const ocrProfile = buildRealisticCareerProfile(stats, ocrText);
+    const ocrComputed = calculateReferencePlayerScore(ocrProfile);
+
+    html += `
+        <div class="career-note" style="margin-top: 16px;">
+            <i class="fas fa-chart-line"></i>
+            Reference Score (OCR): <strong>${ocrComputed.score.toFixed(1)}</strong>/100
+            | Base: ${ocrComputed.baseScore.toFixed(1)}
+            | K/D N: ${(ocrComputed.normalized.kd * 100).toFixed(0)}
+            | Win N: ${(ocrComputed.normalized.winrate * 100).toFixed(0)}
+            | Top10 N: ${(ocrComputed.normalized.top10 * 100).toFixed(0)}
+        </div>
+    `;
     
     if (ocrText) {
         html += `
@@ -3002,40 +3073,265 @@ function formatNumber(num) {
     return num.toLocaleString();
 }
 
+function getCareerStatValue(stats, ...keys) {
+    if (!stats) return 0;
+
+    for (const key of keys) {
+        const value = stats[key];
+        if (value !== undefined && value !== null && value !== '') {
+            return parseFloat(String(value).replace('%', '')) || 0;
+        }
+    }
+
+    return 0;
+}
+
+function sanitizeMetric(value, min, max, fallback) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric) || numeric <= 0) return fallback;
+    return clamp(numeric, min, max);
+}
+
+function normalizePercentValue(value, matchesPlayed = 0) {
+    let numeric = Number(value) || 0;
+    if (numeric <= 0) return 0;
+
+    if (numeric > 100 && matchesPlayed > 0) {
+        const derived = (numeric / matchesPlayed) * 100;
+        if (derived > 0 && derived <= 100) {
+            numeric = derived;
+        }
+    }
+
+    while (numeric > 100) {
+        numeric = numeric / 10;
+    }
+
+    return clamp(numeric, 0, 100);
+}
+
+function extractLabeledPercentFromText(ocrText, labelPattern) {
+    if (!ocrText || typeof ocrText !== 'string') return 0;
+
+    // OCR often inserts punctuation/newlines between label and value.
+    const regex = new RegExp(`\\b(?:${labelPattern})\\b[^\\d%]{0,24}(\\d{1,3}(?:\\.\\d+)?)\\s*%?`, 'i');
+    const match = ocrText.match(regex);
+    if (match && match[1]) {
+        return Number(match[1]) || 0;
+    }
+
+    // Fallback: search near the first label occurrence.
+    const lower = ocrText.toLowerCase();
+    const labelRegex = new RegExp(`\\b(?:${labelPattern})\\b`, 'i');
+    const labelMatch = lower.match(labelRegex);
+    if (!labelMatch || labelMatch.index === undefined) return 0;
+
+    const tail = ocrText.slice(labelMatch.index, labelMatch.index + 64);
+    const nearMatch = tail.match(/(\d{1,3}(?:\.\d+)?)/);
+    return nearMatch && nearMatch[1] ? (Number(nearMatch[1]) || 0) : 0;
+}
+
+function extractTop10AndAccuracyPairFromText(ocrText) {
+    if (!ocrText || typeof ocrText !== 'string') {
+        return { top10: 0, accuracy: 0 };
+    }
+
+    // Handles OCR layouts such as:
+    // "Top 10 Rate Accuracy\n59.3% 9.7%"
+    const pairRegex = /top\s*10\s*rate\s*accuracy[^\d%]{0,24}(\d{1,3}(?:\.\d+)?)\s*%?[^\d%]{0,12}(\d{1,3}(?:\.\d+)?)\s*%?/i;
+    const match = ocrText.match(pairRegex);
+    if (!match || !match[1] || !match[2]) {
+        return { top10: 0, accuracy: 0 };
+    }
+
+    return {
+        top10: Number(match[1]) || 0,
+        accuracy: Number(match[2]) || 0
+    };
+}
+
+function extractKDFromText(ocrText) {
+    if (!ocrText || typeof ocrText !== 'string') return 0;
+
+    // Primary: direct label-to-number capture.
+    const direct = ocrText.match(/\b(?:k\s*\/\s*d\s*ratio|k\s*\/\s*d|kd\s*ratio|kd)\b[^\d]{0,20}(\d{1,2}(?:\.\d{1,2})?)/i);
+    if (direct && direct[1]) {
+        const val = Number(direct[1]) || 0;
+        if (val > 0 && val <= 10) return val;
+    }
+
+    // Fallback: parse nearby numeric candidates around K/D label.
+    const labelMatch = ocrText.match(/\b(?:k\s*\/\s*d\s*ratio|k\s*\/\s*d|kd\s*ratio|kd)\b/i);
+    if (!labelMatch || labelMatch.index === undefined) return 0;
+
+    const windowText = ocrText.slice(labelMatch.index, labelMatch.index + 96);
+    const candidates = windowText.match(/\d{1,2}(?:\.\d{1,2})?/g) || [];
+    if (candidates.length === 0) return 0;
+
+    // Prefer decimal values in realistic BR K/D range.
+    for (const c of candidates) {
+        const v = Number(c) || 0;
+        if (c.includes('.') && v >= 0.5 && v <= 6.0) {
+            return v;
+        }
+    }
+
+    for (const c of candidates) {
+        const v = Number(c) || 0;
+        if (v >= 0.5 && v <= 6.0) {
+            return v;
+        }
+    }
+
+    return 0;
+}
+
+function buildRealisticCareerProfile(stats, ocrText = '') {
+    const matchesPlayed = getCareerStatValue(stats, 'matches_played');
+    const wins = getCareerStatValue(stats, 'wins');
+    const eliminations = getCareerStatValue(stats, 'eliminations');
+    const headshotsCount = getCareerStatValue(stats, 'headshots');
+    const pairRates = extractTop10AndAccuracyPairFromText(ocrText);
+    const textKD = extractKDFromText(ocrText);
+
+    let winrate = normalizePercentValue(getCareerStatValue(stats, 'win_rate'), matchesPlayed);
+    const derivedWinrate = (matchesPlayed > 0 && wins > 0)
+        ? normalizePercentValue((wins / matchesPlayed) * 100, matchesPlayed)
+        : 0;
+
+    if (winrate <= 0 && derivedWinrate > 0) {
+        winrate = derivedWinrate;
+    }
+
+    // Prefer wins/matches-derived ratio when OCR value drifts too far.
+    if (derivedWinrate > 0 && Math.abs(winrate - derivedWinrate) > 3) {
+        winrate = derivedWinrate;
+    }
+
+    let top10 = pairRates.top10 > 0
+        ? normalizePercentValue(pairRates.top10, matchesPlayed)
+        : normalizePercentValue(getCareerStatValue(stats, 'top10_rate', 'top10'), matchesPlayed);
+    if (top10 <= 0) {
+        top10 = 40;
+    }
+
+    let headshot = normalizePercentValue(getCareerStatValue(stats, 'headshot_rate'));
+    if (headshot <= 0 && eliminations > 0 && headshotsCount > 0) {
+        headshot = normalizePercentValue((headshotsCount / eliminations) * 100);
+    }
+
+    const textAccuracy = pairRates.accuracy > 0
+        ? pairRates.accuracy
+        : extractLabeledPercentFromText(ocrText, 'accuracy|acc');
+    const rawAccuracy = normalizePercentValue(getCareerStatValue(stats, 'accuracy'));
+    let accuracy = textAccuracy > 0 ? normalizePercentValue(textAccuracy) : rawAccuracy;
+
+    if (Math.abs(accuracy - top10) <= 1.5 && accuracy > 30) {
+        accuracy = textAccuracy > 0 ? normalizePercentValue(textAccuracy) : 18;
+    }
+
+    return {
+        kd: sanitizeMetric(textKD > 0 ? textKD : getCareerStatValue(stats, 'kd_ratio'), 0.5, 8.0, 2.5),
+        winrate: sanitizeMetric(winrate, 1, 45, 12),
+        top10: sanitizeMetric(top10, 10, 95, 40),
+        avgdamage: sanitizeMetric(getCareerStatValue(stats, 'avg_damage'), 100, 900, 320),
+        headshot: sanitizeMetric(headshot, 5, 60, 18),
+        accuracy: sanitizeMetric(accuracy, 5, 40, 18)
+    };
+}
+
 // ============= INFIKNIGHT ALGORITHM: CALCULATE SKILL SCORE =============
-function calculateSkillScore(careerStats) {
-    // Skill Score = (K/D * 0.4) + (Win Rate * 0.3) + (Top 10 Rate * 0.2) + (Headshot Rate * 0.1)
-    const kd = parseFloat(careerStats.kd_ratio) || 1.0;
-    const winRate = (parseFloat(careerStats.win_rate) || 15) / 100;
-    const top10 = (parseFloat(careerStats.top10_rate) || 40) / 100;
-    const headshot = (parseFloat(careerStats.headshot_rate) || 25) / 100;
-    
-    // Normalize to 0-100 scale
-    const skill = (kd * 10 * 0.4) + (winRate * 100 * 0.3) + (top10 * 100 * 0.2) + (headshot * 100 * 0.1);
-    return Math.min(100, Math.round(skill));
+const INFIKNIGHT_BENCHMARKS = {
+    kd: { min: 0.5, max: 3.5 },
+    winrate: { min: 2, max: 25 },
+    top10: { min: 30, max: 80 },
+    avgdamage: { min: 150, max: 450 },
+    headshot: { min: 5, max: 30 },
+    accuracy: { min: 5, max: 25 }
+};
+
+const INFIKNIGHT_WEIGHTS = {
+    kd: 0.35,
+    winrate: 0.25,
+    top10: 0.15,
+    avgdamage: 0.12,
+    headshot: 0.08,
+    accuracy: 0.05
+};
+
+const INFIKNIGHT_SYNERGY = {
+    solo: 1.0,
+    duo: 1.15,
+    squad: 1.25
+};
+
+const INFIKNIGHT_TEAM_SIZE_FACTOR = {
+    solo: 1,
+    duo: 2,
+    squad: 4
+};
+
+function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
 }
 
-// ============= INFIKNIGHT ALGORITHM: CALCULATE DAMAGE SCORE =============
-function calculateDamageScore(careerStats) {
-    // Damage Score = Avg Damage normalized (0-100)
-    const avgDamage = parseFloat(careerStats.avg_damage) || 300;
-    return Math.min(100, Math.round(avgDamage / 6)); // 600 damage = 100 points
+function normalizeByBenchmark(value, metricKey) {
+    const range = INFIKNIGHT_BENCHMARKS[metricKey];
+    if (!range) return 0;
+
+    const safe = clamp(Number(value) || 0, range.min, range.max);
+    return (safe - range.min) / (range.max - range.min);
 }
 
-// ============= INFIKNIGHT ALGORITHM: CALCULATE SURVIVAL SCORE =============
-function calculateSurvivalScore(careerStats) {
-    // Survival Score = Win Rate * 0.7 + Top 10 Rate * 0.3
-    const winRate = (parseFloat(careerStats.win_rate) || 15) / 100;
-    const top10 = (parseFloat(careerStats.top10_rate) || 40) / 100;
-    
-    const survival = (winRate * 100 * 0.7) + (top10 * 100 * 0.3);
-    return Math.min(100, Math.round(survival));
+function calculateReferencePlayerScore(playerStats) {
+    const normalized = {
+        kd: normalizeByBenchmark(playerStats.kd, 'kd'),
+        winrate: normalizeByBenchmark(playerStats.winrate, 'winrate'),
+        top10: normalizeByBenchmark(playerStats.top10, 'top10'),
+        avgdamage: normalizeByBenchmark(playerStats.avgdamage, 'avgdamage'),
+        headshot: normalizeByBenchmark(playerStats.headshot, 'headshot'),
+        accuracy: normalizeByBenchmark(playerStats.accuracy, 'accuracy')
+    };
+
+    const weightedBase =
+        normalized.kd * INFIKNIGHT_WEIGHTS.kd +
+        normalized.winrate * INFIKNIGHT_WEIGHTS.winrate +
+        normalized.top10 * INFIKNIGHT_WEIGHTS.top10 +
+        normalized.avgdamage * INFIKNIGHT_WEIGHTS.avgdamage +
+        normalized.headshot * INFIKNIGHT_WEIGHTS.headshot +
+        normalized.accuracy * INFIKNIGHT_WEIGHTS.accuracy;
+
+    const basePlayerScore = weightedBase * 100;
+
+    const historicalAvg = Number(playerStats.historicalAvg) || basePlayerScore;
+    const recentTrend = Number(playerStats.recentTrend) || basePlayerScore;
+
+    const finalScore = (0.6 * basePlayerScore) + (0.3 * historicalAvg) + (0.1 * recentTrend);
+
+    return {
+        score: Number(clamp(finalScore, 0, 100).toFixed(2)),
+        baseScore: Number(clamp(basePlayerScore, 0, 100).toFixed(2)),
+        normalized
+    };
 }
 
-// ============= INFIKNIGHT ALGORITHM: CALCULATE OVERALL RATING =============
-function calculateOverallRating(skill, damage, survival) {
-    // Weighted average: Skill 40%, Damage 35%, Survival 25%
-    return ((skill * 0.4) + (damage * 0.35) + (survival * 0.25)).toFixed(1);
+function calculateTeamAdjustedScore(players, matchType) {
+    const safeType = INFIKNIGHT_SYNERGY[matchType] ? matchType : 'solo';
+    const rawTeamScore = players.reduce((sum, p) => sum + (Number(p.rating) || 0), 0);
+    const synergyBonus = INFIKNIGHT_SYNERGY[safeType];
+    const sizeFactor = INFIKNIGHT_TEAM_SIZE_FACTOR[safeType];
+    const adjustedScore = (rawTeamScore * synergyBonus) / sizeFactor;
+
+    return {
+        rawTeamScore: Number(rawTeamScore.toFixed(2)),
+        synergyBonus,
+        adjustedScore: Number(adjustedScore.toFixed(2))
+    };
+}
+
+function calculateConfidenceFromTopTwo(topScore, secondScore) {
+    const confidence = 70 + ((topScore - secondScore) / Math.max(1, topScore)) * 30;
+    return Number(clamp(confidence, 0, 99).toFixed(1));
 }
 
 // ============= CREATE VIRTUAL PLAYER FROM CAREER STATS (FIXED) =============
@@ -3054,10 +3350,12 @@ function createVirtualPlayerFromCareerStats() {
     const currentPlayers = playerInputs.querySelectorAll('.player-input-section').length;
     
     // Calculate InfiKnight scores
-    const skillScore = calculateSkillScore(stats);
-    const damageScore = calculateDamageScore(stats);
-    const survivalScore = calculateSurvivalScore(stats);
-    const overallRating = calculateOverallRating(skillScore, damageScore, survivalScore);
+    const careerProfile = buildRealisticCareerProfile(stats, window.ocrData?.ocr_text || '');
+    const computed = calculateReferencePlayerScore(careerProfile);
+    const skillScore = Math.round(computed.normalized.kd * 100);
+    const damageScore = Math.round(computed.normalized.avgdamage * 100);
+    const survivalScore = Math.round(computed.normalized.top10 * 100);
+    const overallRating = computed.score.toFixed(1);
     
     // Create virtual player
     const virtualPlayer = document.createElement('div');
@@ -3072,37 +3370,37 @@ function createVirtualPlayerFromCareerStats() {
             <div class="input-group">
                 <label>K/D Ratio</label>
                 <input type="number" class="player-kd" step="0.1" min="0.1" max="15" 
-                       value="${stats.kd_ratio || 2.5}">
+                       value="${careerProfile.kd || 2.5}">
             </div>
             <div class="input-group">
                 <label>Win Rate %</label>
                 <input type="number" class="player-winrate" step="0.1" min="0" max="100" 
-                       value="${stats.win_rate || 15}">
+                       value="${careerProfile.winrate || 15}">
             </div>
             <div class="input-group">
                 <label>Top 10 Rate %</label>
                 <input type="number" class="player-top10" step="0.1" min="0" max="100" 
-                       value="${stats.top10_rate || 40}">
+                       value="${careerProfile.top10 || 40}">
             </div>
             <div class="input-group">
                 <label>Avg Damage</label>
                 <input type="number" class="player-avgdamage" step="10" min="0" max="2000" 
-                       value="${stats.avg_damage || 350}">
+                       value="${careerProfile.avgdamage || 350}">
             </div>
             <div class="input-group">
                 <label>Headshot Rate %</label>
                 <input type="number" class="player-headshot" step="0.1" min="0" max="100" 
-                       value="${stats.headshot_rate || 25}">
+                       value="${careerProfile.headshot || 25}">
             </div>
             <div class="input-group">
                 <label>Accuracy %</label>
                 <input type="number" class="player-accuracy" step="0.1" min="0" max="100" 
-                       value="${stats.accuracy || 20}">
+                       value="${careerProfile.accuracy || 20}">
             </div>
         </div>
         <div class="career-note">
             <i class="fas fa-info-circle"></i> 
-            InfiKnight Scores: Skill ${skillScore} | Damage ${damageScore} | Survival ${survivalScore} | Rating ${overallRating}/10
+            InfiKnight Scores: Skill ${skillScore} | Damage ${damageScore} | Survival ${survivalScore} | Rating ${overallRating}/100
         </div>
         <button class="btn btn-danger btn-sm remove-player" onclick="removePlayerInput(this)">
             <i class="fas fa-times"></i> Remove Player
@@ -3112,23 +3410,24 @@ function createVirtualPlayerFromCareerStats() {
     playerInputs.appendChild(virtualPlayer);
     
     // Add opponent players
-    addOpponentPlayers(stats);
+    addOpponentPlayers(stats, window.ocrData?.ocr_text || '');
     
     showNotification('Virtual player created with InfiKnight scores!', 'success');
 }
 
 // ============= ADD OPPONENT PLAYERS (FIXED) =============
-function addOpponentPlayers(careerStats) {
+function addOpponentPlayers(careerStats, ocrText = '') {
     const playerInputs = document.getElementById('playerInputs');
     const opponentCount = 3;
+    const base = buildRealisticCareerProfile(careerStats, ocrText);
     
     for (let i = 1; i <= opponentCount; i++) {
-        const opponentKd = (parseFloat(careerStats.kd_ratio) * (0.6 + Math.random() * 0.3)).toFixed(1);
-        const opponentWinrate = (parseFloat(careerStats.win_rate) * (0.6 + Math.random() * 0.3)).toFixed(1);
-        const opponentTop10 = (parseFloat(careerStats.top10_rate) * (0.7 + Math.random() * 0.4)).toFixed(1);
-        const opponentDmg = Math.round(parseFloat(careerStats.avg_damage) * (0.6 + Math.random() * 0.3));
-        const opponentHs = (parseFloat(careerStats.headshot_rate) * (0.5 + Math.random() * 0.5)).toFixed(1);
-        const opponentAcc = (parseFloat(careerStats.accuracy) * (0.6 + Math.random() * 0.4)).toFixed(1);
+        const opponentKd = sanitizeMetric(base.kd * (0.7 + Math.random() * 0.35), 0.5, 7.0, 2.0).toFixed(1);
+        const opponentWinrate = sanitizeMetric(base.winrate * (0.65 + Math.random() * 0.35), 1, 40, 10).toFixed(1);
+        const opponentTop10 = sanitizeMetric(base.top10 * (0.75 + Math.random() * 0.35), 10, 95, 35).toFixed(1);
+        const opponentDmg = Math.round(sanitizeMetric(base.avgdamage * (0.7 + Math.random() * 0.35), 100, 850, 300));
+        const opponentHs = sanitizeMetric(base.headshot * (0.7 + Math.random() * 0.4), 5, 55, 15).toFixed(1);
+        const opponentAcc = sanitizeMetric(base.accuracy * (0.7 + Math.random() * 0.4), 5, 38, 16).toFixed(1);
         
         const opponentDiv = document.createElement('div');
         opponentDiv.className = 'player-input-section fade-in';
@@ -3190,6 +3489,14 @@ function useCareerStatsForPrediction() {
     const playerInputs = document.getElementById('playerInputs');
     playerInputs.innerHTML = '';
     
+    const profile = buildRealisticCareerProfile(stats, window.ocrData?.ocr_text || '');
+    const kd = profile.kd;
+    const winrate = profile.winrate;
+    const top10 = profile.top10;
+    const avgdamage = profile.avgdamage;
+    const headshot = profile.headshot;
+    const accuracy = profile.accuracy;
+
     // Create virtual player
     const virtualPlayer = document.createElement('div');
     virtualPlayer.className = 'player-input-section fade-in';
@@ -3202,27 +3509,27 @@ function useCareerStatsForPrediction() {
             </div>
             <div class="input-group">
                 <label>K/D Ratio</label>
-                <input type="number" class="player-kd" step="0.1" value="${stats.kd_ratio || 2.5}">
+                <input type="number" class="player-kd" step="0.1" value="${kd || 2.5}">
             </div>
             <div class="input-group">
                 <label>Win Rate %</label>
-                <input type="number" class="player-winrate" step="0.1" value="${stats.win_rate || 15}">
+                <input type="number" class="player-winrate" step="0.1" value="${winrate || 15}">
             </div>
             <div class="input-group">
                 <label>Top 10 Rate %</label>
-                <input type="number" class="player-top10" step="0.1" value="${stats.top10_rate || 40}">
+                <input type="number" class="player-top10" step="0.1" value="${top10 || 40}">
             </div>
             <div class="input-group">
                 <label>Avg Damage</label>
-                <input type="number" class="player-avgdamage" step="10" value="${stats.avg_damage || 350}">
+                <input type="number" class="player-avgdamage" step="10" value="${avgdamage || 350}">
             </div>
             <div class="input-group">
                 <label>Headshot Rate %</label>
-                <input type="number" class="player-headshot" step="0.1" value="${stats.headshot_rate || 25}">
+                <input type="number" class="player-headshot" step="0.1" value="${headshot || 25}">
             </div>
             <div class="input-group">
                 <label>Accuracy %</label>
-                <input type="number" class="player-accuracy" step="0.1" value="${stats.accuracy || 20}">
+                <input type="number" class="player-accuracy" step="0.1" value="${accuracy || 20}">
             </div>
         </div>
     `;
@@ -3230,7 +3537,7 @@ function useCareerStatsForPrediction() {
     playerInputs.appendChild(virtualPlayer);
     
     // Add opponents
-    addOpponentPlayers(stats);
+    addOpponentPlayers(stats, window.ocrData?.ocr_text || '');
     
     // Show processing section
     document.getElementById('processingSection').classList.remove('hidden');
@@ -3310,21 +3617,14 @@ function collectPlayerData(matchType) {
             const headshot = parseFloat(input.querySelector('.player-headshot')?.value) || 25;
             const accuracy = parseFloat(input.querySelector('.player-accuracy')?.value) || 20;
             
-            // Calculate InfiKnight scores
-            const skillScore = calculateSkillScore({
-                kd_ratio: kd,
-                win_rate: winrate,
-                top10_rate: top10,
-                headshot_rate: headshot
+            const computed = calculateReferencePlayerScore({
+                kd,
+                winrate,
+                top10,
+                avgdamage,
+                headshot,
+                accuracy
             });
-            
-            const damageScore = calculateDamageScore({ avg_damage: avgdamage });
-            const survivalScore = calculateSurvivalScore({
-                win_rate: winrate,
-                top10_rate: top10
-            });
-            
-            const overallRating = calculateOverallRating(skillScore, damageScore, survivalScore);
             
             players.push({
                 name,
@@ -3334,10 +3634,12 @@ function collectPlayerData(matchType) {
                 avgdamage,
                 headshot,
                 accuracy,
-                skill: skillScore,
-                damage: damageScore,
-                survival: survivalScore,
-                rating: parseFloat(overallRating)
+                skill: Math.round(computed.normalized.kd * 100),
+                damage: Math.round(computed.normalized.avgdamage * 100),
+                survival: Math.round(computed.normalized.top10 * 100),
+                rating: computed.score,
+                baseRating: computed.baseScore,
+                normalized: computed.normalized
             });
         });
         
@@ -3360,10 +3662,14 @@ function collectPlayerData(matchType) {
                 const headshot = parseFloat(input.querySelector('.team-player-headshot')?.value) || 25;
                 const accuracy = parseFloat(input.querySelector('.team-player-accuracy')?.value) || 20;
                 
-                const skillScore = calculateSkillScore({ kd_ratio: kd, win_rate: winrate, top10_rate: top10, headshot_rate: headshot });
-                const damageScore = calculateDamageScore({ avg_damage: avgdamage });
-                const survivalScore = calculateSurvivalScore({ win_rate: winrate, top10_rate: top10 });
-                const overallRating = calculateOverallRating(skillScore, damageScore, survivalScore);
+                const computed = calculateReferencePlayerScore({
+                    kd,
+                    winrate,
+                    top10,
+                    avgdamage,
+                    headshot,
+                    accuracy
+                });
                 
                 players.push({
                     name,
@@ -3373,18 +3679,20 @@ function collectPlayerData(matchType) {
                     avgdamage,
                     headshot,
                     accuracy,
-                    skill: skillScore,
-                    damage: damageScore,
-                    survival: survivalScore,
-                    rating: parseFloat(overallRating)
+                    skill: Math.round(computed.normalized.kd * 100),
+                    damage: Math.round(computed.normalized.avgdamage * 100),
+                    survival: Math.round(computed.normalized.top10 * 100),
+                    rating: computed.score,
+                    baseRating: computed.baseScore,
+                    normalized: computed.normalized
                 });
             });
             
-            // Calculate team averages
-            const teamSkill = Math.round(players.reduce((sum, p) => sum + p.skill, 0) / players.length);
-            const teamDamage = Math.round(players.reduce((sum, p) => sum + p.damage, 0) / players.length);
-            const teamSurvival = Math.round(players.reduce((sum, p) => sum + p.survival, 0) / players.length);
-            const teamRating = calculateOverallRating(teamSkill, teamDamage, teamSurvival);
+            const teamSkill = Math.round(players.reduce((sum, p) => sum + (p.skill || 0), 0) / players.length);
+            const teamDamage = Math.round(players.reduce((sum, p) => sum + (p.damage || 0), 0) / players.length);
+            const teamSurvival = Math.round(players.reduce((sum, p) => sum + (p.survival || 0), 0) / players.length);
+
+            const teamScore = calculateTeamAdjustedScore(players, matchType);
             
             teams.push({
                 name: teamName,
@@ -3392,7 +3700,9 @@ function collectPlayerData(matchType) {
                 skill: teamSkill,
                 damage: teamDamage,
                 survival: teamSurvival,
-                rating: parseFloat(teamRating)
+                rating: teamScore.adjustedScore,
+                rawTeamScore: teamScore.rawTeamScore,
+                synergyBonus: teamScore.synergyBonus
             });
         });
         
@@ -3438,54 +3748,77 @@ function generateInfiKnightPrediction(data) {
         winner: 0,
         teams: {},
         players: [],
-        algorithm: 'InfiKnight v3.0'
+        algorithm: 'InfiKnight v3.1 (Reference)'
     };
     
     if (data.matchType === 'solo') {
         const players = data.players;
-        
-        // Sort by rating
-        const sorted = [...players].sort((a, b) => b.rating - a.rating);
-        
-        prediction.players = sorted;
-        prediction.winner = players.indexOf(sorted[0]);
-        
-        // Calculate confidence based on rating difference
-        if (players.length >= 2) {
-            const diff = sorted[0].rating - sorted[1].rating;
-            prediction.confidence = Math.min(97, Math.round(75 + (diff * 3)));
-        } else {
-            prediction.confidence = 85;
-        }
-        
-        // Create score mapping
-        players.forEach((player, index) => {
-            prediction.teams[index] = player.rating;
+
+        if (!players || players.length === 0) return prediction;
+
+        const totalScore = players.reduce((sum, p) => sum + (Number(p.rating) || 0), 0);
+        const scoredPlayers = players.map((player, index) => {
+            const teamScore = Number(player.rating) || 0;
+            const winProbability = totalScore > 0 ? (teamScore / totalScore) * 100 : 0;
+
+            return {
+                ...player,
+                index,
+                teamScore: Number(teamScore.toFixed(2)),
+                winProbability: Number(winProbability.toFixed(2))
+            };
         });
+
+        const sorted = [...scoredPlayers].sort((a, b) => b.teamScore - a.teamScore);
+
+        prediction.players = sorted;
+        prediction.winner = sorted[0].index;
+
+        const topScore = sorted[0]?.teamScore || 0;
+        const secondScore = sorted[1]?.teamScore || topScore;
+        prediction.confidence = calculateConfidenceFromTopTwo(topScore, secondScore);
+
+        scoredPlayers.forEach((player, index) => {
+            prediction.teams[index] = player.teamScore;
+        });
+
+        prediction.totalScore = Number(totalScore.toFixed(2));
     } else {
         const teams = data.teams;
-        
-        // Sort teams by rating
-        const sorted = [...teams].sort((a, b) => b.rating - a.rating);
+
+        if (!teams || teams.length === 0) return prediction;
+
+        const totalScore = teams.reduce((sum, t) => sum + (Number(t.rating) || 0), 0);
+        const scoredTeams = teams.map((team, index) => {
+            const teamScore = Number(team.rating) || 0;
+            const winProbability = totalScore > 0 ? (teamScore / totalScore) * 100 : 0;
+
+            return {
+                ...team,
+                index,
+                teamScore: Number(teamScore.toFixed(2)),
+                winProbability: Number(winProbability.toFixed(2))
+            };
+        });
+
+        const sorted = [...scoredTeams].sort((a, b) => b.teamScore - a.teamScore);
         
         prediction.teams = {};
-        teams.forEach((team, index) => {
-            prediction.teams[index] = team.rating;
+        scoredTeams.forEach((team, index) => {
+            prediction.teams[index] = team.teamScore;
         });
         
-        prediction.winner = teams.indexOf(sorted[0]);
+        prediction.winner = sorted[0].index;
         prediction.teamNames = {};
-        teams.forEach((team, index) => {
+        scoredTeams.forEach((team, index) => {
             prediction.teamNames[index] = team.name;
         });
-        
-        // Calculate confidence
-        if (teams.length >= 2) {
-            const diff = sorted[0].rating - sorted[1].rating;
-            prediction.confidence = Math.min(95, Math.round(70 + (diff * 2.5)));
-        } else {
-            prediction.confidence = 80;
-        }
+
+        const topScore = sorted[0]?.teamScore || 0;
+        const secondScore = sorted[1]?.teamScore || topScore;
+        prediction.confidence = calculateConfidenceFromTopTwo(topScore, secondScore);
+        prediction.totalScore = Number(totalScore.toFixed(2));
+        prediction.scoredTeams = sorted;
     }
     
     return prediction;
@@ -3580,21 +3913,91 @@ function updateResults() {
     }
 }
 
+function normalizedToPercent(value) {
+    return Math.round((Number(value) || 0) * 100);
+}
+
+function getPlayerNormalizedDisplay(player) {
+    const normalized = player?.normalized || {};
+    return {
+        kd: normalizedToPercent(normalized.kd),
+        win: normalizedToPercent(normalized.winrate),
+        top10: normalizedToPercent(normalized.top10),
+        avgDamage: normalizedToPercent(normalized.avgdamage),
+        headshot: normalizedToPercent(normalized.headshot),
+        accuracy: normalizedToPercent(normalized.accuracy)
+    };
+}
+
+function getTeamNormalizedDisplay(players) {
+    if (!players || players.length === 0) {
+        return { kd: 0, win: 0, top10: 0, avgDamage: 0, headshot: 0, accuracy: 0 };
+    }
+
+    const sum = players.reduce((acc, p) => {
+        const n = p.normalized || {};
+        acc.kd += Number(n.kd) || 0;
+        acc.win += Number(n.winrate) || 0;
+        acc.top10 += Number(n.top10) || 0;
+        acc.avgDamage += Number(n.avgdamage) || 0;
+        acc.headshot += Number(n.headshot) || 0;
+        acc.accuracy += Number(n.accuracy) || 0;
+        return acc;
+    }, { kd: 0, win: 0, top10: 0, avgDamage: 0, headshot: 0, accuracy: 0 });
+
+    const count = players.length;
+    return {
+        kd: Math.round((sum.kd / count) * 100),
+        win: Math.round((sum.win / count) * 100),
+        top10: Math.round((sum.top10 / count) * 100),
+        avgDamage: Math.round((sum.avgDamage / count) * 100),
+        headshot: Math.round((sum.headshot / count) * 100),
+        accuracy: Math.round((sum.accuracy / count) * 100)
+    };
+}
+
+function renderNormalizedMetrics(prefix, values) {
+    document.getElementById(`${prefix}KD`).textContent = values.kd;
+    document.getElementById(`${prefix}Win`).textContent = values.win;
+    document.getElementById(`${prefix}Top10`).textContent = values.top10;
+    document.getElementById(`${prefix}AvgDamage`).textContent = values.avgDamage;
+    document.getElementById(`${prefix}Headshot`).textContent = values.headshot;
+    document.getElementById(`${prefix}Accuracy`).textContent = values.accuracy;
+}
+
+function getWeakestComponentMessage(values) {
+    const entries = [
+        ['kd', values.kd],
+        ['win', values.win],
+        ['top10', values.top10],
+        ['avgDamage', values.avgDamage],
+        ['headshot', values.headshot],
+        ['accuracy', values.accuracy]
+    ].sort((a, b) => a[1] - b[1]);
+
+    const weakest = entries[0][0];
+
+    if (weakest === 'kd') return 'Improve K/D with smarter fights and safer peeks';
+    if (weakest === 'win') return 'Focus on end-zone decisions to improve win rate';
+    if (weakest === 'top10') return 'Prioritize rotations and survival consistency';
+    if (weakest === 'avgDamage') return 'Increase pressure and damage output each match';
+    if (weakest === 'headshot') return 'Practice recoil control for higher headshot rate';
+    return 'Improve crosshair placement for better accuracy';
+}
+
 // ============= UPDATE SOLO RESULTS (FIXED) =============
 function updateSoloResults(players, prediction) {
-    if (!players || players.length === 0) return;
+    if (!prediction?.players || prediction.players.length === 0) return;
     
-    const sorted = [...players].sort((a, b) => b.rating - a.rating);
+    const sorted = [...prediction.players].sort((a, b) => b.teamScore - a.teamScore);
     const winner = sorted[0];
-    const runnerUp = sorted[1] || sorted[0];
     const weakLink = sorted[sorted.length - 1];
     
     // Update winner info
     document.getElementById('winnerName').textContent = winner.name;
-    document.getElementById('winnerSkill').textContent = winner.skill || '85';
-    document.getElementById('winnerDamage').textContent = winner.damage || '75';
-    document.getElementById('winnerSurvival').textContent = winner.survival || '70';
-    document.getElementById('winnerRating').textContent = winner.rating.toFixed(1);
+    const winnerNorm = getPlayerNormalizedDisplay(winner);
+    renderNormalizedMetrics('winner', winnerNorm);
+    document.getElementById('winnerRating').textContent = (winner.teamScore || winner.rating || 0).toFixed(1);
     
     const winnerCard = document.querySelector('.winner-card');
     if (winnerCard) {
@@ -3604,29 +4007,27 @@ function updateSoloResults(players, prediction) {
     
     // Update top performer
     document.getElementById('topPerformerName').textContent = winner.name;
-    document.getElementById('topPerformerSkill').textContent = winner.skill || '85';
-    document.getElementById('topPerformerDamage').textContent = winner.damage || '75';
-    document.getElementById('topPerformerSurvival').textContent = winner.survival || '70';
+    renderNormalizedMetrics('topPerformer', winnerNorm);
     
     // Update weak link
     document.getElementById('weakLinkName').textContent = weakLink.name;
-    document.getElementById('weakLinkSkill').textContent = weakLink.skill || '45';
-    document.getElementById('weakLinkDamage').textContent = weakLink.damage || '40';
-    document.getElementById('weakLinkSurvival').textContent = weakLink.survival || '35';
+    const weakNorm = getPlayerNormalizedDisplay(weakLink);
+    renderNormalizedMetrics('weakLink', weakNorm);
     
     // Update improvement tip
-    let tip = '';
-    if (weakLink.skill < 50) tip = 'Focus on aim training and positioning';
-    else if (weakLink.damage < 50) tip = 'Work on dealing more damage per match';
-    else if (weakLink.survival < 50) tip = 'Improve survival time and game sense';
-    else tip = 'Consistent performance needed';
+    let tip = getWeakestComponentMessage(weakNorm);
     document.getElementById('improvementTip').textContent = tip;
     
     // Update synergy (for solo, just average rating)
-    const avgRating = players.reduce((sum, p) => sum + p.rating, 0) / players.length;
-    document.getElementById('synergyScore').textContent = (avgRating / 10).toFixed(1);
-    document.getElementById('synergyMeter').style.width = `${avgRating * 10}%`;
-    document.getElementById('synergyDesc').textContent = players.length > 2 ? 'Solo lobby competition' : 'Direct matchup';
+    const soloSynergyVisual = 10.0;
+    document.getElementById('synergyScore').textContent = soloSynergyVisual.toFixed(1);
+    document.getElementById('synergyMeter').style.width = '100%';
+    document.getElementById('synergyDesc').textContent = 'Solo baseline synergy bonus x1.00 applied';
+
+    const predictionDesc = document.getElementById('predictionDesc');
+    if (predictionDesc) {
+        predictionDesc.textContent = `${winner.name} win probability ${winner.winProbability.toFixed(2)}%`;
+    }
     
     // Hide team members
     document.getElementById('teamMembers')?.classList.add('hidden');
@@ -3636,15 +4037,14 @@ function updateSoloResults(players, prediction) {
 function updateTeamResults(teams, prediction) {
     if (!teams || teams.length === 0) return;
     
-    const sorted = [...teams].sort((a, b) => b.rating - a.rating);
+    const sorted = prediction?.scoredTeams ? [...prediction.scoredTeams] : [...teams].sort((a, b) => b.rating - a.rating);
     const winner = sorted[0];
     
     // Update winner info
     document.getElementById('winnerName').textContent = winner.name;
-    document.getElementById('winnerSkill').textContent = winner.skill || '85';
-    document.getElementById('winnerDamage').textContent = winner.damage || '75';
-    document.getElementById('winnerSurvival').textContent = winner.survival || '70';
-    document.getElementById('winnerRating').textContent = winner.rating.toFixed(1);
+    const winnerNorm = getTeamNormalizedDisplay(winner.players || []);
+    renderNormalizedMetrics('winner', winnerNorm);
+    document.getElementById('winnerRating').textContent = (winner.teamScore || winner.rating || 0).toFixed(1);
     
     const winnerCard = document.querySelector('.winner-card');
     if (winnerCard) {
@@ -3656,9 +4056,7 @@ function updateTeamResults(teams, prediction) {
     if (winner.players && winner.players.length > 0) {
         const topPlayer = winner.players.sort((a, b) => b.rating - a.rating)[0];
         document.getElementById('topPerformerName').textContent = topPlayer.name;
-        document.getElementById('topPerformerSkill').textContent = topPlayer.skill || '85';
-        document.getElementById('topPerformerDamage').textContent = topPlayer.damage || '75';
-        document.getElementById('topPerformerSurvival').textContent = topPlayer.survival || '70';
+        renderNormalizedMetrics('topPerformer', getPlayerNormalizedDisplay(topPlayer));
     }
     
     // Find weakest player overall
@@ -3666,16 +4064,22 @@ function updateTeamResults(teams, prediction) {
     if (allPlayers.length > 0) {
         const weakest = allPlayers.sort((a, b) => a.rating - b.rating)[0];
         document.getElementById('weakLinkName').textContent = weakest.name;
-        document.getElementById('weakLinkSkill').textContent = weakest.skill || '45';
-        document.getElementById('weakLinkDamage').textContent = weakest.damage || '40';
-        document.getElementById('weakLinkSurvival').textContent = weakest.survival || '35';
+        const weakNorm = getPlayerNormalizedDisplay(weakest);
+        renderNormalizedMetrics('weakLink', weakNorm);
+        document.getElementById('improvementTip').textContent = getWeakestComponentMessage(weakNorm);
     }
     
     // Update synergy
-    const synergy = calculateTeamSynergyScore(winner.players || []);
+    const bonus = Number(winner.synergyBonus) || (window.currentMatchType === 'duo' ? 1.15 : 1.25);
+    const synergy = Math.min(10, (bonus / 1.25) * 10);
     document.getElementById('synergyScore').textContent = synergy.toFixed(1);
     document.getElementById('synergyMeter').style.width = `${synergy * 10}%`;
-    document.getElementById('synergyDesc').textContent = getSynergyDescription(synergy);
+    document.getElementById('synergyDesc').textContent = `Synergy bonus x${bonus.toFixed(2)} applied`;
+
+    const predictionDesc = document.getElementById('predictionDesc');
+    if (predictionDesc) {
+        predictionDesc.textContent = `${winner.name} win probability ${(winner.winProbability || 0).toFixed(2)}%`;
+    }
     
     // Update team performance grid
     document.getElementById('teamMembers')?.classList.remove('hidden');
@@ -3694,7 +4098,8 @@ function updateTeamResults(teams, prediction) {
                     <span class="stat">Skill: ${team.skill || '85'}</span>
                     <span class="stat">Damage: ${team.damage || '75'}</span>
                     <span class="stat">Survival: ${team.survival || '70'}</span>
-                    <span class="stat">Rating: ${team.rating.toFixed(1)}</span>
+                    <span class="stat">Rating: ${(team.teamScore || team.rating || 0).toFixed(1)}</span>
+                    <span class="stat">Win %: ${(team.winProbability || 0).toFixed(2)}%</span>
                 </div>
             `;
             performanceGrid.appendChild(teamCard);

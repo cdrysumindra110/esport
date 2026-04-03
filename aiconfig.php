@@ -1,6 +1,9 @@
 <?php
 // config.php - Enhanced Database Configuration
-session_start();
+// Only start session if one is not already active
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Database Configuration
 define('DB_HOST', 'localhost');

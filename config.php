@@ -1,6 +1,9 @@
 <?php
 // config.php - Simple Database Connection
-session_start();
+// Only start session if one is not already active
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // Database credentials
 $db_host = 'localhost';
 $db_user = 'root';

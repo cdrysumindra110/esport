@@ -1,51 +1,8 @@
 <?php
-// session_start(); 
-include_once("config.php"); 
-// admin1 is the password
-// Initialize messages
-$error_message = '';
-$success_message = '';   
-
-
-if (isset($_POST['email']) && isset($_POST['password'])) {
-
-    $email = htmlspecialchars(trim($_POST["email"]));
-    $password = trim($_POST["password"]);
-
-    $stmt = $conn->prepare("SELECT * FROM admin WHERE email = ? LIMIT 1");
-    $stmt->bind_param("s", $email); 
-
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
-
-        if (password_verify($password, $user['password'])) {
-
-            $_SESSION['isLogin'] = true;
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $user['email']; 
-            $_SESSION['message'] = 'Successfully logged in!'; 
-
-
-            header("Location: ./admin/admin.php");
-            exit();  
-        } else {
-          
-            $_SESSION['message'] = "Unauthorized Login!"; 
-        }
-    } else {
-
-        $_SESSION['message'] = "Unauthorized Login!"; 
-    }
-
-    // Close the statement
-    $stmt->close();
-}
+// Redirect to unified signin page - Admin and user login are now merged
+header("Location: signin.php");
+exit();
 ?>
-
 
 
 <!DOCTYPE html>

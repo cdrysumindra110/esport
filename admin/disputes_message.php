@@ -1,6 +1,8 @@
 <?php
 include('../config.php');
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $error_message = '';
 $success_message = '';
@@ -61,13 +63,103 @@ if (isset($_POST['delete'], $_POST['id']) && is_numeric($_POST['id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="./css/admin.css">  
+    <link rel="stylesheet" href="./css/admin.css?ver=2.1">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+      #disputes_message .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      #disputes_message .section-header {
+        margin-bottom: 18px;
+      }
+
+      #disputes_message .section-header h1 {
+        margin: 0;
+      }
+
+      #disputes_message .table-shell {
+        background: rgba(255, 255, 255, 0.93);
+        border: 1px solid rgba(27, 45, 79, 0.14);
+        border-radius: 16px;
+        box-shadow: 0 16px 32px rgba(10, 22, 46, 0.12);
+        overflow: hidden;
+      }
+
+      #disputes_message .table-scroll {
+        overflow-x: auto;
+      }
+
+      #disputes_message table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      #disputes_message thead th {
+        background: linear-gradient(180deg, rgba(30, 91, 191, 0.12) 0%, rgba(30, 91, 191, 0.02) 100%);
+        color: #334b70;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      #disputes_message th,
+      #disputes_message td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e8edf7;
+        vertical-align: top;
+      }
+
+      #disputes_message tbody tr:hover {
+        background: rgba(245, 158, 11, 0.08);
+      }
+
+      #disputes_message tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      #disputes_message .message-cell {
+        min-width: 280px;
+        max-width: 460px;
+        color: #4f5f79;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+
+      #disputes_message .resolve-btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 9px 13px;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: #ffffff;
+        background: linear-gradient(135deg, #1e5bbf 0%, #133d86 100%);
+        box-shadow: 0 10px 22px rgba(19, 61, 134, 0.24);
+        cursor: pointer;
+      }
+
+      #disputes_message .resolve-btn:hover {
+        filter: brightness(1.06);
+      }
+
+      @media (max-width: 768px) {
+        #disputes_message th,
+        #disputes_message td {
+          padding: 12px 10px;
+          font-size: 0.9rem;
+        }
+
+        #disputes_message .message-cell {
+          min-width: 220px;
+        }
+      }
+    </style>
 </head>
 <body>
-<div id="preloader" style="background: #1E1E2F url(../img/loader.gif) no-repeat center center; 
-        background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-        </div>
+<div id="preloader"></div>
 <div class="popup-message" id="popup-message"></div>
       <header class="page-header">
         <nav>
@@ -181,7 +273,9 @@ if (isset($_POST['delete'], $_POST['id']) && is_numeric($_POST['id'])) {
           <!-- Registration Management Section -->
           <section id="disputes_message">
             <div class="main-content">
-              <h1>Dispute Management</h1>
+              <div class="section-header">
+                <h1>Dispute Management</h1>
+              </div>
             <?php
                 // Display success/error messages
                 if (isset($_SESSION['success_message'])): ?>
@@ -191,6 +285,8 @@ if (isset($_POST['delete'], $_POST['id']) && is_numeric($_POST['id'])) {
                     <div class="error-message"><?= $_SESSION['error_message']; unset($_SESSION['error_message']); ?></div>
                 <?php endif; ?>
 
+                <div class="table-shell">
+                <div class="table-scroll">
                 <table>
                     <thead>
                         <tr>
@@ -209,12 +305,12 @@ if (isset($_POST['delete'], $_POST['id']) && is_numeric($_POST['id'])) {
                                     <td><?= htmlspecialchars($row['name']) ?></td>
                                     <td><?= htmlspecialchars($row['email']) ?></td>
                                     <td><?= htmlspecialchars($row['subject']) ?></td>
-                                    <td><?= htmlspecialchars($row['message']) ?></td>
+                                <td class="message-cell"><?= htmlspecialchars($row['message']) ?></td>
                                     <td><?= htmlspecialchars($row['submitted_at']) ?></td>
                                     <td>
                                         <form method="POST" action="disputes_message.php">
                                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                            <button type="submit" name="delete" class="view-btn">Resolve</button>
+                                    <button type="submit" name="delete" class="resolve-btn">Resolve</button>
                                         </form>
                                     </td> 
                                 </tr>
@@ -226,6 +322,8 @@ if (isset($_POST['delete'], $_POST['id']) && is_numeric($_POST['id'])) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+                    </div>
+                    </div>
 
                 <?php $conn->close(); ?>
             </div>
@@ -727,14 +825,19 @@ if (isset($_POST['delete'], $_POST['id']) && is_numeric($_POST['id'])) {
     <script>
     var loader = document.getElementById("preloader");
     window.addEventListener("load", function () {
-        loader.style.display = "none";
+        if (loader) {
+          loader.style.display = "none";
+        }
     });
   </script>
     <script>
           document.addEventListener('DOMContentLoaded', function () {
             setTimeout(function() {
-                var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
-                myModal.show();
+                var modalElement = document.getElementById('staticBackdrop');
+                if (modalElement && window.bootstrap && window.bootstrap.Modal) {
+                  var myModal = new bootstrap.Modal(modalElement);
+                  myModal.show();
+                }
             }, 1000); // 1-second delay before modal appears
         });
         // Display popup message when page loads

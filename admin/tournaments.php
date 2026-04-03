@@ -1,8 +1,8 @@
 <?php
 include('../config.php'); 
-session_start();
-
-// Initialize messages
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $error_message = '';
 $success_message = '';
 
@@ -23,6 +23,7 @@ if (isset($_SESSION['error_message'])) {
 }
 
 $users = [];
+$tournaments = [];
 
 // Fetch users from the database
 if ($conn) {
@@ -98,14 +99,12 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="./css/admin.css">  
-    <link rel="stylesheet" href="./css/tournaments.css">  
+    <link rel="stylesheet" href="./css/admin.css?ver=2.2">  
+    <link rel="stylesheet" href="./css/tournaments.css?ver=2.1">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<div id="preloader" style="background: #1E1E2F url(../img/loader.gif) no-repeat center center; 
-        background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-        </div>
+<div id="preloader"></div>
 <div class="popup-message" id="popup-message"></div>
       <header class="page-header">
         <nav>
@@ -226,80 +225,78 @@ $conn->close();
           <!-- Tournament Management Section -->
           <section id="tournament">
             <div class="main-content">
-              <h1>Tournament Management</h1>
-            </div>
-            <div id="myTournamentsSection" class="profile-section">
-              <div class="ut-container">
-                <h2 class="unique-header">Available Tournaments</h2>
+              <div class="tour-hero">
+                <h1>Tournament Management</h1>
+                <p>Review active tournaments and open detailed result dashboards.</p>
+              </div>
+
+              <div id="myTournamentsSection" class="profile-section">
+                <div class="ut-container">
+                  <div class="ut-header">
+                    <h2 class="unique-header">Available Tournaments</h2>
+                    <span class="tour-count"><?php echo count($tournaments); ?> total</span>
+                  </div>
+
+                  <div class="ut-table-wrap">
                     <table class="ut-table">
-                        <thead>
-                            <tr>
-                                <th class="ut-table__head">
-                                    <i class='fa fa-trophy' style='color:#00d696'></i> TOURNAMENTS
-                                </th>
-                                <th class="ut-table__head ut-table__head--game">
-                                    <i class='fa fa-flag-checkered' style='color:#00d696'></i> GAME
-                                </th>
-                                <th class="ut-table__head ut-table__cell--brackets">
-                                    <i class='fa fa-calendar' style='color:#00d696'></i> Brackets
-                                </th>
-                                <th class="ut-table__head ut-table__cell--date">
-                                    <i class='fa fa-calendar' style='color:#00d696'></i> DATE
-                                </th>
-                                <th class="ut-table__head ut-table__cell--prize" style="padding-left: 20px;">
-                                    <i class='fas fa-medal' style='color:#00d696'></i> PRIZE
-                                </th>
-                                <th class="ut-table__head"></th>
+                      <thead>
+                        <tr>
+                          <th class="ut-table__head">
+                            <i class='fa fa-trophy'></i> TOURNAMENTS
+                          </th>
+                          <th class="ut-table__head ut-table__head--game">
+                            <i class='fa fa-flag-checkered'></i> GAME
+                          </th>
+                          <th class="ut-table__head ut-table__cell--brackets">
+                            <i class='fa fa-calendar'></i> BRACKETS
+                          </th>
+                          <th class="ut-table__head ut-table__cell--date">
+                            <i class='fa fa-calendar-alt'></i> DATE
+                          </th>
+                          <th class="ut-table__head ut-table__cell--prize">
+                            <i class='fas fa-medal'></i> PRIZE
+                          </th>
+                          <th class="ut-table__head">VIEW</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php if (!empty($tournaments)): ?>
+                          <?php foreach ($tournaments as $tournament): ?>
+                            <tr class="ut-row" onclick="window.location.href='result.php?tournament_id=<?php echo $tournament['id']; ?>'">
+                              <td class="ut-table__cell ut-table__cell--first">
+                                <div class="ut-image">
+                                  <?php if (!empty($tournament['bannerimg'])): ?>
+                                    <img src="data:image/jpeg;base64,<?php echo base64_encode($tournament['bannerimg']); ?>" alt="Tournament Banner">
+                                  <?php else: ?>
+                                    <img src="./img/dash-logo.png" alt="Default Tournament Banner">
+                                  <?php endif; ?>
+                                </div>
+                                <div class="ut-info">
+                                  <div class="ut-info__name"><?php echo htmlspecialchars($tournament['tname']); ?></div>
+                                  <div class="ut-info__host">Hosted by <span class="ut-info__host-name"><?php echo htmlspecialchars($tournament['host_username']); ?></span></div>
+                                </div>
+                              </td>
+                              <td class="ut-table__cell ut-table__cell--game"><?php echo htmlspecialchars($tournament['selected_game']); ?></td>
+                              <td class="ut-table__cell ut-table__cell--brackets"><?php echo htmlspecialchars($tournament['bracket_type']); ?></td>
+                              <td class="ut-table__cell ut-table__cell--date"><?php echo htmlspecialchars($tournament['sdate']); ?></td>
+                              <td class="ut-table__cell ut-table__cell--prize"><?php echo htmlspecialchars($tournament['prizes']); ?></td>
+                              <td class="ut-table__cell ut-table__cell--view">
+                                <a href="result.php?tournament_id=<?php echo $tournament['id']; ?>" aria-label="View tournament results">
+                                  <i class='fa fa-eye ut-row__icon-eye'></i>
+                                </a>
+                              </td>
                             </tr>
-                        </thead>           
-                        <tbody>
-                            <?php if (!empty($tournaments)): ?>
-                                <?php foreach ($tournaments as $tournament): ?>
-                                <tr class="ut-row" onclick="window.location.href='result.php?tournament_id=<?php echo $tournament['id']; ?>'" style="cursor: pointer;">
-                                    <td class="ut-table__cell ut-table__cell--first">
-                                        <div class="ut-image">
-                                            <?php if (!empty($tournament['bannerimg'])): ?>
-                                                <img src="data:image/jpeg;base64,<?php echo base64_encode($tournament['bannerimg']); ?>" alt="Tournament Banner">
-                                            <?php else: ?>
-                                                <img src="./img/dash-logo.png" alt="Default Tournament Banner">
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="ut-info">
-                                            <div class="ut-info__name"><?php echo htmlspecialchars($tournament['tname']); ?></div>
-                                            <div class="ut-info__host">Hosted by 
-                                                <span style="color: #00d696;">
-                                                    <?php echo htmlspecialchars($tournament['host_username']); ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="ut-table__cell ut-table__cell--game">
-                                        <?php echo htmlspecialchars($tournament['selected_game']); ?>
-                                    </td>
-                                    <td class="ut-table__cell ut-table__cell--brackets">
-                                        <?php echo htmlspecialchars($tournament['bracket_type']); ?>
-                                    </td>
-                                    <td class="ut-table__cell ut-table__cell--date">
-                                        <?php echo htmlspecialchars($tournament['sdate']); ?>
-                                    </td>
-                                    <td class="ut-table__cell ut-table__cell--prize">
-                                        <?php echo htmlspecialchars($tournament['prizes']); ?>
-                                    </td>
-                                    <td class="ut-table__cell">
-                                        <a href="result.php?tournament_id=<?php echo $tournament['id']; ?>">
-                                            <i class='fa fa-eye ut-row__icon-eye'></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="6">No tournaments found.</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
+                          <?php endforeach; ?>
+                        <?php else: ?>
+                          <tr>
+                            <td colspan="6" class="ut-empty-row">No tournaments found.</td>
+                          </tr>
+                        <?php endif; ?>
+                      </tbody>
                     </table>
+                  </div>
                 </div>
+              </div>
             </div>
           </section>
         </section>
@@ -799,9 +796,11 @@ $conn->close();
     <script src="../admin/js/admin.js?ver=1.0"></script>
       <script>
     var loader = document.getElementById("preloader");
-    window.addEventListener("load", function () {
-        loader.style.display = "none";
-    });
+    if (loader) {
+      window.addEventListener("load", function () {
+          loader.style.display = "none";
+      });
+    }
   </script>
 <script>
         // Display popup message when page loads

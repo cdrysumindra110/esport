@@ -78,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tournament']) 
             "DELETE FROM squad_registration WHERE tournament_id = ?",
             "DELETE FROM brackets WHERE tournament_id = ?",
             "DELETE FROM leaderboard WHERE tournament_id = ?",
+            "DELETE FROM organizer_predictions WHERE tournament_id = ?",
             "DELETE FROM streams WHERE tournament_id = ?",
             "DELETE FROM brackets WHERE tournament_id = ?",
             "DELETE FROM tournaments WHERE id = ?"
@@ -1048,8 +1049,8 @@ $conn->close();
                             <button class="br-btn-small" onclick="updateBrackets(<?php echo $tournament_id; ?>)">
                                 <i class="fas fa-project-diagram"></i> Update Brackets
                             </button>
-                            <button class="br-btn-small" onclick="simulateMatches(<?php echo $tournament_id; ?>)">
-                                <i class="fas fa-dice"></i> Simulate Matches
+                            <button class="br-btn-small" onclick="predictWinner(<?php echo $tournament_id; ?>)">
+                                <i class="fas fa-crosshairs"></i> Predict Winner
                             </button>
                             <button class="br-btn-small" onclick="location.reload()">
                                 <i class="fas fa-sync-alt"></i> Refresh
@@ -1497,9 +1498,9 @@ $conn->close();
         window.location.href = 'update_brackets.php?tournament_id=' + tournamentId;
     }
     
-    function simulateMatches(tournamentId) {
-        // Redirect to simulate matches page
-        window.location.href = 'simulate_matches.php?tournament_id=' + tournamentId;
+    function predictWinner(tournamentId) {
+        // Redirect to organizer prediction endpoint
+        window.location.href = 'predict_winner.php?tournament_id=' + tournamentId;
     }
     </script>
 </body>

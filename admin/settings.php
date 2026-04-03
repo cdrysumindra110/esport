@@ -1,6 +1,8 @@
 <?php
 include('../config.php');
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Initialize messages
 $error_message = '';
@@ -97,105 +99,12 @@ if (empty($email)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="./css/admin.css">  
+    <link rel="stylesheet" href="./css/admin.css?ver=2.2">  
+    <link rel="stylesheet" href="./css/settings-modern.css?ver=2.1">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-  .form-container {
-    max-width: 500px;
-    /* width: 70%; */
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-
-  .form-container h2 {
-    margin: 0 0 20px;
-    text-align: center;
-    color: #333;
-  }
-
-  .options {
-    display: flex;
-    margin-bottom: 20px;
-  }
-
-  .option {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    background: #f1f1f1;
-    transition: all 0.3s ease;
-    border-radius: 5px;
-    margin-right: 5px;
-  }
-
-  .option:last-child {
-    margin-right: 0;
-  }
-
-  .option.active {
-    background-color: #007bff;
-    color: #fff;
-    border: 1px solid #007bff;
-  }
-
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #555;
-  }
-
-  .form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-
-  .btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background 0.3s ease;
-  }
-
-  .btn:hover {
-    background-color: #0056b3;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  .error {
-    color: #d9534f;
-    font-size: 14px;
-    margin-top: 5px;
-  }
-</style>
-
 </head>
 <body>
-<div id="preloader" style="background: #1E1E2F url(../img/loader.gif) no-repeat center center; 
-        background-size: 4.5%;height: 100vh;width: 100%;position: fixed;z-index: 999;">
-        </div>
+<div id="preloader"></div>
 <div class="popup-message" id="popup-message"></div>
       <header class="page-header">
         <nav>
@@ -315,44 +224,43 @@ if (empty($email)) {
 
           <!-- Setting Management Section -->
           <section id="Setting">
-            <div class="main-content">
-                <h1>Admin Control pannel</h1>
-                <div class="form-container">
-              <h2>Update Admin Details</h2>
-              <div class="options">
-                <div class="option active" data-target="emailGroup">Update Email</div>
-                <div class="option" data-target="passwordGroup">Update Password</div>
+            <div class="main-content settings-main-content">
+              <div class="settings-header">
+                <h1>Admin Control Panel</h1>
+                <p>Update your admin account email or password securely.</p>
               </div>
-              <form id="updateForm" method="POST" action="settings.php" onsubmit="return validatePassword()">
-                  <!-- Email Update Group -->
+              <div class="form-container settings-card">
+                <h2>Update Admin Details</h2>
+                <div class="options settings-tabs">
+                  <div class="option active" data-target="emailGroup">Update Email</div>
+                  <div class="option" data-target="passwordGroup">Update Password</div>
+                </div>
+                <form id="updateForm" method="POST" action="settings.php" onsubmit="return validatePassword()">
                   <div class="form-group" id="emailGroup">
-                      <label for="currentEmail">Existing Email</label>
-                      <input type="text" id="currentEmail" name="currentEmail" value="<?php echo htmlspecialchars($email); ?>" readonly>
-                      <label for="newEmail">New Email</label>
-                      <input type="text" id="newEmail" name="newEmail" placeholder="Enter new email">
+                    <label for="currentEmail">Existing Email</label>
+                    <input type="text" id="currentEmail" name="currentEmail" value="<?php echo htmlspecialchars($email); ?>" readonly>
+                    <label for="newEmail">New Email</label>
+                    <input type="text" id="newEmail" name="newEmail" placeholder="Enter new email">
                   </div>
 
-                  <!-- Password Update Group -->
                   <div class="form-group hidden" id="passwordGroup">
-                      <label for="newPassword">New Password</label>
-                      <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password">
-                      <label for="confirmPassword">Confirm Password</label>
-                      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
-                      <div id="passwordError" class="error hidden">Passwords do not match.</div>
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                    <div id="passwordError" class="error hidden">Passwords do not match.</div>
                   </div>
 
-                  <!-- Single Submit Button -->
                   <button type="submit" class="btn">Update</button>
                   <div id="errorMessages"></div>
-                  <!-- Error and Success Messages -->
                   <?php if ($error_message): ?>
-                      <div class="error"><?php echo $error_message; ?></div>
+                    <div class="error"><?php echo $error_message; ?></div>
                   <?php endif; ?>
                   <?php if ($success_message): ?>
-                      <div class="success"><?php echo $success_message; ?></div>
+                    <div class="success"><?php echo $success_message; ?></div>
                   <?php endif; ?>
-              </form>
-            </div>
+                </form>
+              </div>
             </div>
           </section>
         </section>
@@ -850,6 +758,14 @@ if (empty($email)) {
     </svg>
 
     <script src="../admin/js/admin.js?ver=1.0"></script>
+  <script>
+    var loader = document.getElementById("preloader");
+    window.addEventListener("load", function () {
+      if (loader) {
+        loader.style.display = "none";
+      }
+    });
+    </script>
 <script>
         // Display popup message when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -895,17 +811,19 @@ if (empty($email)) {
     form.addEventListener('submit', event => {
         const newPassword = document.getElementById('newPassword');
         const confirmPassword = document.getElementById('confirmPassword');
+      const passwordGroup = document.getElementById('passwordGroup');
+      const emailGroup = document.getElementById('emailGroup');
         passwordError.classList.add('hidden');
 
         // Password validation: only if password section is visible
-        if (!newPassword.classList.contains('hidden') && newPassword.value !== confirmPassword.value) {
+      if (!passwordGroup.classList.contains('hidden') && newPassword.value !== confirmPassword.value) {
             passwordError.classList.remove('hidden');
             event.preventDefault();
         }
 
         // Optionally add email validation here if you need it
         const newEmail = document.getElementById('newEmail');
-        if (!newEmail.classList.contains('hidden') && newEmail.value) {
+      if (!emailGroup.classList.contains('hidden') && newEmail.value) {
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(newEmail.value)) {
                 alert("Please enter a valid email address.");

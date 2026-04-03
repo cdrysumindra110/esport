@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session
+include_once('config.php');
 
 // Destroy all session data
 session_unset();

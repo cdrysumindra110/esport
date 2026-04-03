@@ -1,5 +1,4 @@
 <?php
-//session_start();
 include_once('config.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -53,39 +52,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $mail = new PHPMailer(true);
 
                     try {
-                        // Server settings
+                        // Build dynamic verification link for localhost or production
+                        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+                        $verifyLink = $scheme . '://' . $host . '/esport/verify.php?token=' . $verify_token;
+
+                        // Server settings - Gmail SMTP
                         $mail->isSMTP();
                         $mail->Host = 'smtp.gmail.com';  
                         $mail->SMTPAuth = true;
-                        $mail->Username = 'infiknightesports@gmail.com';  // Your email address
-                        $mail->Password = 'mjbn ijjz ysel kkiz';  // Your email password (or app password) mjbn ijjz ysel kkiz
+                        $mail->Username = 'infiknightesports@gmail.com';
+                        $mail->Password = str_replace(' ', '', 'ydln gvym ffji ioys'); // Strip spaces from app password
                         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                         $mail->Port = 587;
-                      //  cdrysumindra2060@gmail.com =  rwiy dkal iizf ildc   
+                        $mail->Timeout = 30;
+                        $mail->SMTPOptions = array(
+                            'ssl' => array(
+                                'verify_peer' => false,
+                                'verify_peer_name' => false,
+                                'allow_self_signed' => true
+                            )
+                        );
+
                         // Recipients
-                        $mail->setFrom('infiknightesports@gmail.com');
+                        $mail->setFrom('infiknightesports@gmail.com', 'InfiKnight Esports');
                         $mail->addAddress($email);
 
                         // Content
                         $mail->isHTML(true);
                         $mail->Subject = 'Email Verification';
-                        $mail->Body    = 'Please click the following link to verify your email address: 
-                        <a href="http://localhost/esport/verify.php?token=' . $verify_token . '">Verify Email</a>';
+                        $mail->Body    = 'Please click the following link to verify your email address: <a href="' . $verifyLink . '">Verify Email</a>';
+                        $mail->AltBody = 'Copy and open this link to verify your email address: ' . $verifyLink;
 
                         // Send the email
-                        $mail->send();
+                        if (!$mail->send()) {
+                            throw new Exception('Mail send failed: ' . $mail->ErrorInfo);
+                        }
                         $success_signup = "Account created successfully! Please check your email for verification.";
                         header("Location: signin.php?success_signup=" . urlencode($success_signup));
                         exit();
                     } catch (Exception $e) {
-                        $error_message = "Error sending verification email: " . $mail->ErrorInfo;
+                        error_log("Email Error for $email: " . $e->getMessage());
+                        error_log("PHPMailer Error: " . $mail->ErrorInfo);
+                        
+                        // Delete the unverified user since email failed
+                        $stmt = $conn->prepare("DELETE FROM users WHERE email = ?");
+                        $stmt->bind_param("s", $email);
+                        $stmt->execute();
+                        $stmt->close();
+                      $stmt = null;
+                        
+                        $error_message = "Error sending verification email. Please try again.";
                     }
                 } else {
                     $error_message = "Error: " . $conn->error;
                 }
             }
 
-            $stmt->close();
+                if (isset($stmt) && $stmt instanceof mysqli_stmt) {
+                  $stmt->close();
+                }
             $conn->close();
         }
     }
@@ -157,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <div class="container" id="container">
   <div class="form-container sign-up-container">
-    <form id="signup-form" action="signup.php" method="post" onsubmit="return validateForm()">
+    <form id="signup-form" action="signup.php" method="post">
       <h1>Sign Up</h1>
       <div class="social-container">
         <a class="social-icon" id="google-signup" title="Sign Up with Google"><i class="fab fa-google"></i></a>

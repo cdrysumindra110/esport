@@ -1,6 +1,8 @@
 <?php
 include('../config.php');
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Initialize messages
 $error_message = '';
@@ -95,11 +97,13 @@ if ($result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../admin/css/admin.css?ver=1.0">
+    <link rel="stylesheet" href="../admin/css/admin.css?ver=2.2">
+  <link rel="stylesheet" href="../admin/css/contents-modern.css?ver=2.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
+<div id="preloader"></div>
 <div class="popup-message" id="popup-message"></div>
       <header class="page-header">
         <nav>
@@ -220,77 +224,84 @@ if ($result->num_rows > 0) {
           <!-- Contents Management Section -->
           <section id="contents">
             <div class="main-content">
-              <h1>Contents Management</h1>
-
-              <div class="tab-content">
-                  <!-- Add News Form Tab -->
-                  <div class="tab active" data-tab="add-news" style="width: 100%; background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 20px auto;">
-                      <h3 style="font-size: 1.6em; margin-bottom: 20px; color: #333; text-align: center;">Add New News Article</h3>
-
-                      <?php if (!empty($error_message)): ?>
-                          <div class="error-message" style="padding: 10px 20px; border-radius: 5px; margin-bottom: 20px; font-size: 1.1em; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
-                              <p><?php echo $error_message; ?></p>
-                          </div>
-                      <?php endif; ?>
-
-                      <?php if (!empty($success_message)): ?>
-                          <div class="success-message" style="padding: 10px 20px; border-radius: 5px; margin-bottom: 20px; font-size: 1.1em; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;">
-                              <p><?php echo $success_message; ?></p>
-                          </div>
-                      <?php endif; ?>
-
-                      <form action="" method="POST" enctype="multipart/form-data">
-                          <div class="form-group" style="margin-bottom: 20px;">
-                              <label for="title" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Title:</label>
-                              <input type="text" name="title" id="title" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;">
-                          </div>
-                          <div class="form-group" style="margin-bottom: 20px;">
-                              <label for="description" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Description:</label>
-                              <textarea name="description" id="description" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;"></textarea>
-                          </div>
-                          <div class="form-group" style="margin-bottom: 20px;">
-                            <label for="image" style="font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Image:</label>
-                            <input type="file" name="image" id="image" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em; transition: border-color 0.3s ease;" onchange="previewImage(event)">
-                            <br>
-                            <!-- Image preview section -->
-                            <img id="imagePreview" src="#" alt="Image Preview" style="width: 100%; height: 300px; object-fit: cover; margin-top: 10px; display: none;">
-                        </div>
-                          <button type="submit" name="submit" class="btn btn-primary" style="background-color: #007bff; color: white; padding: 12px 20px; font-size: 1.1em; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease;">Post News</button>
-                      </form>
-                  </div>
+              <div class="contents-hero">
+                <h1>Contents Management</h1>
+                <p>Create and maintain news articles shown across the platform.</p>
               </div>
-              <?php
-              // Assuming you already have the $articles array filled with data
-              if (!empty($articles)): 
-              ?>
-                <table class="article-news-table">
-                  <thead>
-                    <tr>
-                      <th class="table-header">Image</th>
-                      <th class="table-header">Title</th>
-                      <th class="table-header">Description</th>
-                      <th class="table-header">Updated At</th>
-                      <th class="table-header">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php foreach ($articles as $article): ?>
-                      <tr class="table-row">
-                        <td class="table-cell"><img src="<?= $article['image'] ?>" alt="Article Image" class="article-image"></td>
-                        <td class="table-cell"><?= htmlspecialchars($article['title']) ?></td>
-                        <td class="table-cell"><?= htmlspecialchars($article['description']) ?></td>
-                        <td class="table-cell"><?= htmlspecialchars($article['updated_at']) ?></td>
-                        <td class="table-cell">
-                          <button class="action-button update-button" onclick="window.location.href='update_article.php?id=<?= $article['id'] ?>'">Update</button>
-                          <button class="action-button delete-button" onclick="confirmDelete(<?= $article['id'] ?>)">Delete</button>
-                        </td>
-                      </tr>
-                    <?php endforeach; ?>
-                  </tbody>
-                </table>
-              <?php else: ?>
-                  <p>No news articles available at the moment.</p>
-              <?php endif; ?>
+
+              <div class="contents-layout">
+                <div class="contents-card">
+                  <h3>Add New News Article</h3>
+
+                  <?php if (!empty($error_message)): ?>
+                      <div class="contents-alert contents-alert-error">
+                          <p><?php echo $error_message; ?></p>
+                      </div>
+                  <?php endif; ?>
+
+                  <?php if (!empty($success_message)): ?>
+                      <div class="contents-alert contents-alert-success">
+                          <p><?php echo $success_message; ?></p>
+                      </div>
+                  <?php endif; ?>
+
+                  <form action="" method="POST" enctype="multipart/form-data" class="contents-form">
+                      <div class="form-group">
+                          <label for="title">Title</label>
+                          <input type="text" name="title" id="title" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="description">Description</label>
+                          <textarea name="description" id="description" class="form-control" required></textarea>
+                      </div>
+                      <div class="form-group">
+                          <label for="image">Image</label>
+                          <input type="file" name="image" id="image" class="form-control" required onchange="previewImage(event)">
+                          <img id="imagePreview" src="#" alt="Image Preview" class="image-preview">
+                      </div>
+                      <button type="submit" name="submit" class="contents-submit-btn">Post News</button>
+                  </form>
+                </div>
+
+                <div class="contents-card contents-table-card">
+                  <div class="contents-table-header">
+                    <h3>Published Articles</h3>
+                    <span class="contents-badge"><?php echo !empty($articles) ? count($articles) : 0; ?> total</span>
+                  </div>
+
+                  <?php if (!empty($articles)): ?>
+                    <div class="contents-table-wrap">
+                      <table class="article-news-table">
+                        <thead>
+                          <tr>
+                            <th class="table-header">Image</th>
+                            <th class="table-header">Title</th>
+                            <th class="table-header">Description</th>
+                            <th class="table-header">Updated At</th>
+                            <th class="table-header">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php foreach ($articles as $article): ?>
+                            <tr class="table-row">
+                              <td class="table-cell"><img src="<?= htmlspecialchars($article['image']) ?>" alt="Article Image" class="article-image"></td>
+                              <td class="table-cell"><?= htmlspecialchars($article['title']) ?></td>
+                              <td class="table-cell"><?= htmlspecialchars($article['description']) ?></td>
+                              <td class="table-cell"><?= htmlspecialchars($article['updated_at']) ?></td>
+                              <td class="table-cell">
+                                <button class="action-button update-button" onclick="window.location.href='update_article.php?id=<?= $article['id'] ?>'">Update</button>
+                                <button class="action-button delete-button" onclick="confirmDelete(<?= $article['id'] ?>)">Delete</button>
+                              </td>
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  <?php else: ?>
+                      <p class="contents-empty">No news articles available at the moment.</p>
+                  <?php endif; ?>
+                </div>
+              </div>
             </div>
             
           </section>
@@ -790,9 +801,11 @@ if ($result->num_rows > 0) {
     <script src="../admin/js/admin.js?ver=1.0"></script>
     <script>
     var loader = document.getElementById("preloader");
-    window.addEventListener("load", function () {
-        loader.style.display = "none";
-    });
+    if (loader) {
+      window.addEventListener("load", function () {
+          loader.style.display = "none";
+      });
+    }
   </script>
 <script>
         // Display popup message when page loads
